@@ -1,0 +1,26 @@
+{
+  "name": "prosemirror-demo",
+  "version": "0.0.1",
+  "description": "Demo of ProseMirror's collaborative editing",
+  "maintainers": [
+    {
+      "name": "Marijn Haverbeke",
+      "email": "marijnh@gmail.com",
+      "web": "http://marijnhaverbeke.nl"
+    }
+  ],
+  "dependencies": {
+    "ecstatic": "^0.8.0",
+    "prosemirror": "^0.0.1"
+  },
+  "devDependencies": {
+    "babel": "^5.4.7",
+    "babelify": "^6.0.2",
+    "cssify": "^0.7.0",
+    "watchify": "^3.2.0"
+  },
+  "scripts": {
+    "start": "node src/server/start.js",
+    "demo": "watchify -d --outfile public/demo.js -t babelify src/client/client.js"
+  }
+}
