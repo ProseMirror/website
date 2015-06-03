@@ -10,8 +10,8 @@ export function req(conf, callback) {
       callback(err)
     }
   })
-  req.addEventListener("error", function() {
-    callback(null, new Error("Network error"))
+  req.addEventListener("error", function(e) {
+    callback(new Error("Network error"))
   })
   if (conf.headers) for (let header in conf.headers) req.setRequestHeader(header, conf.headers[header])
   req.send(conf.body || null)

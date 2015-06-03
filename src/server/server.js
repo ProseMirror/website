@@ -58,7 +58,7 @@ function handle(method, url, f) {
       try {
         output = f(...args, req, resp)
       } catch (err) {
-        output = new Output(500, err.toString())
+        output = new Output(err.status || 500, err.toString())
       }
       if (output) output.resp(resp)
     }
@@ -81,14 +81,16 @@ handle("GET", ["doc", null], id => {
 function nonNegInteger(str) {
   let num = Number(str)
   if (!isNaN(num) && Math.floor(num) == num && num >= 0) return num
-  throw new Error("Not a non-negative integer: " + str)
+  let err = new Error("Not a non-negative integer: " + str)
+  err.status = 400
+  throw err
 }
 
 class Waiting {
   constructor(resp) {
     this.resp = resp
     this.done = false
-    setTimeout(() => this.send([]), 1000 * 60 * 5)
+    resp.setTimeout(1000 * 60 * 5, () => this.send([]))
   }
 
   send(steps) {
@@ -102,7 +104,7 @@ handle("GET", ["doc", null, "steps", null], (id, version, _, resp) => {
   version = nonNegInteger(version)
   let steps = getSteps(id, version)
   if (steps === false)
-    return new Output(410, "steps no longer available")
+    return new Output(410, "Steps no longer available")
   if (steps.length)
     return Output.json(steps.map(s => s.toJSON()))
   let wait = new Waiting(resp)
@@ -115,5 +117,5 @@ handle("POST", ["doc", null, "steps"], (data, id) => {
   if (addSteps(id, data.version, steps))
     return new Output(204)
   else
-    return new Output(406, "Version not current")
+    return new Output(409, "Version not current")
 })

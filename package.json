@@ -20,7 +20,7 @@
     "watchify": "^3.2.0"
   },
   "scripts": {
-    "start": "node src/server/start.js",
-    "demo": "watchify -d --outfile public/demo.js -t babelify src/client/client.js"
+    "server": "node src/server/start.js",
+    "client": "watchify -d --outfile public/demo.js -t babelify src/client/client.js"
   }
 }

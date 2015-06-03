@@ -32,9 +32,17 @@ function newInstance(id) {
   return instances[id] = new Instance(id)
 }
 
+function checkVersion(inst, version) {
+  if (version < 0 || version > inst.version) {
+    let err = new Error("Invalid version " + version)
+    err.status = 400
+    throw err
+  }
+}
+
 export function addSteps(id, version, steps) {
   let inst = getInstance(id)
-  if (version < 0 || version > inst.version) throw new Error("Bogus version " + version)
+  checkVersion(inst, version)
   if (inst.version != version) return false
   let doc = inst.doc
   for (let i = 0; i < steps.length; i++)
@@ -49,7 +57,7 @@ export function addSteps(id, version, steps) {
 
 export function getSteps(id, version) {
   let inst = getInstance(id)
-  if (version < 0 || version > inst.version) throw new Error("Bogus version " + version)
+  checkVersion(inst, version)
   let startIndex = inst.steps.length - (inst.version - version)
   if (startIndex < 0) return false
   inst.lastActive = Date.now()
