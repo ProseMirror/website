@@ -6,7 +6,7 @@ import "prosemirror/dist/menu/inlinetooltip"
 import "prosemirror/dist/menu/menu"
 
 import {GET, POST} from "./http"
-import {CommentStore} from "./comment"
+import {CommentStore, CommentUI} from "./comment"
 
 function reportFailure(err) {
   console.log("FAILED:", err.toString()) // FIXME
@@ -18,6 +18,7 @@ function reportDelay(err) {
 class ServerConnection {
   constructor(pm, url, id) {
     this.pm = pm
+    new CommentUI(pm)
     pm.mod.connection = this
     this.url = url
     this.id = id

@@ -1,14 +1,18 @@
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/edit/dom"
+import {defineOption} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/edit"
+import {Debounced} from "prosemirror/dist/util/debounce"
+
 import {items as inlineItems} from "prosemirror/dist/menu/inlinetooltip"
 import {Item, Dialog} from "prosemirror/dist/menu/menuitem"
+import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
 class Comment {
-  constructor(text, id, marker) {
+  constructor(text, id, range) {
     this.id = id
     this.text = text
-    this.marker = marker
+    this.range = range
   }
 }
 
@@ -30,9 +34,11 @@ export class CommentStore {
   }
 
   addComment(from, to, text, id) {
-    let marker = this.pm.markRange(from, to, {className: "comment", id: id})
-    marker.on("removed", () => this.removeComment(id))
-    this.comments[id] = new Comment(text, id, marker)
+    if (!this.comments[id]) {
+      let range = this.pm.markRange(from, to, {className: "comment", id: id})
+      range.on("removed", () => this.removeComment(id))
+      this.comments[id] = new Comment(text, id, range)
+    }
   }
 
   addJSONComment(obj) {
@@ -42,7 +48,7 @@ export class CommentStore {
   removeComment(id) {
     let found = this.comments[id]
     if (found) {
-      this.pm.removeRange(found.marker)
+      this.pm.removeRange(found.range)
       delete this.comments[id]
       return true
     }
@@ -67,10 +73,10 @@ export class CommentStore {
         result.push({type: "delete", id: event.id})
       } else { // "create"
         let found = this.comments[event.id]
-        if (!found || !found.marker.from) continue
+        if (!found || !found.range.from) continue
         result.push({type: "create",
-                     from: found.marker.from,
-                     to: found.marker.to,
+                     from: found.range.from,
+                     to: found.range.to,
                      id: found.id,
                      text: found.text})
       }
@@ -90,6 +96,16 @@ export class CommentStore {
         this.addJSONComment(event)
     })
     this.version = version
+  }
+
+  findCommentsAt(pos) {
+    let found = []
+    for (let id in this.comments) {
+      let comment = this.comments[id]
+      if (comment.range.from.cmp(pos) < 0 && comment.range.to.cmp(pos) > 0)
+        found.push(comment)
+    }
+    return found
   }
 }
 
@@ -130,10 +146,75 @@ class CommentDialog extends Dialog {
 
   apply(form, pm) {
     let input = form.elements.text, val = input.value
-    if (!val) return
-    let sel = pm.selection
-    pm.mod.comments.createComment(sel.from, sel.to, val)
+    if (val) pm.mod.comments.createComment(val)
   }
 }
 
 inlineItems.addItem(new CommentItem)
+
+// Comment UI
+
+export class CommentUI {
+  constructor(pm) {
+    this.pm = pm
+    pm.mod.commentUI = this
+    this.debounced = new Debounced(pm, 100, () => this.update())
+    pm.on("selectionChange", this.updateFunc = () => this.debounced.trigger())
+    pm.on("change", this.updateFunc)
+    this.tooltip = new Tooltip(pm, "below", true)
+    this.tooltip.reset = this.updateFunc
+    this.highlighting = null
+  }
+
+  update() {
+    let sel = this.pm.selection, comments
+    if (!this.pm.mod.comments || !sel.empty || !this.pm.hasFocus() ||
+        (comments = this.pm.mod.comments.findCommentsAt(sel.head)).length == 0) {
+      this.tooltip.close()
+      this.clearHighlight()
+    } else {
+      this.tooltip.show(null, this.renderComments(comments), bottomCenterOfSelection())
+    }
+  }
+
+  highlightComment(comment) {
+    this.clearHighlight()
+    this.highlighting = this.pm.markRange(comment.range.from, comment.range.to,
+                                          {className: "currentComment"})
+  }
+
+  clearHighlight() {
+    if (this.highlighting) {
+      this.pm.removeRange(this.highlighting)
+      this.highlighting = null
+    }
+  }
+
+  renderComment(comment) {
+    let btn = elt("button", {class: "commentDelete"}, "×")
+    btn.addEventListener("click", () => {
+      this.clearHighlight()
+      this.pm.mod.comments.deleteComment(comment.id)
+      this.update()
+    })
+    let li = elt("li", {class: "commentText"}, comment.text, btn)
+    li.addEventListener("mouseover", e => {
+      if (!li.contains(e.relatedTarget)) this.highlightComment(comment)
+    })
+    li.addEventListener("mouseout", e => {
+      if (!li.contains(e.relatedTarget)) this.clearHighlight()
+    })
+    return li
+  }
+
+  renderComments(comments) {
+    let rendered = comments.map(c => this.renderComment(c))
+    return elt("ul", {class: "commentList"}, rendered)
+  }
+}
+
+function bottomCenterOfSelection() {
+  let rects = window.getSelection().getRangeAt(0).getClientRects()
+  let {left, right, bottom} = rects[rects.length - 1]
+  return {top: bottom, left: (left + right) / 2}
+}

@@ -4,6 +4,45 @@ body {
 }
 
 .comment { background-color: #ff8 }
+.currentComment { background-color: #fe0 }
+
+.commentList, .commentText {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.commentList {
+  width: 15em;
+}
+
+.commentText {
+  padding: 2px 20px 2px 5px;
+  position: relative;
+}
+
+.commentText + .commentText {
+  border-top: 1px solid white;
+}
+
+.commentText:hover {
+  background: #444;
+}
+
+.commentDelete {
+  position: absolute;
+  right: 0;
+  border: 0;
+  font: inherit;
+  display: inline;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.commentDelete:hover {
+  color: #f88;
+}
 
 .ProseMirror { margin-top: 2em }
 
