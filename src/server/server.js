@@ -4,8 +4,9 @@ import {Router} from "./route"
 import ecstatic from "ecstatic"
 
 import {Step} from "prosemirror/dist/transform"
+import {Pos} from "prosemirror/dist/model"
 
-import {getInstance, getSteps, addSteps} from "./instance"
+import {getInstance} from "./instance"
 
 const port = 8000
 
@@ -58,6 +59,7 @@ function handle(method, url, f) {
       try {
         output = f(...args, req, resp)
       } catch (err) {
+        console.log(err.stack)
         output = new Output(err.status || 500, err.toString())
       }
       if (output) output.resp(resp)
@@ -75,7 +77,10 @@ function handle(method, url, f) {
 
 handle("GET", ["doc", null], id => {
   let inst = getInstance(id)
-  return Output.json({doc: inst.doc.toJSON(), version: inst.version})
+  return Output.json({doc: inst.doc.toJSON(),
+                      version: inst.version,
+                      comments: inst.comments.comments,
+                      commentVersion: inst.comments.version})
 })
 
 function nonNegInteger(str) {
@@ -90,32 +95,50 @@ class Waiting {
   constructor(resp) {
     this.resp = resp
     this.done = false
-    resp.setTimeout(1000 * 60 * 5, () => this.send([]))
+    resp.setTimeout(1000 * 60 * 5, () => this.send(Output.json({})))
   }
 
-  send(steps) {
+  send(output) {
     if (this.done) return
-    Output.json(steps.map(s => s.toJSON())).resp(this.resp)
+    output.resp(this.resp)
     this.done = true
   }
 }
 
-handle("GET", ["doc", null, "steps", null], (id, version, _, resp) => {
-  version = nonNegInteger(version)
-  let steps = getSteps(id, version)
-  if (steps === false)
-    return new Output(410, "Steps no longer available")
-  if (steps.length)
-    return Output.json(steps.map(s => s.toJSON()))
+function outputEvents(inst, data) {
+  return Output.json({version: inst.version,
+                      commentVersion: inst.comments.version,
+                      steps: data.steps.map(s => s.toJSON()),
+                      comment: data.comment})
+}
+
+handle("GET", ["doc", null, "events"], (id, req, resp) => {
+  let version = nonNegInteger(req.query.version)
+  let commentVersion = nonNegInteger(req.query.commentVersion)
+
+  let inst = getInstance(id)
+  let data = inst.getEvents(version, commentVersion)
+  if (data === false)
+    return new Output(410, "History no longer available")
+  if (data.steps.length || data.comment.length)
+    return outputEvents(inst, data)
   let wait = new Waiting(resp)
-  getInstance(id).waiting.push(() => wait.send(getSteps(id, version)))
+  getInstance(id).waiting.push(() => {
+    wait.send(outputEvents(inst, inst.getEvents(version, commentVersion)))
+  })
 })
 
-handle("POST", ["doc", null, "steps"], (data, id) => {
+handle("POST", ["doc", null, "events"], (data, id) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(s))
-  if (addSteps(id, data.version, steps))
-    return new Output(204)
-  else
+  let comments = data.comment.map(e => {
+    if (e.from) e.from = Pos.fromJSON(e.from)
+    if (e.to) e.to = Pos.fromJSON(e.to)
+    return e
+  })
+  let result = getInstance(id).addEvents(data.version, steps, comments)
+  if (!result)
     return new Output(409, "Version not current")
+  else
+    return Output.json(result)
 })

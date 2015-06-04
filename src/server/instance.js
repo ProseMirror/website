@@ -1,14 +1,64 @@
 import {Node} from "prosemirror/dist/model"
 import {applyStep} from "prosemirror/dist/transform"
 
+import {Comments} from "./comments"
+
 class Instance {
   constructor(id) {
     this.id = id
     this.doc = new Node("doc", null, [new Node("paragraph")])
+    this.comments = new Comments
     this.version = 0
     this.steps = []
     this.lastActive = Date.now()
     this.waiting = []
+  }
+
+  addEvents(version, steps, comments) {
+    this.checkVersion(version)
+    if (this.version != version) return false
+    let doc = this.doc, maps = []
+    for (let i = 0; i < steps.length; i++) {
+      let result = applyStep(doc, steps[i])
+      doc = result.doc
+      maps.push(result.map)
+    }
+    this.doc = doc
+    this.version += steps.length
+    this.steps = this.steps.concat(steps)
+
+    this.comments.mapThrough(maps)
+    for (let i = 0; i < comments.length; i++) {
+      let event = comments[i]
+      if (event.type == "delete")
+        this.comments.deleted(event.id)
+      else
+        this.comments.created(event)
+    }
+
+    this.lastActive = Date.now()
+    while (this.waiting.length) this.waiting.pop()()
+    return {version: this.version, commentVersion: this.comments.version}
+  }
+
+  checkVersion(version) {
+    if (version < 0 || version > this.version) {
+      let err = new Error("Invalid version " + version)
+      err.status = 400
+      throw err
+    }
+  }
+
+  getEvents(version, commentVersion) {
+    this.checkVersion(version)
+    let startIndex = this.steps.length - (this.version - version)
+    if (startIndex < 0) return false
+    let commentStartIndex = this.comments.events.length - (this.comments.version - commentVersion)
+    if (commentStartIndex < 0) return false
+
+    this.lastActive = Date.now()
+    return {steps: this.steps.slice(startIndex),
+            comment: this.comments.eventsAfter(commentStartIndex)}
   }
 }
 
@@ -30,36 +80,4 @@ function newInstance(id) {
     delete instances[oldest.id]
   }
   return instances[id] = new Instance(id)
-}
-
-function checkVersion(inst, version) {
-  if (version < 0 || version > inst.version) {
-    let err = new Error("Invalid version " + version)
-    err.status = 400
-    throw err
-  }
-}
-
-export function addSteps(id, version, steps) {
-  let inst = getInstance(id)
-  checkVersion(inst, version)
-  if (inst.version != version) return false
-  let doc = inst.doc
-  for (let i = 0; i < steps.length; i++)
-    doc = applyStep(doc, steps[i]).doc
-  inst.doc = doc
-  inst.version += steps.length
-  inst.steps = inst.steps.concat(steps)
-  inst.lastActive = Date.now()
-  while (inst.waiting.length) inst.waiting.pop()()
-  return true
-}
-
-export function getSteps(id, version) {
-  let inst = getInstance(id)
-  checkVersion(inst, version)
-  let startIndex = inst.steps.length - (inst.version - version)
-  if (startIndex < 0) return false
-  inst.lastActive = Date.now()
-  return inst.steps.slice(startIndex)
 }

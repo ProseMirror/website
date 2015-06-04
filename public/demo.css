@@ -1,9 +1,9 @@
 body {
   font-family: Georgia;
-  max-width: 50em
+  max-width: 50em;
 }
 
-.comment { background-color: #ff9 }
+.comment { background-color: #ff8 }
 
 .ProseMirror { margin-top: 2em }
 

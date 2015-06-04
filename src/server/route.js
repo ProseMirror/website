@@ -30,7 +30,9 @@ export class Router {
   }
 
   resolve(request, response) {
-    let path = parse(request.url).pathname
+    let parsed = parse(request.url, true)
+    let path = parsed.pathname
+    request.query = parsed.query
 
     return this.routes.some(route => {
       let match = route.method == request.method && this.match(route.url, path)
