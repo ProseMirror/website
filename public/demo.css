@@ -21,12 +21,12 @@ body {
   position: relative;
 }
 
-.commentText + .commentText {
-  border-top: 1px solid white;
+.commentText:hover {
+  background: #4c4c4c;
 }
 
-.commentText:hover {
-  background: #444;
+.commentText + .commentText {
+  border-top: 1px solid white;
 }
 
 .commentDelete {

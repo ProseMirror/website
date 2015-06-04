@@ -164,6 +164,7 @@ export class CommentUI {
     this.tooltip = new Tooltip(pm, "below", true)
     this.tooltip.reset = this.updateFunc
     this.highlighting = null
+    this.displaying = null
   }
 
   update() {
@@ -172,8 +173,13 @@ export class CommentUI {
         (comments = this.pm.mod.comments.findCommentsAt(sel.head)).length == 0) {
       this.tooltip.close()
       this.clearHighlight()
+      this.displaying = null
     } else {
-      this.tooltip.show(null, this.renderComments(comments), bottomCenterOfSelection())
+      let id = comments.map(c => c.id).join(" ")
+      if (id != this.displaying) {
+        this.displaying = id
+        this.tooltip.show(id, this.renderComments(comments), bottomCenterOfSelection())
+      }
     }
   }
 
@@ -198,6 +204,7 @@ export class CommentUI {
       this.update()
     })
     let li = elt("li", {class: "commentText"}, comment.text, btn)
+    // FIXME this does not work and is a mess
     li.addEventListener("mouseover", e => {
       if (!li.contains(e.relatedTarget)) this.highlightComment(comment)
     })
