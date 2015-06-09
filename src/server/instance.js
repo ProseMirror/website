@@ -81,3 +81,7 @@ function newInstance(id) {
   }
   return instances[id] = new Instance(id)
 }
+
+export function instanceIDs() {
+  return Object.keys(instances)
+}

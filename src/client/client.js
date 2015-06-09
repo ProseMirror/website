@@ -1,4 +1,4 @@
-import {Node} from "prosemirror/dist/model"
+import {Node, fromDOM} from "prosemirror/dist/model"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
@@ -7,6 +7,7 @@ import "prosemirror/dist/menu/menu"
 
 import {GET, POST} from "./http"
 import {CommentStore, CommentUI} from "./comment"
+import {Hinter} from "./hinter"
 
 function reportFailure(err) {
   console.log("FAILED:", err.toString()) // FIXME
@@ -16,21 +17,19 @@ function reportDelay(err) {
 }
 
 class ServerConnection {
-  constructor(pm, url, id) {
+  constructor(pm, url) {
     this.pm = pm
     new CommentUI(pm)
     pm.mod.connection = this
-    this.url = url
-    this.id = id
+    this.url = null
 
     this.state = this.request = this.collab = this.comments = null
     this.backOff = 0
-
-    this.init()
   }
 
-  init() {
+  start(url, c) {
     this.state = "start"
+    this.url = url
 
     this.request = GET(this.url, (err, data) => {
       if (err) {
@@ -47,6 +46,7 @@ class ServerConnection {
         data.comments.forEach(comment => this.comments.addJSONComment(comment))
         this.backOff = 0
         this.poll()
+        if (c) c()
       }
     })
   }
@@ -58,7 +58,7 @@ class ServerConnection {
       if (this.request != req) return
 
       if (err && err.status == 410) { // Too far behind. Revert to server state
-        this.init()
+        this.start(this.url)
       } else if (err) {
         this.recover(err)
       } else {
@@ -131,14 +131,35 @@ class ServerConnection {
   }
 }
 
-function start(id) {
-  let pm = window[id] = new ProseMirror({
-    place: document.body,
-    autoInput: true,
-    inlineTooltip: true,
-    menu: {followCursor: true}
-  })
-  new ServerConnection(pm, "/doc/test", id)
-}
+let pm = window.pm = new ProseMirror({
+  place: document.querySelector("#editor"),
+  autoInput: true,
+  inlineTooltip: true,
+  menu: {followCursor: true},
+  doc: fromDOM(document.querySelector("#help"))
+})
+new ServerConnection(pm)
 
-start("pm")
+let idInput = document.querySelector("#docname")
+let hinter = new Hinter(idInput, c => {
+  GET("/doc", (err, data) => {
+    if (!err) c(JSON.parse(data))
+  })
+}, picked => {
+  location.hash = "#edit-" + encodeURIComponent(picked)
+})
+
+document.querySelector("#startdemo").addEventListener("submit", e => {
+  e.preventDefault()
+  location.hash = "#edit-" + encodeURIComponent(idInput.value)
+})
+
+function connectFromHash() {
+  let isID = /^#edit-(.+)/.exec(location.hash)
+  if (isID) {
+    pm.mod.connection.start("/doc/" + isID[1], () => pm.focus())
+    idInput.value = decodeURIComponent(isID[1])
+  }
+}
+addEventListener("hashchange", connectFromHash)
+connectFromHash()

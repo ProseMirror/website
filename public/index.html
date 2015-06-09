@@ -1,11 +1,121 @@
 <!doctype html>
 
 <meta charset="utf-8">
-<title>ProseMirror demo</title>
+<title>ProseMirror</title>
 <link rel=stylesheet href=demo.css>
 
-<body>
+<body class=front>
 
-<h1>ProseMirror collaborative editing demo</h1>
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><img src="logo.png" class=logo> ProseMirror</h1>
+    <div class=subtitle>A web-based <abbr title="What You See Is What
+    You Mean">WYSIWYM</abbr> editor from
+    the <a href="http://marijnhaverbeke.nl">author</a>
+    of <a href="http://codemirror.net">CodeMirror</a></div>
+  </div>
+</div>
+
+<article>
+
+<section id="qualities">
+
+<p><strong>Rich text, modernized</strong>: Have your users edit
+documents with all the styling and structuring found in
+Markdown/<a href="http://commonmark.org">CommonMark</a> using a
+simple, easily learnable interface. <span class=subtle>(Different
+document models will be supported in the future.)</span></p>
+
+<p><strong>Edit prose, not HTML</strong>. ProseMirror completely
+detaches its document model from HTML, resulting in a simple,
+predictable editing experience and clean, portable output.</p>
+
+<p><strong>Collaborate</strong>. Broadcast changes to peers editing
+the same document. Support for real-time collaboration is built into
+the library.</p>
+
+<p><strong>Extend</strong>.
+Like <a href="http://codemirror.net">CodeMirror</a>, ProseMirror is
+designed to be a flexible <em>component</em>, allowing sites to add
+and replace functionality through a rich programming API.</p>
+
+</section>
+
+<section id="status">
+
+<h2>Status</h2>
+
+<p>ProseMirror is intended to become open source (MIT licenced), but
+since I need to somehow combine writing open software and earning a
+living, I am running a <a href="XXX">crowd-funding campaign</a> to
+fund the work I did on this system. Until that succeeds, all rights
+are reserved.</p>
+
+<p>The library is in beta status. It works, as the demo below can
+attest, but there are without doubt a lot of wrinkles left that need
+to be found through real-world use.</p>
+
+</section>
+
+<section id="demo">
+
+<h2>Demo</h2>
+
+<p>I have set up a simple collaborative editing service to showcase
+both the editing experience and the collaborative aspect. You can
+create or join a document, and edit it along with other people looking
+at the same document.</p>
+
+<p><strong>Disclaimer</strong>: Firstly, since this demo is open for
+everybody, you might run into people typing stupid, mean, and
+disgusting things. Try not to be such a person. Secondly, this is a
+quickly hacked together demo on top of a beta-quality software
+component. It is likely to crash and lose all its data on a regular
+interval. Don't use it for anything serious.</p>
+
+<div class=opendemo>
+  <form id="startdemo">
+    Create or open a document:&nbsp;
+    <input name=id id=docname placeholder="Document ID" width=20>
+    <button type=submit>Connect</button>
+  </form>
+</div>
+
+<div id=editor></div>
+
+</section>
+
+</article>
+
+<div style="display: none" id="help">
+  <h1>Using ProseMirror</h1>
+
+  <p>This is editable text. Focus it and start typing.</p>
+
+  <p>To apply stying, you can select a piece of text and manipulate
+  its styling from the tooltip menu. You
+  get <em>emphasis</em>, <strong>strong
+  text</strong>, <a href="http://XXX">links</a>, <code>code
+  font</code>, and <img src="img.png"> images.</p>
+
+  <p>Block-level structure is manipulated through the “hamburger” menu
+  to the right of the selected paragraph. This allows you to change
+  paragraphs into headers or code blocks, to wrap them in lists or
+  blockquotes, to unwrap them, and to insert things like horizontal
+  rules.</p>
+
+  <p>Try using the menu to turn this paragraph into a numbered
+  list.</p>
+
+  <p>And turn this paragraph into a code block.</p>
+
+  <p>When editing a collaborative document, this demo adds an
+  annotation feature, which is also available from the selection menu.
+  Annotated text shows up yellow. Put your cursor on it to see what it
+  says.</p>
+
+  <p>To start playing with collaborative editing, select an instance
+  ID from the input field above the editor.</p>
+</div>
 
 <script src="demo.js"></script>

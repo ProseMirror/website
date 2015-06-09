@@ -6,7 +6,7 @@ import ecstatic from "ecstatic"
 import {Step} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 
-import {getInstance} from "./instance"
+import {getInstance, instanceIDs} from "./instance"
 
 const port = 8000
 
@@ -74,6 +74,10 @@ function handle(method, url, f) {
       finish()
   })
 }
+
+handle("GET", ["doc"], () => {
+  return Output.json(instanceIDs())
+})
 
 handle("GET", ["doc", null], id => {
   let inst = getInstance(id)
