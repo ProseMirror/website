@@ -1,5 +1,4 @@
 import {createServer} from "http"
-import Promise from "promise"
 import {Router} from "./route"
 
 import {Step} from "prosemirror/dist/transform"
