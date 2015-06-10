@@ -124,21 +124,16 @@ class CommentItem extends Item {
 }
 
 class CommentDialog extends Dialog {
-  form(_, submit) {
+  form() {
     let te = elt("textarea", {name: "text",
                               placeholder: "Annotation text",
                               style: "font: inherit"})
     te.addEventListener("keydown", e => {
-      if (e.keyCode == 13) {
+      if (e.keyCode == 13 && (e.ctrlKey || e.metaKey || e.shiftKey)) {
         e.preventDefault()
-        if (e.ctrlKey || e.shiftKey) {
-          let val = te.value, selStart = te.selectionStart
-          
-          te.value = val.slice(0, selStart) + "\n" + val.slice(te.selectionEnd)
-          te.selectionStart = selStart + 1
-        } else {
-          submit()
-        }
+        let val = te.value, selStart = te.selectionStart
+        te.value = val.slice(0, selStart) + "\n" + val.slice(te.selectionEnd)
+        te.selectionStart = selStart + 1
       }
     })
     return elt("form", null, elt("div", null, te))

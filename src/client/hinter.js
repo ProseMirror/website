@@ -37,8 +37,9 @@ export class Hinter {
         })
       }
     } else {
-      this.placeDOM()
       this.isOpen = true
+      this.updateDOM()
+      this.placeDOM()
     }
   }
 
@@ -75,6 +76,8 @@ export class Hinter {
   }
 
   updateDOM() {
+    if (!this.isOpen) return
+
     let selectedText = this.selected == -1 ? null : this.dom.childNodes[this.selected].textContent
     if (this.dom) this.dom.parentNode.removeChild(this.dom)
     let value = this.input.value
@@ -87,7 +90,7 @@ export class Hinter {
         this.pick(e.target.textContent)
     })
     this.setSelection(matchingItems.indexOf(selectedText))
-    if (this.isOpen) this.placeDOM()
+    this.placeDOM()
   }
 
   placeDOM() {
