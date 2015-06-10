@@ -10,13 +10,11 @@
     }
   ],
   "dependencies": {
-    "ecstatic": "^0.8.0",
     "prosemirror": "^0.0.1"
   },
   "devDependencies": {
     "babel": "^5.4.7",
     "babelify": "^6.0.2",
-    "cssify": "^0.7.0",
     "watchify": "^3.2.0"
   },
   "scripts": {
