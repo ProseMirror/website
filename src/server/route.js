@@ -15,6 +15,7 @@ export class Router {
       return match && match.slice(1)
     } else {
       let parts = path.slice(1).split("/")
+      if (parts.length && !parts[parts.length - 1]) parts.pop()
       if (parts.length != pattern.length) return null
       let result = []
       for (let i = 0; i < parts.length; i++) {

@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
+     inkscape:zoom="0.24748738"
      inkscape:cx="335.2244"
-     inkscape:cy="457.52462"
+     inkscape:cy="611.39381"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -82,10 +82,10 @@
     <rect
        style="fill:#000000;fill-opacity:1;stroke:none"
        id="rect3762"
-       width="10.291256"
-       height="34.63485"
-       x="213.41864"
-       y="404.65488" />
+       width="17.362324"
+       height="43.221146"
+       x="207.80153"
+       y="399.96124" />
     <path
        transform="matrix(0.90260923,0,0,0.88298487,13.256968,90.262326)"
        d="m 188.89852,376.06506 a 32.324883,39.901024 0 1 1 -64.64976,0 32.324883,39.901024 0 1 1 64.64976,0 z"
@@ -102,13 +102,6 @@
        id="path3770"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
-    <rect
-       y="404.65488"
-       x="150.7002"
-       height="34.63485"
-       width="10.291256"
-       id="rect3782"
-       style="fill:#000000;fill-opacity:1;stroke:none" />
     <g
        id="g3795"
        transform="matrix(1.2485688,0,0,1.1512795,-220.62872,-155.43263)"
@@ -150,5 +143,12 @@
        d="m 267.4009,352.78019 35.32633,14.84594 -24.86888,22.80623 z"
        id="path3877"
        inkscape:connector-curvature="0" />
+    <rect
+       y="400.61426"
+       x="145.73842"
+       height="43.221146"
+       width="17.362324"
+       id="rect2997"
+       style="fill:#000000;fill-opacity:1;stroke:none" />
   </g>
 </svg>

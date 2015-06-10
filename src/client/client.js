@@ -142,7 +142,7 @@ new ServerConnection(pm)
 
 let idInput = document.querySelector("#docname")
 let hinter = new Hinter(idInput, c => {
-  GET("/doc", (err, data) => {
+  GET("doc/", (err, data) => {
     if (!err) c(JSON.parse(data))
   })
 }, picked => {
@@ -151,13 +151,14 @@ let hinter = new Hinter(idInput, c => {
 
 document.querySelector("#startdemo").addEventListener("submit", e => {
   e.preventDefault()
-  location.hash = "#edit-" + encodeURIComponent(idInput.value)
+  if (idInput.value)
+    location.hash = "#edit-" + encodeURIComponent(idInput.value)
 })
 
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
   if (isID) {
-    pm.mod.connection.start("/doc/" + isID[1], () => pm.focus())
+    pm.mod.connection.start("doc/" + isID[1], () => pm.focus())
     idInput.value = decodeURIComponent(isID[1])
   }
 }

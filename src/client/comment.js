@@ -118,7 +118,7 @@ function randomID() {
 // Inline menu item
 
 class CommentItem extends Item {
-  constructor() { super("comment", "Add a comment") }
+  constructor() { super("comment", "Add annotation") }
   select(pm) { return pm.mod.comments }
   apply(pm) { return new CommentDialog }
 }
@@ -126,7 +126,7 @@ class CommentItem extends Item {
 class CommentDialog extends Dialog {
   form(_, submit) {
     let te = elt("textarea", {name: "text",
-                              placeholder: "Comment text",
+                              placeholder: "Annotation text",
                               style: "font: inherit"})
     te.addEventListener("keydown", e => {
       if (e.keyCode == 13) {
@@ -197,7 +197,7 @@ export class CommentUI {
   }
 
   renderComment(comment) {
-    let btn = elt("button", {class: "commentDelete"}, "×")
+    let btn = elt("button", {class: "commentDelete", title: "Delete annotation"}, "×")
     btn.addEventListener("click", () => {
       this.clearHighlight()
       this.pm.mod.comments.deleteComment(comment.id)

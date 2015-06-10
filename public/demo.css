@@ -9,24 +9,27 @@ body {
   font-family: Lato;
 }
 
+h1, h2, strong, a, a:visited { color: #38a; }
+
 .fronttitle {
-  background: #2ad;
+  background: #5ad;
   color: white;
   width: 100%;
-  padding: 20px 0;
+  padding: 30px 0;
   margin: 17vh 0 8vh;
 }
-.fronttitle a { color: white }
+.fronttitle a, .fronttitle h1 { color: white }
 .fronttitle-inner {
   max-width: 45em;
   margin: auto;
 }
 .fronttitle h1 {
-  font-size: 280%;
+  font-size: 300%;
+  letter-spacing: .5px;
   margin: 0;
 }
 .subtitle { font-size: 110%; }
-.logo { height: 2.2em; float: left; margin-right: 20px; margin-top: -10px; }
+.logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
 
 article {
   max-width: 45em;
@@ -79,7 +82,7 @@ abbr { border-bottom: 1px dotted }
   color: #f88;
 }
 
-.ProseMirror { margin-top: 1em; border: 1px solid #4ad !important }
+.ProseMirror { margin-top: 1em; border: 1px solid #38a !important; border-radius: 4px }
 
 .ProseMirror-icon-comment:before { content: "\e600" }
 .ProseMirror-icon-comment { font-family: ProseMirror-demo-icons !important }
@@ -103,6 +106,8 @@ abbr { border-bottom: 1px dotted }
   font-size: 90%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+  max-height: 15em;
+  overflow-y: auto;
 }
 .hint-list li {
   display: block;
@@ -110,7 +115,7 @@ abbr { border-bottom: 1px dotted }
   margin: 0;
   cursor: pointer;
 }
-.hint-list li:hover {
-  background: #2ad;
+.hint-list li:hover, .hint-list .selectedhint {
+  background: #5ad;
   color: white;
 }

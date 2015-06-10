@@ -1,7 +1,6 @@
 import {createServer} from "http"
 import Promise from "promise"
 import {Router} from "./route"
-import ecstatic from "ecstatic"
 
 import {Step} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
@@ -11,10 +10,10 @@ import {getInstance, instanceIDs} from "./instance"
 const port = 8000
 
 const router = new Router
-const fileServer = ecstatic({root: __dirname + "/../../public"})
 
 const server = createServer((req, resp) => {
-  router.resolve(req, resp) || fileServer(req, resp)
+  if (!router.resolve(req, resp))
+    new Output(404, "Not found").resp(resp)
 })
 
 server.listen(port)
@@ -75,11 +74,11 @@ function handle(method, url, f) {
   })
 }
 
-handle("GET", ["doc"], () => {
+handle("GET", [], () => {
   return Output.json(instanceIDs())
 })
 
-handle("GET", ["doc", null], id => {
+handle("GET", [null], id => {
   let inst = getInstance(id)
   return Output.json({doc: inst.doc.toJSON(),
                       version: inst.version,
@@ -116,7 +115,7 @@ function outputEvents(inst, data) {
                       comment: data.comment})
 }
 
-handle("GET", ["doc", null, "events"], (id, req, resp) => {
+handle("GET", [null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
   let commentVersion = nonNegInteger(req.query.commentVersion)
 
@@ -132,7 +131,7 @@ handle("GET", ["doc", null, "events"], (id, req, resp) => {
   })
 })
 
-handle("POST", ["doc", null, "events"], (data, id) => {
+handle("POST", [null, "events"], (data, id) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(s))
   let comments = data.comment.map(e => {
