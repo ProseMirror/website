@@ -73,15 +73,15 @@ quickly hacked together demo on top of a beta-quality software
 component. It is likely to crash and lose all its data on a regular
 interval. Don't use it for anything serious.</p>
 
-<div class=opendemo>
-  <form id="startdemo">
-    Create or open a document:&nbsp;
-    <input name=id id=docname placeholder="Document ID" width=20>
-    <button type=submit>Connect</button>
-  </form>
-</div>
-
 <div id=editor></div>
+
+<div class=docinfo>
+  Connected to: <span id="connected">
+    <span id="docname">None</span>
+    <span id="users"></span>
+    <button type=button id="changedoc">Change</button>
+  </span>
+</div>
 
 </section>
 

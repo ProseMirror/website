@@ -6,12 +6,22 @@ import {Comments} from "./comments"
 class Instance {
   constructor(id) {
     this.id = id
-    this.doc = new Node("doc", null, [new Node("paragraph")])
+    this.doc = new Node("doc", null, [new Node("paragraph", null, [
+      Node.text("This is a collaborative test document. Start editing to make it more interesting!")
+    ])])
     this.comments = new Comments
     this.version = 0
     this.steps = []
     this.lastActive = Date.now()
+    this.users = Object.create(null)
+    this.userCount = 0
     this.waiting = []
+
+    this.collecting = null
+  }
+
+  stop() {
+    if (this.collecting != null) clearInterval(this.collecting)
   }
 
   addEvents(version, steps, comments) {
@@ -20,6 +30,7 @@ class Instance {
     let doc = this.doc, maps = []
     for (let i = 0; i < steps.length; i++) {
       let result = applyStep(doc, steps[i])
+      if (!result) console.log("doc: " + doc, steps[i])
       doc = result.doc
       maps.push(result.map)
     }
@@ -36,8 +47,7 @@ class Instance {
         this.comments.created(event)
     }
 
-    this.lastActive = Date.now()
-    while (this.waiting.length) this.waiting.pop()()
+    while (this.waiting.length) this.waiting.pop().finish()
     return {version: this.version, commentVersion: this.comments.version}
   }
 
@@ -56,9 +66,26 @@ class Instance {
     let commentStartIndex = this.comments.events.length - (this.comments.version - commentVersion)
     if (commentStartIndex < 0) return false
 
-    this.lastActive = Date.now()
     return {steps: this.steps.slice(startIndex),
-            comment: this.comments.eventsAfter(commentStartIndex)}
+            comment: this.comments.eventsAfter(commentStartIndex),
+            users: this.userCount}
+  }
+
+  collectUsers() {
+    this.users = Object.create(null)
+    this.userCount = 0
+    this.collecting = null
+    for (let i = 0; i < this.waiting.length; i++)
+      this.registerUser(this.waiting[i].ip)
+  }
+
+  registerUser(ip) {
+    if (!(ip in this.users)) {
+      this.users[ip] = true
+      this.userCount++
+      if (this.collecting == null)
+        this.collecting = setTimeout(() => this.collectUsers(), 5000)
+    }
   }
 }
 
@@ -66,8 +93,11 @@ const instances = Object.create(null)
 let instanceCount = 0
 let maxCount = 500
 
-export function getInstance(id) {
-  return instances[id] || newInstance(id)
+export function getInstance(id, ip) {
+  let inst = instances[id] || newInstance(id)
+  if (ip) inst.registerUser(ip)
+  inst.lastActive = Date.now()
+  return inst
 }
 
 function newInstance(id) {
@@ -77,11 +107,16 @@ function newInstance(id) {
       let inst = instances[id]
       if (!oldest || inst.lastActive < oldest.lastActive) oldest = inst
     }
+    instances[oldest.id].stop()
     delete instances[oldest.id]
+    --instanceCount
   }
   return instances[id] = new Instance(id)
 }
 
-export function instanceIDs() {
-  return Object.keys(instances)
+export function instanceInfo() {
+  let found = []
+  for (let id in instances)
+    found.push({id: id, users: instances[id].userCount})
+  return found
 }

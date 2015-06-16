@@ -96,7 +96,7 @@ abbr { border-bottom: 1px dotted }
   font-style: normal;
 }
 
-.hint-list {
+.doclist {
   display: block;
   padding: 2px 2px;
   margin: 0;
@@ -109,13 +109,13 @@ abbr { border-bottom: 1px dotted }
   max-height: 15em;
   overflow-y: auto;
 }
-.hint-list li {
-  display: block;
+.doclist li {
+ display: block;
   padding: 1px 3px;
   margin: 0;
   cursor: pointer;
 }
-.hint-list li:hover, .hint-list .selectedhint {
+.doclist li:hover {
   background: #5ad;
   color: white;
 }

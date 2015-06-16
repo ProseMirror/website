@@ -1,4 +1,5 @@
 import {Node, fromDOM} from "prosemirror/dist/model"
+import {elt} from "prosemirror/dist/edit/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
@@ -7,7 +8,6 @@ import "prosemirror/dist/menu/menu"
 
 import {GET, POST} from "./http"
 import {CommentStore, CommentUI} from "./comment"
-import {Hinter} from "./hinter"
 
 function reportFailure(err) {
   console.log("FAILED:", err.toString()) // FIXME
@@ -31,6 +31,7 @@ class ServerConnection {
     this.state = "start"
     this.url = url
 
+    if (this.request) this.request.abort()
     this.request = GET(this.url, (err, data) => {
       if (err) {
         reportFailure(err)
@@ -44,6 +45,7 @@ class ServerConnection {
         this.comments = new CommentStore(this.pm, data.commentVersion)
         this.comments.on("mustSend", () => this.mustSend())
         data.comments.forEach(comment => this.comments.addJSONComment(comment))
+        info.users.textContent = userString(data.users)
         this.backOff = 0
         this.poll()
         if (c) c()
@@ -69,6 +71,7 @@ class ServerConnection {
         if (data.comment && data.comment.length) // FIXME map through unconfirmed maps
           this.comments.receive(data.comment, data.commentVersion)
         this.sendOrPoll()
+        info.users.textContent = userString(data.users)
       }
     })
   }
@@ -140,27 +143,56 @@ let pm = window.pm = new ProseMirror({
 })
 new ServerConnection(pm)
 
-let idInput = document.querySelector("#docname")
-let hinter = new Hinter(idInput, c => {
+let info = {
+  name: document.querySelector("#docname"),
+  users: document.querySelector("#users"),
+}
+document.querySelector("#changedoc").addEventListener("click", e => {
   GET("doc/", (err, data) => {
-    if (!err) c(JSON.parse(data))
+    if (err) reportFailure(err)
+    else showDocList(e.target, JSON.parse(data))
   })
-}, picked => {
-  location.hash = "#edit-" + encodeURIComponent(picked)
 })
 
-document.querySelector("#startdemo").addEventListener("submit", e => {
-  e.preventDefault()
-  if (idInput.value)
-    location.hash = "#edit-" + encodeURIComponent(idInput.value)
+function userString(n) {
+  return "(" + n + " user" + (n == 1 ? "" : "s") + ")"
+}
+
+let docList
+function showDocList(node, list) {
+  if (docList) docList.parentNode.removeChild(docList)
+
+  let ul = docList = document.body.appendChild(elt("ul", {class: "doclist"}))
+  list.forEach(doc => {
+    ul.appendChild(elt("li", {"data-name": doc.id},
+                       doc.id + " " + userString(doc.users)))
+  })
+  let rect = node.getBoundingClientRect()
+  ul.style.top = (rect.bottom + 10 + pageYOffset - ul.offsetHeight) + "px"
+  ul.style.left = (rect.left - 5 + pageXOffset) + "px"
+
+  ul.addEventListener("click", e => {
+    if (e.target.nodeName == "LI") {
+      ul.parentNode.removeChild(ul)
+      docList = null
+      location.hash = "#edit-" + encodeURIComponent(e.target.getAttribute("data-name"))
+    }
+  })
+}
+document.addEventListener("click", () => {
+  if (docList) {
+    docList.parentNode.removeChild(docList)
+    docList = null
+  }
 })
 
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
   if (isID) {
     pm.mod.connection.start("doc/" + isID[1], () => pm.focus())
-    idInput.value = decodeURIComponent(isID[1])
+    info.name.textContent = decodeURIComponent(isID[1])
   }
 }
+
 addEventListener("hashchange", connectFromHash)
 connectFromHash()

@@ -4,7 +4,7 @@ import {Router} from "./route"
 import {Step} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 
-import {getInstance, instanceIDs} from "./instance"
+import {getInstance, instanceInfo} from "./instance"
 
 const port = 8000
 
@@ -74,12 +74,13 @@ function handle(method, url, f) {
 }
 
 handle("GET", [], () => {
-  return Output.json(instanceIDs())
+  return Output.json(instanceInfo())
 })
 
-handle("GET", [null], id => {
-  let inst = getInstance(id)
+handle("GET", [null], (id, req) => {
+  let inst = getInstance(id, reqIP(req))
   return Output.json({doc: inst.doc.toJSON(),
+                      users: inst.userCount,
                       version: inst.version,
                       comments: inst.comments.comments,
                       commentVersion: inst.comments.version})
@@ -94,10 +95,21 @@ function nonNegInteger(str) {
 }
 
 class Waiting {
-  constructor(resp) {
+  constructor(resp, inst, ip, finish) {
     this.resp = resp
+    this.inst = inst
+    this.ip = ip
+    this.finish = finish
     this.done = false
-    resp.setTimeout(1000 * 60 * 5, () => this.send(Output.json({})))
+    resp.setTimeout(1000 * 60 * 5, () => {
+      this.abort()
+      this.send(Output.json({}))
+    })
+  }
+
+  abort() {
+    let found = this.inst.waiting.indexOf(this)
+    if (found > -1) this.inst.waiting.splice(found, 1)
   }
 
   send(output) {
@@ -118,19 +130,24 @@ handle("GET", [null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
   let commentVersion = nonNegInteger(req.query.commentVersion)
 
-  let inst = getInstance(id)
+  let inst = getInstance(id, reqIP(req))
   let data = inst.getEvents(version, commentVersion)
   if (data === false)
     return new Output(410, "History no longer available")
   if (data.steps.length || data.comment.length)
     return outputEvents(inst, data)
-  let wait = new Waiting(resp)
-  getInstance(id).waiting.push(() => {
+  let wait = new Waiting(resp, inst, reqIP(req), () => {
     wait.send(outputEvents(inst, inst.getEvents(version, commentVersion)))
   })
+  inst.waiting.push(wait)
+  resp.on("close", () => wait.abort())
 })
 
-handle("POST", [null, "events"], (data, id) => {
+function reqIP(request) {
+  return request.socket.remoteAddress
+}
+
+handle("POST", [null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(s))
   let comments = data.comment.map(e => {
@@ -138,9 +155,16 @@ handle("POST", [null, "events"], (data, id) => {
     if (e.to) e.to = Pos.fromJSON(e.to)
     return e
   })
-  let result = getInstance(id).addEvents(data.version, steps, comments)
+  let result = getInstance(id, reqIP(req)).addEvents(data.version, steps, comments)
   if (!result)
     return new Output(409, "Version not current")
   else
     return Output.json(result)
 })
+
+getInstance("*scratch*")
+getInstance("Business Plan")
+getInstance("Lost and Found")
+getInstance("Nonsense")
+getInstance("Comment Section")
+getInstance("Museum")
