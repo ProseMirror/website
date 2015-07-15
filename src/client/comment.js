@@ -156,7 +156,9 @@ export class CommentUI {
     this.debounced = new Debounced(pm, 100, () => this.update())
     pm.on("selectionChange", this.updateFunc = () => this.debounced.trigger())
     pm.on("change", this.updateFunc)
-    this.tooltip = new Tooltip(pm, "below", true)
+    pm.on("blur", this.updateFunc)
+    pm.on("focus", this.updateFunc)
+    this.tooltip = new Tooltip(pm, "below")
     this.tooltip.reset = this.updateFunc
     this.highlighting = null
     this.displaying = null
