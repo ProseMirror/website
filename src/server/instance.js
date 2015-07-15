@@ -4,9 +4,9 @@ import {applyStep} from "prosemirror/dist/transform"
 import {Comments} from "./comments"
 
 class Instance {
-  constructor(id) {
+  constructor(id, doc) {
     this.id = id
-    this.doc = new Node("doc", null, [new Node("paragraph", null, [
+    this.doc = doc || new Node("doc", null, [new Node("paragraph", null, [
       Node.text("This is a collaborative test document. Start editing to make it more interesting!")
     ])])
     this.comments = new Comments
@@ -91,7 +91,7 @@ class Instance {
 
 const instances = Object.create(null)
 let instanceCount = 0
-let maxCount = 500
+let maxCount = 20
 
 export function getInstance(id, ip) {
   let inst = instances[id] || newInstance(id)
@@ -100,7 +100,7 @@ export function getInstance(id, ip) {
   return inst
 }
 
-function newInstance(id) {
+export function newInstance(id, doc) {
   if (++instanceCount > maxCount) {
     let oldest = null
     for (let id in instances) {
@@ -111,7 +111,7 @@ function newInstance(id) {
     delete instances[oldest.id]
     --instanceCount
   }
-  return instances[id] = new Instance(id)
+  return instances[id] = new Instance(id, doc)
 }
 
 export function instanceInfo() {

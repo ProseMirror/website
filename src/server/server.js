@@ -5,6 +5,7 @@ import {Step} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 
 import {getInstance, instanceInfo} from "./instance"
+import "./defaultinstances"
 
 const port = 8000
 
@@ -161,10 +162,3 @@ handle("POST", [null, "events"], (data, id, req) => {
   else
     return Output.json(result)
 })
-
-getInstance("*scratch*")
-getInstance("Business Plan")
-getInstance("Lost and Found")
-getInstance("Nonsense")
-getInstance("Comment Section")
-getInstance("Museum")
