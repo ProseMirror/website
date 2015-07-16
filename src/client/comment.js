@@ -1,5 +1,5 @@
 import {Pos} from "prosemirror/dist/model"
-import {elt} from "prosemirror/dist/edit/dom"
+import {elt} from "prosemirror/dist/dom"
 import {defineOption} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/edit"
 import {Debounced} from "prosemirror/dist/util/debounce"

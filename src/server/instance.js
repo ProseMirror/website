@@ -1,4 +1,4 @@
-import {Node} from "prosemirror/dist/model"
+import {Node, Span} from "prosemirror/dist/model"
 import {applyStep} from "prosemirror/dist/transform"
 
 import {Comments} from "./comments"
@@ -7,7 +7,7 @@ class Instance {
   constructor(id, doc) {
     this.id = id
     this.doc = doc || new Node("doc", null, [new Node("paragraph", null, [
-      Node.text("This is a collaborative test document. Start editing to make it more interesting!")
+      Span.text("This is a collaborative test document. Start editing to make it more interesting!")
     ])])
     this.comments = new Comments
     this.version = 0
