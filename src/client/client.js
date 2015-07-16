@@ -1,5 +1,5 @@
 import {Node, fromDOM} from "prosemirror/dist/model"
-import {elt} from "prosemirror/dist/edit/dom"
+import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
@@ -167,6 +167,9 @@ function showDocList(node, list) {
     ul.appendChild(elt("li", {"data-name": doc.id},
                        doc.id + " " + userString(doc.users)))
   })
+  ul.appendChild(elt("li", {"data-new": "true", style: "border-top: 1px solid silver; margin-top: 2px"},
+                     "Create a new document"))
+
   let rect = node.getBoundingClientRect()
   ul.style.top = (rect.bottom + 10 + pageYOffset - ul.offsetHeight) + "px"
   ul.style.left = (rect.left - 5 + pageXOffset) + "px"
@@ -175,7 +178,10 @@ function showDocList(node, list) {
     if (e.target.nodeName == "LI") {
       ul.parentNode.removeChild(ul)
       docList = null
-      location.hash = "#edit-" + encodeURIComponent(e.target.getAttribute("data-name"))
+      if (e.target.hasAttribute("data-name"))
+        location.hash = "#edit-" + encodeURIComponent(e.target.getAttribute("data-name"))
+      else
+        newDocument()
     }
   })
 }
@@ -185,6 +191,12 @@ document.addEventListener("click", () => {
     docList = null
   }
 })
+
+function newDocument() {
+  let name = prompt("Name the new document", "")
+  if (name)
+    location.hash = "#edit-" + encodeURIComponent(name)
+}
 
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
