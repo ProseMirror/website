@@ -53,6 +53,6 @@ newInstance("Comment Section", new Node("doc", null, [
   ]),
   new Node("heading", {level: 4}, [Span.text("From user21841. "), Span.text("20 seconds ago", [style.em])]),
   new Node("paragraph", null, [
-    Span.text("If you look at it rationally you'll see that open-source software is communism and communism is bad because the free market is out God and saviour. Also sheep caused 9/11.")
+    Span.text("If you look at it rationally you'll see that open-source software is communism and communism is bad because the free market is our God and savior. Also sheep caused 9/11.")
   ])
 ]))

@@ -1,4 +1,4 @@
-import {Node, fromDOM} from "prosemirror/dist/model"
+import {Node, nodeTypes, fromDOM} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
@@ -8,6 +8,10 @@ import "prosemirror/dist/menu/menu"
 
 import {GET, POST} from "./http"
 import {CommentStore, CommentUI} from "./comment"
+
+// Crude way to prevent XSS (until we have configurable doc models)
+delete nodeTypes.html_block
+delete nodeTypes.html_tag
 
 function reportFailure(err) {
   console.log("FAILED:", err.toString()) // FIXME
