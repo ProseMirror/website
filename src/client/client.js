@@ -1,10 +1,11 @@
-import {Node, nodeTypes, fromDOM} from "prosemirror/dist/model"
+import {Node, nodeTypes} from "prosemirror/dist/model"
+import {fromDOM} from "prosemirror/dist/convert/from_dom"
 import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
 import "prosemirror/dist/menu/inlinetooltip"
-import "prosemirror/dist/menu/menu"
+import "prosemirror/dist/menu/buttonmenu"
 
 import {GET, POST} from "./http"
 import {CommentStore, CommentUI} from "./comment"
@@ -142,7 +143,7 @@ let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   autoInput: true,
   inlineTooltip: true,
-  menu: {followCursor: true},
+  buttonMenu: {followCursor: true},
   doc: fromDOM(document.querySelector("#help"))
 })
 new ServerConnection(pm)
