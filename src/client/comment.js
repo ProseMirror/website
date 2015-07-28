@@ -1,6 +1,5 @@
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
-import {defineOption} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/edit"
 import {Debounced} from "prosemirror/dist/util/debounce"
 
@@ -120,7 +119,7 @@ function randomID() {
 class CommentItem extends Item {
   constructor() { super("comment", "Add annotation") }
   select(pm) { return pm.mod.comments }
-  apply(pm) { return new CommentDialog }
+  apply() { return new CommentDialog }
 }
 
 class CommentDialog extends Dialog {
@@ -201,7 +200,6 @@ export class CommentUI {
       this.update()
     })
     let li = elt("li", {class: "commentText"}, comment.text, btn)
-    // FIXME this does not work and is a mess
     li.addEventListener("mouseover", e => {
       if (!li.contains(e.relatedTarget)) this.highlightComment(comment)
     })

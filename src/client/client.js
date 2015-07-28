@@ -9,22 +9,23 @@ import "prosemirror/dist/menu/buttonmenu"
 import "prosemirror/dist/menu/menubar"
 
 import {GET, POST} from "./http"
+import {Reporter} from "./reporter"
 import {CommentStore, CommentUI} from "./comment"
 
 // Crude way to prevent XSS (until we have configurable doc models)
 delete nodeTypes.html_block
 delete nodeTypes.html_tag
 
-function reportFailure(err) {
-  console.log("FAILED:", err.toString()) // FIXME
-}
-function reportDelay(err) {
-  console.log("DELAY:" + err.toString())
+const report = new Reporter()
+
+function badVersion(err) {
+  return err.status == 400 && /invalid version/i.test(err)
 }
 
 class ServerConnection {
-  constructor(pm, url) {
+  constructor(pm, report) {
     this.pm = pm
+    this.report = report
     new CommentUI(pm)
     pm.mod.connection = this
     this.url = null
@@ -40,8 +41,9 @@ class ServerConnection {
     if (this.request) this.request.abort()
     this.request = GET(this.url, (err, data) => {
       if (err) {
-        reportFailure(err)
+        this.report.failure(err)
       } else {
+        this.report.success()
         data = JSON.parse(data)
         this.pm.setOption("collab", null)
         this.pm.setDoc(Node.fromJSON(data.doc))
@@ -65,16 +67,19 @@ class ServerConnection {
     let req = this.request = GET(url, (err, data) => {
       if (this.request != req) return
 
-      if (err && err.status == 410) { // Too far behind. Revert to server state
+      if (err && (err.status == 410 || badVersion(err))) {
+        // Too far behind. Revert to server state
+        this.report.failure(err)
         this.start(this.url)
       } else if (err) {
         this.recover(err)
       } else {
+        this.report.success()
         data = JSON.parse(data)
         this.backOff = 0
         if (data.steps && data.steps.length)
           this.collab.receive(data.steps)
-        if (data.comment && data.comment.length) // FIXME map through unconfirmed maps
+        if (data.comment && data.comment.length)
           this.comments.receive(data.comment, data.commentVersion)
         this.sendOrPoll()
         info.users.textContent = userString(data.users)
@@ -102,13 +107,17 @@ class ServerConnection {
 
     let req = this.request = POST(this.url + "/events", json, "application/json", err => {
       if (this.request != req) return
-      
+
       if (err && err.status == 409) { // Conflict
         this.backOff = 0
         this.poll()
+      } else if (err && badVersion(err)) {
+        this.report.failure(err)
+        this.start(this.url)
       } else if (err) {
         this.recover(err)
       } else {
+        this.report.success()
         this.backOff = 0
         this.collab.confirmSteps(sendable)
         if (nComments) this.comments.eventsSent(nComments)
@@ -126,11 +135,11 @@ class ServerConnection {
 
   recover(err) {
     if (err.status && err.status < 500) {
-      reportFailure(err)
+      this.report.failure(err)
     } else {
       this.state = "recover"
       let newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200
-      if (newBackOff > 1000 && this.backOff < 1000) reportDelay(err)
+      if (newBackOff > 1000 && this.backOff < 1000) this.report.delay(err)
       this.backOff = newBackOff
       setTimeout(() => {
         if (this.state != "recover") return
@@ -146,7 +155,7 @@ let pm = window.pm = new ProseMirror({
   menuBar: {float: true},
   doc: fromDOM(document.querySelector("#help"))
 })
-new ServerConnection(pm)
+new ServerConnection(pm, report)
 
 let info = {
   name: document.querySelector("#docname"),
@@ -154,7 +163,7 @@ let info = {
 }
 document.querySelector("#changedoc").addEventListener("click", e => {
   GET("doc/", (err, data) => {
-    if (err) reportFailure(err)
+    if (err) report.failure(err)
     else showDocList(e.target, JSON.parse(data))
   })
 })

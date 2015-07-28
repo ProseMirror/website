@@ -76,5 +76,5 @@ export class Comments {
       }
     }
     return result
-  }           
+  }
 }

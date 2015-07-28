@@ -5,17 +5,23 @@ export function req(conf, callback) {
     if (req.status < 400) {
       callback(null, req.responseText)
     } else {
-      let err = new Error("Request failed: " + req.statusText + (req.responseText ? "\n\n" + req.responseText : ""))
+      let text = req.responseText
+      if (text && /html/.test(req.getResponseHeader("content-type"))) text = makePlain(text)
+      let err = new Error("Request failed: " + req.statusText + (text ? "\n\n" + text : ""))
       err.status = req.status
       callback(err)
     }
   })
-  req.addEventListener("error", function(e) {
-    callback(new Error("Network error"))
-  })
+  req.addEventListener("error", () => callback(new Error("Network error")))
   if (conf.headers) for (let header in conf.headers) req.setRequestHeader(header, conf.headers[header])
   req.send(conf.body || null)
   return req
+}
+
+function makePlain(html) {
+  var elt = document.createElement("div")
+  elt.innerHTML = html
+  return elt.textContent.trimLeft().replace(/\n[^]*/, "")
 }
 
 export function GET(url, callback) {

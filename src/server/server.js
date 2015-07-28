@@ -36,19 +36,15 @@ class Output {
 }
 
 function readStreamAsJSON(stream, callback) {
-  var data = "";
-  stream.on("data", function(chunk) {
-    data += chunk;
-  });
-  stream.on("end", function() {
-    var result, error;
-    try { result = JSON.parse(data); }
-    catch (e) { error = e; }
-    callback(error, result);
-  });
-  stream.on("error", function(error) {
-    callback(error);
-  });
+  let data = ""
+  stream.on("data", chunk => data += chunk)
+  stream.on("end", () => {
+    let result, error
+    try { result = JSON.parse(data) }
+    catch (e) { error = e }
+    callback(error, result)
+  })
+  stream.on("error", e => callback(e))
 }
 
 function handle(method, url, f) {
@@ -156,7 +152,7 @@ handle("POST", [null, "events"], (data, id, req) => {
     if (e.to) e.to = Pos.fromJSON(e.to)
     return e
   })
-  let result = getInstance(id, reqIP(req)).addEvents(data.version, steps, comments)
+  let result = getInstance(id, reqIP(req)).addEvents(version, steps, comments)
   if (!result)
     return new Output(409, "Version not current")
   else

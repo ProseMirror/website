@@ -30,7 +30,6 @@ class Instance {
     let doc = this.doc, maps = []
     for (let i = 0; i < steps.length; i++) {
       let result = applyStep(doc, steps[i])
-      if (!result) console.log("doc: " + doc, steps[i])
       doc = result.doc
       maps.push(result.map)
     }
