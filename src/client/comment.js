@@ -3,8 +3,7 @@ import {elt} from "prosemirror/dist/dom"
 import {eventMixin} from "prosemirror/dist/edit"
 import {Debounced} from "prosemirror/dist/util/debounce"
 
-import {items as inlineItems} from "prosemirror/dist/menu/inlinetooltip"
-import {Item, Dialog} from "prosemirror/dist/menu/menuitem"
+import {registerItem, IconItem, DialogItem} from "prosemirror/dist/menu/items"
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
 class Comment {
@@ -116,17 +115,18 @@ function randomID() {
 
 // Inline menu item
 
-class CommentItem extends Item {
+class CommentItem extends IconItem {
   constructor() { super("comment", "Add annotation") }
   select(pm) { return pm.mod.comments }
-  apply() { return new CommentDialog }
+  apply() { return [new CommentDialog] }
 }
+registerItem("inline", new CommentItem)
 
-class CommentDialog extends Dialog {
+class CommentDialog extends DialogItem {
   form() {
     let te = elt("textarea", {name: "text",
                               placeholder: "Annotation text",
-                              style: "font: inherit"})
+                              style: "font: inherit; width: 7em"})
     te.addEventListener("keydown", e => {
       if (e.keyCode == 13 && (e.ctrlKey || e.metaKey || e.shiftKey)) {
         e.preventDefault()
@@ -143,8 +143,6 @@ class CommentDialog extends Dialog {
     if (val) pm.mod.comments.createComment(val)
   }
 }
-
-inlineItems.addItem(new CommentItem)
 
 // Comment UI
 
@@ -174,7 +172,7 @@ export class CommentUI {
       let id = comments.map(c => c.id).join(" ")
       if (id != this.displaying) {
         this.displaying = id
-        this.tooltip.show(id, this.renderComments(comments), bottomCenterOfSelection())
+        this.tooltip.open(this.renderComments(comments), bottomCenterOfSelection())
       }
     }
   }

@@ -60,7 +60,7 @@ abbr { border-bottom: 1px dotted }
 }
 
 .commentText:hover {
-  background: #4c4c4c;
+  background: #525252;
 }
 
 .commentText + .commentText {
