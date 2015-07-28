@@ -5,7 +5,6 @@ import {Step} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 
 import {getInstance, instanceInfo} from "./instance"
-import "./defaultinstances"
 
 const port = 8000
 

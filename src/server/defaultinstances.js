@@ -1,6 +1,8 @@
 import {Node, Span, style} from "prosemirror/dist/model"
 import {newInstance} from "./instance"
 
+export function populateDefaultInstances() {
+
 newInstance("Example", new Node("doc", null, [
   new Node("heading", {level: 2}, [Span.text("Example Document")]),
   new Node("paragraph", null, [
@@ -56,3 +58,5 @@ newInstance("Comment Section", new Node("doc", null, [
     Span.text("If you look at it rationally you'll see that open-source software is communism and communism is bad because the free market is our God and savior. Also sheep caused 9/11.")
   ])
 ]))
+
+}

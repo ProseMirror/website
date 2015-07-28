@@ -1,15 +1,17 @@
 import {Node, Span} from "prosemirror/dist/model"
 import {applyStep} from "prosemirror/dist/transform"
 
-import {Comments} from "./comments"
+import {Comments, Comment} from "./comments"
+import {populateDefaultInstances} from "./defaultinstances"
+import {readFileSync, writeFile} from "fs"
 
 class Instance {
-  constructor(id, doc) {
+  constructor(id, doc, comments) {
     this.id = id
     this.doc = doc || new Node("doc", null, [new Node("paragraph", null, [
       Span.text("This is a collaborative test document. Start editing to make it more interesting!")
     ])])
-    this.comments = new Comments
+    this.comments = comments || new Comments
     this.version = 0
     this.steps = []
     this.lastActive = Date.now()
@@ -47,6 +49,7 @@ class Instance {
     }
 
     while (this.waiting.length) this.waiting.pop().finish()
+    scheduleSave()
     return {version: this.version, commentVersion: this.comments.version}
   }
 
@@ -92,6 +95,35 @@ const instances = Object.create(null)
 let instanceCount = 0
 let maxCount = 20
 
+let saveFile = "./demo-instances.json", json
+if (process.argv.indexOf("--fresh") == -1) {
+  try {
+    json = JSON.parse(readFileSync(saveFile, "utf8"))
+  } catch (e) {}
+}
+
+if (json) {
+  for (let prop in json)
+    newInstance(prop, Node.fromJSON(json[prop].doc),
+                new Comments(json[prop].comments.map(c => Comment.fromJSON(c))))
+} else {
+  populateDefaultInstances()
+}
+
+let saveTimeout = null, saveEvery = 1e4
+function scheduleSave() {
+  if (saveTimeout != null) return
+  saveTimeout = setTimeout(doSave, saveEvery)
+}
+function doSave() {
+  saveTimeout = null
+  let out = {}
+  for (var prop in instances)
+    out[prop] = {doc: instances[prop].doc.toJSON(),
+                 comments: instances[prop].comments.comments}
+  writeFile(saveFile, JSON.stringify(out))
+}
+
 export function getInstance(id, ip) {
   let inst = instances[id] || newInstance(id)
   if (ip) inst.registerUser(ip)
@@ -99,7 +131,7 @@ export function getInstance(id, ip) {
   return inst
 }
 
-export function newInstance(id, doc) {
+export function newInstance(id, doc, comments) {
   if (++instanceCount > maxCount) {
     let oldest = null
     for (let id in instances) {
@@ -110,7 +142,7 @@ export function newInstance(id, doc) {
     delete instances[oldest.id]
     --instanceCount
   }
-  return instances[id] = new Instance(id, doc)
+  return instances[id] = new Instance(id, doc, comments)
 }
 
 export function instanceInfo() {

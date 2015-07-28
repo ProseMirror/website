@@ -1,17 +1,21 @@
 import {Pos} from "prosemirror/dist/model"
 
-class Comment {
+export class Comment {
   constructor(from, to, text, id) {
     this.from = from
     this.to = to
     this.text = text
     this.id = id
   }
+
+  static fromJSON(json) {
+    return new Comment(Pos.fromJSON(json.from), Pos.fromJSON(json.to), json.text, json.id)
+  }
 }
 
 export class Comments {
-  constructor() {
-    this.comments = []
+  constructor(comments) {
+    this.comments = comments || []
     this.events = []
     this.version = 0
   }
