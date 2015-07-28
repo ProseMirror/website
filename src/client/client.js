@@ -4,8 +4,9 @@ import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
-import "prosemirror/dist/menu/inlinetooltip"
+import "prosemirror/dist/menu/inlinemenu"
 import "prosemirror/dist/menu/buttonmenu"
+import "prosemirror/dist/menu/menubar"
 
 import {GET, POST} from "./http"
 import {CommentStore, CommentUI} from "./comment"
@@ -142,8 +143,7 @@ class ServerConnection {
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   autoInput: true,
-  inlineTooltip: true,
-  buttonMenu: {followCursor: true},
+  menuBar: {float: true},
   doc: fromDOM(document.querySelector("#help"))
 })
 new ServerConnection(pm)
@@ -213,3 +213,16 @@ function connectFromHash() {
 
 addEventListener("hashchange", connectFromHash)
 connectFromHash()
+
+let menuStyle = document.querySelector("#menustyle")
+menuStyle.addEventListener("change", () => {
+  if (menuStyle.value == "bar") {
+    pm.setOption("menuBar", {float: true})
+    pm.setOption("inlineMenu", false)
+    pm.setOption("buttonMenu", false)
+  } else {
+    pm.setOption("menuBar", false)
+    pm.setOption("inlineMenu", true)
+    pm.setOption("buttonMenu", {followCursor: true})
+  }
+})

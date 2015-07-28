@@ -119,3 +119,12 @@ abbr { border-bottom: 1px dotted }
   background: #5ad;
   color: white;
 }
+
+.docinfo {
+  position: relative;
+}
+.menustyle {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
