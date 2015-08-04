@@ -3,7 +3,11 @@ import {applyStep} from "prosemirror/dist/transform"
 
 import {Comments, Comment} from "./comments"
 import {populateDefaultInstances} from "./defaultinstances"
+
 import {readFileSync, writeFile} from "fs"
+import {createHash} from "crypto"
+
+const MAX_STEP_HISTORY = 10000
 
 class Instance {
   constructor(id, doc, comments) {
@@ -26,11 +30,13 @@ class Instance {
     if (this.collecting != null) clearInterval(this.collecting)
   }
 
-  addEvents(version, steps, comments) {
+  addEvents(version, steps, comments, ip) {
     this.checkVersion(version)
     if (this.version != version) return false
     let doc = this.doc, maps = []
+    let hash = getHash(ip + "t2ng1&")
     for (let i = 0; i < steps.length; i++) {
+      steps[i].origin = hash
       let result = applyStep(doc, steps[i])
       doc = result.doc
       maps.push(result.map)
@@ -38,6 +44,8 @@ class Instance {
     this.doc = doc
     this.version += steps.length
     this.steps = this.steps.concat(steps)
+    if (this.steps.length > MAX_STEP_HISTORY)
+      this.steps = this.steps.slice(this.steps.length - MAX_STEP_HISTORY)
 
     this.comments.mapThrough(maps)
     for (let i = 0; i < comments.length; i++) {
@@ -89,6 +97,12 @@ class Instance {
         this.collecting = setTimeout(() => this.collectUsers(), 5000)
     }
   }
+}
+
+function getHash(str) {
+  let sum = createHash("sha1")
+  sum.update(str)
+  return sum.digest("hex").slice(0, 8)
 }
 
 const instances = Object.create(null)

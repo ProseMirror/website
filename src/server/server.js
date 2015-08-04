@@ -115,10 +115,16 @@ class Waiting {
   }
 }
 
+function stepJSON(step) {
+  var obj = step.toJSON()
+  obj.origin = step.origin
+  return obj
+}
+
 function outputEvents(inst, data) {
   return Output.json({version: inst.version,
                       commentVersion: inst.comments.version,
-                      steps: data.steps.map(s => s.toJSON()),
+                      steps: data.steps.map(stepJSON),
                       comment: data.comment})
 }
 
@@ -151,7 +157,8 @@ handle("POST", [null, "events"], (data, id, req) => {
     if (e.to) e.to = Pos.fromJSON(e.to)
     return e
   })
-  let result = getInstance(id, reqIP(req)).addEvents(version, steps, comments)
+  let ip = reqIP(req)
+  let result = getInstance(id, ip).addEvents(version, steps, comments, ip)
   if (!result)
     return new Output(409, "Version not current")
   else

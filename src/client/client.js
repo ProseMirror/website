@@ -12,6 +12,7 @@ import "prosemirror/dist/menu/menubar"
 import {GET, POST} from "./http"
 import {Reporter} from "./reporter"
 import {CommentStore, CommentUI} from "./comment"
+import {showOrigins} from "./origins"
 
 // Crude way to prevent XSS (until we have configurable doc models)
 delete nodeTypes.html_block
@@ -78,8 +79,10 @@ class ServerConnection {
         this.report.success()
         data = JSON.parse(data)
         this.backOff = 0
-        if (data.steps && data.steps.length)
-          this.collab.receive(data.steps.map(s => Step.fromJSON(s)))
+        if (data.steps && data.steps.length) {
+          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(j)))
+          showOrigins(this.pm, data.steps, maps)
+        }
         if (data.comment && data.comment.length)
           this.comments.receive(data.comment, data.commentVersion)
         this.sendOrPoll()
