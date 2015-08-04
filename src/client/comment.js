@@ -126,7 +126,7 @@ class CommentDialog extends DialogItem {
   form() {
     let te = elt("textarea", {name: "text",
                               placeholder: "Annotation text",
-                              style: "font: inherit; width: 7em"})
+                              style: "font: inherit; width: 14em"})
     te.addEventListener("keydown", e => {
       if (e.keyCode == 13 && (e.ctrlKey || e.metaKey || e.shiftKey)) {
         e.preventDefault()

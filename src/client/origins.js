@@ -32,7 +32,6 @@ function getClass(origin) {
   return known[origin] = "user-" + origin
 }
 
-
 export function showOrigins(pm, steps, maps) {
   let collab = pm.mod.collab
   steps.forEach((step, i) => {
