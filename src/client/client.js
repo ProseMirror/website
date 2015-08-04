@@ -178,6 +178,7 @@ document.querySelector("#changedoc").addEventListener("click", e => {
 })
 
 function userString(n) {
+  if (n == null) n = 1
   return "(" + n + " user" + (n == 1 ? "" : "s") + ")"
 }
 
