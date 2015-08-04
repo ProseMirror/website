@@ -1,4 +1,5 @@
 import {Node, nodeTypes} from "prosemirror/dist/model"
+import {Step} from "prosemirror/dist/transform"
 import {fromDOM} from "prosemirror/dist/convert/from_dom"
 import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
@@ -78,7 +79,7 @@ class ServerConnection {
         data = JSON.parse(data)
         this.backOff = 0
         if (data.steps && data.steps.length)
-          this.collab.receive(data.steps)
+          this.collab.receive(data.steps.map(s => Step.fromJSON(s)))
         if (data.comment && data.comment.length)
           this.comments.receive(data.comment, data.commentVersion)
         this.sendOrPoll()
@@ -107,7 +108,7 @@ class ServerConnection {
     let nComments = this.comments.hasUnsentEvents()
     let comments = this.comments.unsentEvents()
     let json = JSON.stringify({version: sendable.version,
-                               steps: sendable.steps,
+                               steps: sendable.steps.map(s => s.toJSON()),
                                comment: comments})
 
     let req = this.request = POST(this.url + "/events", json, "application/json", err => {
