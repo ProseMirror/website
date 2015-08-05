@@ -41,7 +41,7 @@ h1, h2, strong, a, a:visited { color: #38a; }
 
 article {
   max-width: 44em;
-  padding: 0 .5em 10vh;
+  padding: 0 .5em 30vh;
   margin: auto;
 }
 
