@@ -27,7 +27,8 @@
 <section id="markdown">
   <style>
     #markdown .ProseMirror-content { height: 200px; overflow-y: auto; box-sizing: border-box }
-    #markdown textarea { width: 100%; height: 202px; border: 1px solid silver; box-sizing: border-box; padding: 3px 10px }
+    #markdown textarea { width: 100%; height: 202px; border: 1px solid silver; box-sizing: border-box; padding: 3px 10px;
+                         border-radius: 3px; border: 1px solid #38a }
     #markdown .ProseMirror, #markdown textarea { display: block; margin-bottom: 4px }
   </style>
 
@@ -79,6 +80,35 @@ You could set up your commenting or authoring system to allow people to **choose
   extensions that interact properly with all parts of the system.</p>
 
   <p>Dinosaur icons by <a href="http://fasticon.com/">FastIcon.com</a></p>
+</section>
+
+<section id="lint">
+  <style>
+    .problem, .markprob { background: #fdd; border-bottom: 1px solid #f22 }
+    .problem { padding: 2px; cursor: pointer }
+    .problem:before { border-radius: 100px; background: #f22; color: white; content: "!"; font-weight: bold; width: 1.1em; height: 1.1em;
+                      display: inline-block; text-align: center; margin: 0 10px 0 5px; padding-left: 1px; line-height: 1.1em }
+    .probarrow { position: fixed; width: 55px; height: 33px; }
+  </style>
+
+  <h2>Decorating documents</h2>
+
+  <div id=lint_editor></div>
+  <div id=lint_output></div>
+
+  <div id=lint_content style="display: none">
+    <h2>Linting demo</h2>
+
+    <p>ProseMirror is instrumentable enough to hook up something like
+    a linter, and show feedback to the user about potential issues
+    with their document.</p>
+
+    <h4>Too-small header</h4>
+
+    <p>This is an image <img src="img.png"> without alt text. You
+    should obviously hover over the messages below to see where they
+    occur.</p>
+  </div>
 </section>
 
 </article>

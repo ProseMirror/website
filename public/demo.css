@@ -90,7 +90,7 @@ abbr { border-bottom: 1px dotted }
   color: #f88;
 }
 
-.ProseMirror { margin-top: 1em; border: 1px solid #38a !important; border-radius: 4px }
+.ProseMirror { margin-top: 1em; border: 1px solid  #38a !important; border-radius: 4px }
 
 .ProseMirror-icon-comment:before { content: "\e600" }
 .ProseMirror-icon-comment { font-family: ProseMirror-demo-icons !important }

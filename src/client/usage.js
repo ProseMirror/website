@@ -1,5 +1,5 @@
 import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
-import {nodeTypes, NodeType, Span} from "prosemirror/dist/model"
+import {nodeTypes, NodeType, Span, Pos} from "prosemirror/dist/model"
 import {fromMarkdown} from "prosemirror/dist/convert/from_markdown"
 import {render as renderDOM} from "prosemirror/dist/convert/to_dom"
 import {tags as parseTags} from "prosemirror/dist/convert/from_dom"
@@ -137,5 +137,101 @@ function initWidgetEditor() {
   }))
 }
 
+function initLintEditor() {
+  let badWords = /obviously|clearly|evidently|actually/ig
+  function lint(doc) {
+    let result = [], lastHead = null, path = [], offset
+    function record(msg, from, to) {
+      from = new Pos(path.slice(), from)
+      to = to == null ? from : new Pos(from.path, to)
+      result.push({msg: msg, from: from, to: to})
+    }
+    function scan(node) {
+      if (node.type.name == "text") {
+        let m
+        while (m = badWords.exec(node.text))
+          record("Try not to say '" + m[0] + "'", offset + m.index, offset + m.index + m[0].length)
+      } else if (node.type.name == "heading") {
+        if (lastHead != null && node.attrs.level > lastHead + 1)
+          record("Heading too small (" + node.attrs.level + " under " + lastHead + ")", 0, node.maxOffset)
+        lastHead = node.attrs.level
+      } else if (node.type.name == "image") {
+        if (!node.attrs.alt) record("Missing alt text", offset, offset + 1)
+      }
+
+      if (node.type.block) {
+        if (!node.content.length) record("Empty block", new Pos(path, 0))
+        offset = 0
+        for (let i = 0; i < node.content.length; i++) {
+          scan(node.content[i])
+          offset += node.content[i].text.length
+        }
+      } else {
+        for (let i = 0; i < node.content.length; i++) {
+          path.push(i)
+          scan(node.content[i])
+          path.pop()
+        }
+      }
+    }
+    scan(doc)
+    return result
+  }
+
+  let pm = window.lintPM = new ProseMirror({
+    place: document.querySelector("#lint_editor"),
+    doc: document.querySelector("#lint_content").innerHTML,
+    docFormat: "html",
+    menuBar: true
+  }), delay = null
+  pm.on("change", () => {
+    clearTimeout(delay)
+    delay = setTimeout(runLint, 1000)
+  })
+
+  let output = document.querySelector("#lint_output")
+  function runLint() {
+    delay = null
+    output.textContent = ""
+    lint(pm.doc).forEach(prob => {
+      let note = output.appendChild(elt("div", {class: "problem"}, prob.msg))
+      note.addEventListener("mouseover", event => {
+        if (!note.contains(event.relatedTarget)) showProb(prob)
+      })
+      note.addEventListener("mouseout", event => {
+        if (!note.contains(event.relatedTarget)) clearProb(prob)
+      })
+      note.addEventListener("click", () => {
+        if (delay == null) {
+          pm.setSelection(prob.from, prob.to)
+          pm.focus()
+        }
+      })
+    })
+  }
+
+  let showingProb = null, range = null, overlay = null
+  function showProb(prob) {
+    if (showingProb) clearProb(showingProb)
+    if (delay != null) return
+    showingProb = prob
+    if (prob.from.cmp(prob.to))
+      range = pm.markRange(prob.from, prob.to, {className: "markprob"})
+    overlay = document.body.appendChild(elt("img", {src: "bouncing_arrow.gif", class: "probarrow"}))
+    let coords = pm.coordsAtPos(prob.from)
+    overlay.style.left = (coords.left - 55) + "px"
+    overlay.style.top = (((coords.top + coords.bottom) / 2) - 16) + "px"
+  }
+  function clearProb(prob) {
+    if (showingProb != prob) return
+    if (range) pm.removeRange(range)
+    document.body.removeChild(overlay)
+    showingProb = range = overlay = null
+  }
+
+  runLint()
+}
+
 initMarkdownView()
 initWidgetEditor()
+initLintEditor()
