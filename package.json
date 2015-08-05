@@ -19,6 +19,7 @@
   },
   "scripts": {
     "server": "node src/server/start.js",
-    "client": "watchify -d --outfile public/demo.js -t babelify src/client/client.js"
+    "client": "watchify -d --outfile public/demo.js -t babelify src/client/client.js",
+    "usage": "watchify -d --outfile public/usage.js -t babelify src/client/usage.js"
   }
 }

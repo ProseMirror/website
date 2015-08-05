@@ -1,0 +1,86 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror usage demos</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  section { margin-top: 50px }
+</style>
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><img src="logo.png" class=logo> ProseMirror</h1>
+    <div class=subtitle>&nbsp;Illustrated with usage demos</div>
+  </div>
+</div>
+
+<article>
+
+<section id="intro">
+  <p>Blah blah FIXME</p>
+</section>
+
+<section id="markdown">
+  <style>
+    #markdown .ProseMirror-content { height: 200px; overflow-y: auto; box-sizing: border-box }
+    #markdown textarea { width: 100%; height: 202px; border: 1px solid silver; box-sizing: border-box; padding: 3px 10px }
+    #markdown .ProseMirror, #markdown textarea { display: block; margin-bottom: 4px }
+  </style>
+
+  <h2>A fall-back editor for Markdown</h2>
+
+  <div id="markdown_editor"></div>
+  <div style="text-align: center">
+    <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
+  </div>
+
+  <div style="display: none" id="markdown_content">## A Markdown document
+
+Many people like the directness of writing [Markdown-style](http://commonmark.org) content. It definitely beats BBCode. However, for people who aren't already used to internalizing arcane syntactic rules, the format is *not* very approachable.
+
+You could set up your commenting or authoring system to allow people to **choose** between text-based Markdown input and a familiar editor interface built on ProseMirror.
+</div>
+</section>
+
+<section id="widget">
+  <style>
+    img.dinosaur { height: 40px; vertical-align: bottom; border: 1px solid #0ae; border-radius: 4px; background: #ddf6ff }
+    .dinoicon { height: 25px; vertical-align: bottom; margin-left: 10px  }
+    .ProseMirror-tooltip .dinoicon { vertical-align: middle }
+  </style>
+
+  <h2>Custom document elements</h2>
+
+  <div id="widget_editor"></div>
+  <div id="widget_content" style="display: none">
+    <p>Imagine a content management situation that revolves
+    around <em>dinosaurs</em>. In this editor, dinosaurs are
+    first-class elements in the document model. They can appear
+    anywhere where text can appear.</p>
+    <p>For <img class=dinosaur dino-type="stegosaurus"> example,
+    <img class=dinosaur dino-type="triceratops"> this paragraph
+    is full <img class=dinosaur dino-type="tyrannosaurus"> of them.</p>
+    <p>You can insert dinosaurs by typing their names enclosed by
+    brackets, such as <code>[pterodactyl]</code>. You'll get a simple
+    completion tooltip as you do so, and can press tab to select the
+    top completion. The menu bar also contains a dinosaur-insertion
+    submenu.</p>
+    <p>Dinosaurs can be selected, copied, pasted, dragged, and so
+    on.</p>
+  </div>
+
+  <p><strong>Note:</strong> The document-model customization API is
+  not finished yet. It is powerful enough to kludge in something like
+  this, but there's a bunch of work to do before we can write robust
+  extensions that interact properly with all parts of the system.</p>
+
+  <p>Dinosaur icons by <a href="http://fasticon.com/">FastIcon.com</a></p>
+</section>
+
+</article>
+
+<script src="usage.js"></script>

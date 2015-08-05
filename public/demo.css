@@ -34,9 +34,9 @@ h1, h2, strong, a, a:visited { color: #38a; }
 .logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
 
 @media (min-width: 700px) {
-  .fronttitle h1 { font-size: 90px }
-  .subtitle { font-size: 20px }
-  .logo { height: 140px }
+  .front .fronttitle h1 { font-size: 90px }
+  .front .subtitle { font-size: 20px }
+  .front .logo { height: 140px }
 }
 
 article {
