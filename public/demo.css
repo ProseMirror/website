@@ -30,7 +30,7 @@ h1, h2, strong, a, a:visited { color: #38a; }
   margin: 0;
 }
 
-.subtitle { font-size: 16px; }
+.subtitle { font-size: 18px; }
 .logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
 
 @media (min-width: 700px) {
