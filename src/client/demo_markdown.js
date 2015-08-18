@@ -7,7 +7,7 @@ import "prosemirror/dist/menu/buttonmenu"
 
 let place = document.querySelector("#markdown_editor")
 
-let state = "textarea", getContent
+let getContent
 function toTextArea(content, focus) {
   let te = place.appendChild(elt("textarea", {style: "font-family: inherit; font-size: inherit"}))
   te.value = content
