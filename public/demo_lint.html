@@ -1,0 +1,77 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror Document Checking Demo</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .markprob { background: #fdd; border-bottom: 1px solid #f22 }
+  .problem { padding: 2px; cursor: pointer }
+  .problem:hover { background: #fdd; border-radius: 5px }
+  .problem:before { border-radius: 100px; background: #f22; color: white; content: "!"; font-weight: bold; width: 1.1em; height: 1.1em;
+                    display: inline-block; text-align: center; margin: 0 10px 0 5px; padding-left: .5px; line-height: 1.1em }
+  .probarrow { position: fixed; width: 55px; height: 33px; }
+  .fixbutton { background: #0ae; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px }
+</style>
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
+    <div class=subtitle>&nbsp;Document checking demo</div>
+  </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
+</div>
+
+<article>
+
+<h3>Working with content</h3>
+
+<p>The browser DOM serves its purpose—representing complex
+webpages—very well. But its huge scope and loose structure makes it
+difficult to make assumptions about. A document model that represents
+a smaller set of documents can be easier to reason about.</p>
+
+<p>This demo implements a simple document <a
+href="https://en.wikipedia.org/wiki/Lint_(software)">linter</a> that
+finds problems in your document, and makes it easy to fix them.</p>
+
+<h3>Demo</h3>
+
+<p>The full source code for this demo
+is <a href="demo_lint.js">here</a>.</p>
+
+<div id=editor></div>
+<div id=lint_output></div>
+
+<p>Next demo: <a href="demo_collab.html">collaborative editing</a>.</p>
+
+<div id=content style="display: none">
+<h2>Linting demo</h2>
+
+<p>This is a sentence ,but the comma isn't in the right place.</p>
+
+<h4>Too-minor header</h4>
+
+<p>This is an image <img src="img.png"> without alt text. You
+should <em>obviously</em> hover over the messages below to see where they
+occur.</p>
+</div>
+
+<script src="demo_lint_built.js"></script>

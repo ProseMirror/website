@@ -1,0 +1,83 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror Document Model Extension</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  img.dinosaur { height: 40px; vertical-align: bottom; border: 1px solid #0ae; border-radius: 4px; background: #ddf6ff }
+  .dinoicon { height: 25px; vertical-align: bottom; margin-left: 10px  }
+  .ProseMirror-tooltip .dinoicon { vertical-align: middle }
+</style>
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
+    <div class=subtitle>&nbsp;Document extension demo</div>
+  </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
+</div>
+
+<article>
+
+<h3>Custom document models</h3>
+
+<p>Imagine we need to include exotic, site-specific elements in our
+documents. These may be handles to other objects in our system
+(documents, users, etc), domain-specific widgets, or, in the case of
+this demo, dinosaurs.</p>
+
+<p>ProseMirror allows you to define custom document elements, along
+with serialization and parsing methods to convert them to and from the
+document formats you are interested in. These then become proper
+semantic element in your document format.</p>
+
+<p>In the editor below, dinosaurs are first-class elements in the
+document model. They can appear anywhere where text can appear.</p>
+
+<h3>Demo</h3>
+
+<p>The full source code for this demo
+is <a href="demo_dino.js">here</a>.</p>
+
+<div id="editor"></div>
+
+<div id="content" style="display: none">
+  <p>You can insert dinosaurs by typing their names enclosed by
+  brackets, such as <code>[pterodactyl]</code>. You'll get a simple
+  completion tooltip as you do so, and can press tab to select the top
+  completion. The menu bar also contains a dinosaur-insertion
+  submenu.</p>
+  <p>This paragraph <img class=dinosaur dino-type="stegosaurus">, for example,
+  <img class=dinosaur dino-type="triceratops">
+  is full <img class=dinosaur dino-type="tyrannosaurus"> of
+  dinosaurs.</p>
+  <p>Dinosaurs can be selected, copied, pasted, dragged, and so
+  on.</p>
+</div>
+
+<p><strong>Note:</strong> The document-model customization API is not
+finished yet. It is powerful enough to kludge in something like this,
+but there's a bunch of work to do before we can write robust
+extensions that interact properly with all parts of the system.</p>
+
+<p>Next demo: <a href="demo_lint.html">inspecting and manipulating documents</a>.</p>
+
+<script src="demo_dino_built.js"></script>

@@ -5,135 +5,96 @@
 <link rel=stylesheet href=demo.css>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
 <body class=front>
 
 <div class="fronttitle">
   <div class="fronttitle-inner">
     <h1><img src="logo.png" class=logo> ProseMirror</h1>
-    <div class=subtitle>A web-based <abbr title="What You See Is What
-    You Mean">WYSIWYM</abbr> editor from
-    the <a href="http://marijnhaverbeke.nl">author</a>
-    of <a href="http://codemirror.net">CodeMirror</a></div>
+    <div class=subtitle>&nbsp;In-browser structured text editing</div>
   </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
 </div>
 
 <article>
 
-<section id="qualities">
+<h3>Control your Content</h3>
 
-<p><strong>Rich text, modernized:</strong> Have your users edit
-documents with all the styling and structuring found in
-Markdown/<a href="http://commonmark.org">CommonMark</a> using a
-simple, easily learnable interface. <span class=subtle>(Different
-document models will be supported in the future.)</span></p>
+<p>Online content authoring isn't a solved problem. You might go with an
+HTML-based editor, and hope it gives you the kind of HTML you want. Or
+you might go with a text-based markup format, and hope your users
+understand how to use it.</p>
 
-<p><strong>Edit prose, not HTML.</strong> ProseMirror completely
-detaches its document model from HTML, resulting in a simple,
-predictable editing experience and clean, portable output.
-See <a href="demos.html">this page</a> for a demonstration of why this
-is useful.</p>
+<p>ProseMirror aims to improve that situation by providing a drop-in
+editor component with a rigid semantic document model, that can be
+customized to fit your application. By default, it exposes
+the <a href="http://commonmark.org">CommonMark</a> (Markdown) document
+model, but you can restrict that and/or add your own kinds of
+elements.</p>
 
-<p><strong>Collaborate.</strong> Broadcast changes to peers editing
-the same document. Support for real-time collaboration is built into
-the library.</p>
+<p>By strictly separating its document data structure from the browser's
+DOM, ProseMirror sidesteps most of the mess that is
+<code>contentEditable</code>, and ensures that the document stays
+entirely under the control of the editor.</p>
 
-<p><strong>Extend.</strong>
-Like <a href="http://codemirror.net">CodeMirror</a>, ProseMirror is
-designed to be a flexible <em>component</em>, allowing sites to add
-and replace functionality through a rich programming API.</p>
+<h3>Collaborate</h3>
 
-<p>If you want to know more, read the blog posts
-that <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">announce
-the project</a> and describe
-its <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">collaboration
-algorithm</a>. There are no docs yet, but the code can be read
-on <a href="https://github.com/prosemirror/prosemirror">github</a>. Be
-sure to also check out the <a href="demos.html">usage demos</a> (they
-involve dinosaurs)!</p>
+<p>ProseMirror represents changes to documents as well-defined pieces of
+data. Such changes can be stored, inverted (for undo), analyzed (think
+<code>git blame</code>), and filtered (to implement more complex types
+of content restriction).</p>
 
-</section>
+<p>And most importantly, they can be sent over the wire to implement
+real-time collaborative editing. The library solves the hard problems
+(see <a
+href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">this
+writeup</a>), and you can simply wire it up to your transport of
+choice (think long-polling or websockets). You can see this in action
+in <a href="demo-collab.html">our demo</a>.</p>
 
-<section id="status">
+<h3>Integrate and Extend</h3>
 
-<h2>Status</h2>
+<p>ProseMirror is implemented as a set of
+clean <a href="http://babeljs.io">ES6</a> modules. I was able to apply
+much of my editor-implementing experience (as the author
+of <a href="http://codemirror.net">CodeMirror</a>) to make this editor
+fast, robust, and open to extension.</p>
+
+<p>The codebase was written with extendability in mind. ProseMirror
+adjusts to your site, not the other way around. External code can
+extend the document model, attach event handlers, register new
+options, trigger editing actions, and so on.</p>
+
+<h3>Status</h3>
 
 <p>ProseMirror is intended to become open source (MIT licenced), but
-since I need to somehow combine writing open software and earning a
-living, I am running a <a href="https://www.indiegogo.com/projects/prosemirror/">crowd-funding campaign</a> to
-fund the work I put into the implementation. Until that succeeds, all
-rights are reserved.</p>
+since I need to combine writing open software and earning a living, I
+am running
+a <a href="https://www.indiegogo.com/projects/prosemirror/">crowd-funding
+campaign</a> to fund the work I put into the implementation. Until
+that succeeds, all rights are reserved.</p>
 
 <p>The library is in <strong>beta</strong> status. It works, as the
-demo below can attest, but there are without doubt a lot of wrinkles
-left that need to be found through real-world use.</p>
+demos can attest, but there are without doubt a lot of wrinkles left
+that need to be ironed out with real-world testing.</p>
 
-</section>
-
-<section id="demo">
-
-<h2>Demo</h2>
-
-<p>I have set up a simple collaborative editing service to showcase
-both the editing experience and the collaborative aspect. You can
-create or join a document, and edit it along with other people looking
-at the same document.</p>
-
-<p><strong>Disclaimer:</strong> Firstly, since this demo is open for
-everybody, you might run into people typing stupid, mean, and
-disgusting things. Try not to be such a person. Secondly, this is a
-quickly hacked together demo on top of a beta-quality software
-component. It is likely to crash and lose all its data on a regular
-interval. Don't use it for anything serious.</p>
-
-<div id=editor></div>
-
-<div class=docinfo>
-  Connected to: <span id="connected">
-    <span id="docname">None</span>
-    <span id="users"></span>
-    <button type=button id="changedoc">Change</button>
-  </span>
-  <div class=menustyle>
-    Menu style: <select id=menustyle>
-      <option selected value=bar>top bar</option>
-      <option value=tooltip>tooltips</option>
-    </select></div>
-</div>
-
-</section>
+<p>Curious? Play with <a href="demo_basic.html">some demos</a>, or
+check out
+the <a href="https://github.com/prosemirror/prosemirror">source
+code</a>.</p>
 
 </article>
-
-<div style="display: none" id="help">
-  <h1>Using ProseMirror</h1>
-
-  <p>This is editable text. Focus it and start typing.</p>
-
-  <p>To apply styling, you can select a piece of text and manipulate
-  its styling from the tooltip menu. You
-  get <em>emphasis</em>, <strong>strong
-  text</strong>, <a href="http://marijnhaverbeke.nl/blog">links</a>, <code>code
-  font</code>, and <img src="img.png"> images.</p>
-
-  <p>Block-level structure is manipulated through the “hamburger” menu
-  to the right of the selected paragraph. This allows you to change
-  paragraphs into headers or code blocks, to wrap them in lists or
-  blockquotes, to unwrap them, and to insert things like horizontal
-  rules.</p>
-
-  <p>Try using the "indent” item in the menu to wrap this paragraph in
-  a numbered list.</p>
-
-  <p>And turn this paragraph into a code block.</p>
-
-  <p>When editing a collaborative document, this demo adds an
-  annotation feature, which is also available from the selection menu.
-  Annotated text shows up yellow. Put your cursor on it to see what it
-  says.</p>
-
-  <p>To start playing with collaborative editing, select an instance
-  ID from the input field above the editor.</p>
-</div>
-
-<script src="demo.js"></script>

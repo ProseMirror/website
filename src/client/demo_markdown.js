@@ -5,7 +5,7 @@ import "prosemirror/dist/convert/to_markdown"
 import "prosemirror/dist/menu/inlinemenu"
 import "prosemirror/dist/menu/buttonmenu"
 
-let place = document.querySelector("#markdown_editor")
+let place = document.querySelector("#editor")
 
 let getContent
 function toTextArea(content, focus) {

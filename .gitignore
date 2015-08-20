@@ -1,5 +1,4 @@
 /node_modules
-/public/demo.js
-/public/usage.js
+/public/*_built.js
 .tern-port
 /demo-instances.json

@@ -9,19 +9,20 @@ body {
   font-family: Lato;
 }
 
-h1, h2, strong, a, a:visited { color: #38a; }
+h1, h2, h3, strong, a, a:visited { color: #08b; }
 
 .fronttitle {
   background: #5ad;
+  background: #5ad linear-gradient(to bottom, #565bdd 0%, transparent 64%, #5dc8ef 100%);
   color: white;
   width: 100%;
-  padding: 30px 0;
-  margin: 17vh 0 8vh;
+  padding: 20px 0 30px;
+  margin: 0 0 30px;
 }
-.fronttitle a, .fronttitle h1 { color: white }
+.fronttitle a, .fronttitle h1 { color: white; text-decoration: none }
 .fronttitle-inner {
-  max-width: 45em;
-  padding: 0 .5em;
+  max-width: 720px;
+  padding: 0;
   margin: auto;
 }
 .fronttitle h1 {
@@ -30,21 +31,118 @@ h1, h2, strong, a, a:visited { color: #38a; }
   margin: 0;
 }
 
-.subtitle { font-size: 18px; }
-.logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
-
 @media (min-width: 700px) {
   .front .fronttitle h1 { font-size: 90px }
-  .front .subtitle { font-size: 20px }
+  .front .subtitle { font-size: 22px }
   .front .logo { height: 140px }
 }
 
-article {
-  max-width: 44em;
-  padding: 0 .5em 30vh;
-  margin: auto;
+.subtitle { font-size: 18px; }
+.logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
+
+.nav {
+  width: 100%;
+  display: block;
+  text-align: right;
+  margin-top: -20px;
+  z-index: 5;
 }
 
+.nav a {
+  padding: 5px 20px;
+  display: inline-block;
+  font-size: 16px;
+  text-decoration: none;
+  color: #08b;
+}
+
+.nav a:hover {
+  color: white;
+  background: #5ad;
+}
+
+.submenu {
+  text-align: left;
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  min-width: 5em;
+  z-index: 5;
+}
+
+.submenu a {
+  background: #5ad;
+  color: white;
+  white-space: pre;
+  min-width: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.demos:hover > a {
+  background: #5ad;
+  color: white;
+}
+.submenu a:hover {
+  background: white;
+  color: #08b;
+}
+
+.demos {
+  display: inline-block;
+  position: relative;
+}
+
+.demos:hover .submenu {
+  display: block;
+}
+
+@media (min-width: 1000px) {
+  .nav {
+    text-align: left;
+    padding-top: 10px;
+    position: absolute;
+    right: 20px;
+    width: auto;
+  }
+  .nav a {
+    display: block;
+  }
+  .demos {
+    width: 100%;
+  }
+  .submenu {
+    right: 90%;
+    left: auto;
+    top: 0;
+  }
+}
+
+article {
+  max-width: 700px;
+  padding: 0 .5em 30vh;
+  margin: auto;
+  position: relative;
+}
+
+h3 {
+  font-size: 18px;
+  margin: 0;
+}
+
+@media (min-width: 1080px) {
+  h3 {
+    position: absolute;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    right: 101.5%;
+  }
+  .ProseMirror h3 {
+    position: static;
+  }
+}
+
+ 
 abbr { border-bottom: 1px dotted }
 
 .subtle { color: #777 }
@@ -135,4 +233,9 @@ abbr { border-bottom: 1px dotted }
   position: absolute;
   top: 0;
   right: 0;
+}
+
+pre {
+  padding-left: 15px;
+  line-height: 1.4;
 }

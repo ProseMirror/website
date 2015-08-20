@@ -4,8 +4,8 @@ import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
 let pm = window.lintPM = new ProseMirror({
-  place: document.querySelector("#lint_editor"),
-  doc: document.querySelector("#lint_content").innerHTML,
+  place: document.querySelector("#editor"),
+  doc: document.querySelector("#content").innerHTML,
   docFormat: "html",
   menuBar: true
 })

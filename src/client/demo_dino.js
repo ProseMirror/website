@@ -53,9 +53,9 @@ function insertDino(pm, name) {
 
 defineOption("dinos", false)
 let pm = window.dinoPM = new ProseMirror({
-  place: document.querySelector("#widget_editor"),
+  place: document.querySelector("#editor"),
   menuBar: true,
-  doc: document.querySelector("#widget_content").innerHTML,
+  doc: document.querySelector("#content").innerHTML,
   docFormat: "html",
   dinos: true,
   autoInput: true

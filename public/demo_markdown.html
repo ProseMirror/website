@@ -1,0 +1,74 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror Markdown Demo</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .ProseMirror-content { height: 120px; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
+  textarea { width: 100%; height: 123px; border: 1px solid silver; box-sizing: border-box; -moz-box-sizing: border-box; padding: 3px 10px;
+             border-radius: 3px; border: 1px solid #38a }
+  .ProseMirror, #markdown textarea { display: block; margin-bottom: 4px }
+</style>
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
+    <div class=subtitle>&nbsp;Markdown editing demo</div>
+  </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
+</div>
+
+<article>
+
+<h3>Friendly Markdown</h3>
+
+<p>Say you have a site that allows users to enter comments, and you've
+decided to use Markdown for the comment input. Your target group
+mostly knows how to use Markdown, and finds it convenient to type. But
+you also have some non-technical users, for whom learning arcane
+syntactic rules does not come naturally.</p>
+
+<p>Without changing anything in your backend, you can drop in
+ProseMirror as an alternative input editor. People can even switch
+between both views as they are editing!</p>
+
+<p>Because we've set ProseMirror up with a document model that only
+contains things that can be expressed in Markdown, we can be sure that
+the edited document can meaningfully be serialized in that format.</p>
+
+<h3>Demo</h3>
+
+<p>The full source code for this demo
+is <a href="demo_markdown.js">here</a>.</p>
+
+<div id="editor"></div>
+<div style="text-align: center">
+  <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
+</div>
+
+<p>Next demo: <a href="demo_dino.html">extending the document model</a>.</p>
+
+<div style="display: none" id="markdown_content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?
+
+So we've given people the **choice** to use a more familiar, discoverable interface.
+</div>
+
+<script src="demo_markdown_built.js"></script>

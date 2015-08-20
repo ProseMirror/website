@@ -5,8 +5,6 @@ import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
-import "prosemirror/dist/menu/inlinemenu"
-import "prosemirror/dist/menu/buttonmenu"
 import "prosemirror/dist/menu/menubar"
 
 import {GET, POST} from "./http"
@@ -161,8 +159,7 @@ class ServerConnection {
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   autoInput: true,
-  menuBar: {float: true},
-  doc: fromDOM(document.querySelector("#help"))
+  menuBar: {float: true}
 })
 new ServerConnection(pm, report)
 
@@ -227,21 +224,9 @@ function connectFromHash() {
   if (isID) {
     pm.mod.connection.start("doc/" + isID[1], () => pm.focus())
     info.name.textContent = decodeURIComponent(isID[1])
+    return true
   }
 }
 
 addEventListener("hashchange", connectFromHash)
-connectFromHash()
-
-let menuStyle = document.querySelector("#menustyle")
-menuStyle.addEventListener("change", () => {
-  if (menuStyle.value == "bar") {
-    pm.setOption("menuBar", {float: true})
-    pm.setOption("inlineMenu", false)
-    pm.setOption("buttonMenu", false)
-  } else {
-    pm.setOption("menuBar", false)
-    pm.setOption("inlineMenu", true)
-    pm.setOption("buttonMenu", {followCursor: true})
-  }
-})
+connectFromHash() || (location.hash = "#edit-Example")

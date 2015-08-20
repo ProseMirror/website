@@ -1,0 +1,68 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror Collaborative Demo</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
+    <div class=subtitle>&nbsp;Collaborative editing demo</div>
+  </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
+</div>
+
+<article>
+
+<h3>Collaborate</h3>
+
+<p>The editor below talks to a simple server-side service to allow
+real-time <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">collaborative
+editing</a>. Everybody connected to a given document sees the same
+document, and has their changes sent over to other people working on
+the document.</p>
+
+<p>The demo also (crudely) shows how ProseMirror can be used to
+implement something like out-of-line annotations. If you select text
+and click the speech bubble icon in the menu, you'll be prompted to
+enter an annotation. These are synced to other users and show up as
+text with yellow background. Put the cursor in an annotation to see
+what it says.</p>
+
+<h3>Demo</h3>
+
+<p><strong>Disclaimer:</strong> Since this demo is open for everybody,
+you might run into people typing stupid, mean, and disgusting things.
+Try not to be such a person.</p>
+
+<div id=editor></div>
+
+<div class=docinfo>
+  Connected to: <span id="connected">
+    <span id="docname">None</span>
+    <span id="users"></span>
+    <button type=button id="changedoc">Change</button>
+  </span>
+</div>
+
+<p>Next demo: <a href="demo_basic.html">basic use</a>.</p>
+
+<script src="demo_collab_built.js"></script>
