@@ -290,3 +290,22 @@ pre {
   padding-left: 15px;
   line-height: 1.4;
 }
+
+.demoblock {
+  display: inline-block;
+  vertical-align: top;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid white;
+}
+
+.demoblock:hover {
+  border-radius: 5px;
+  border: 1px solid #7cf;
+}
+
+.demoblock a {
+  text-decoration: none;
+  color: #777;
+  font-size: 14px;
+}
