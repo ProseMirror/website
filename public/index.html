@@ -11,6 +11,7 @@
   <div class="fronttitle-inner">
     <h1><img src="logo.png" class=logo> ProseMirror</h1>
     <div class=subtitle>&nbsp;In-browser structured text editing</div>
+    <a class="fundlink" href="http://indiegogo.com/projects/prosemirror/">Fund it!</a>
   </div>
 </div>
 
@@ -26,17 +27,21 @@
     </div>
   </span>
   <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
-  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
   <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
 </div>
 
 <article>
 
+<div id=editor menustyle=tooltip style="position: relative">
+  <div class=demotip>↖ You can edit this</div>
+</div>
+
+<div style="display: none" id="content">
 <h3>Control your Content</h3>
 
-<p>Online content authoring isn't a solved problem. You might go with an
-HTML-based editor, and hope it gives you the kind of HTML you want. Or
-you might go with a text-based markup format, and hope your users
+<p>Online content authoring isn't a solved problem. You might go with
+an HTML-based editor, and hope it gives you the kind of HTML you want.
+Or you might use a text-based markup format, and hope your users
 understand how to use it.</p>
 
 <p>ProseMirror aims to improve that situation by providing a drop-in
@@ -44,12 +49,13 @@ editor component with a rigid semantic document model, that can be
 customized to fit your application. By default, it exposes
 the <a href="http://commonmark.org">CommonMark</a> (Markdown) document
 model, but you can restrict that and/or add your own kinds of
-elements.</p>
+semantic elements.</p>
 
 <p>By strictly separating its document data structure from the browser's
 DOM, ProseMirror sidesteps most of the mess that is
 <code>contentEditable</code>, and ensures that the document stays
 entirely under the control of the editor.</p>
+</div>
 
 <h3>Collaborate</h3>
 
@@ -98,3 +104,14 @@ the <a href="https://github.com/prosemirror/prosemirror">source
 code</a>.</p>
 
 </article>
+
+<script src="demo_basic_built.js"></script>
+
+<script>
+  var updated = false
+  pm.content.addEventListener("focus", function() {
+    if (updated) return
+    updated = document.querySelector(".demotip").textContent =
+      "See also the other demos in the menu ↑"
+  })
+</script>

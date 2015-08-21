@@ -4,17 +4,19 @@ import "prosemirror/dist/menu/inlinemenu"
 import "prosemirror/dist/menu/buttonmenu"
 import "prosemirror/dist/menu/menubar"
 
+let place = document.querySelector("#editor");
+
 let pm = window.pm = new ProseMirror({
-  place: document.querySelector("#editor"),
+  place: place,
   autoInput: true,
-  menuBar: {float: true},
   doc: document.querySelector("#content"),
   docFormat: "dom"
 })
 
-let menuStyle = document.querySelector("#menustyle")
-menuStyle.addEventListener("change", () => {
-  if (menuStyle.value == "bar") {
+setMenuStyle(place.getAttribute("menustyle") || "bar")
+
+function setMenuStyle(type) {
+  if (type == "bar") {
     pm.setOption("menuBar", {float: true})
     pm.setOption("inlineMenu", false)
     pm.setOption("buttonMenu", false)
@@ -23,4 +25,7 @@ menuStyle.addEventListener("change", () => {
     pm.setOption("inlineMenu", true)
     pm.setOption("buttonMenu", {followCursor: true})
   }
-})
+}
+
+let menuStyle = document.querySelector("#menustyle")
+if (menuStyle) menuStyle.addEventListener("change", () => setMenuStyle(menuStyle.value))

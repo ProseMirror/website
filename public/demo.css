@@ -17,18 +17,57 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   color: white;
   width: 100%;
   padding: 20px 0 30px;
-  margin: 0 0 30px;
+  margin: 0 0 1em;
 }
 .fronttitle a, .fronttitle h1 { color: white; text-decoration: none }
 .fronttitle-inner {
   max-width: 720px;
   padding: 0;
   margin: auto;
+  position: relative;
 }
 .fronttitle h1 {
   font-size: 60px;
   letter-spacing: .5px;
   margin: 0;
+}
+
+.fundlink {
+  z-index: 6;
+  background: #e22;
+  color: white;
+  position: absolute;
+  right: 0px;
+  border-radius: 5px;
+  top: -5px;
+  transform: rotate(8deg);
+  transition: transform .3s linear;
+  -moz-background-clip: padding;
+  -webkit-background-clip: padding;
+  background-clip: padding-box;   
+  border: 1px solid rgba(230, 34, 34, 0.2);
+  font-size: 25px;
+  font-weight: bold;
+  padding: 4px 15px;
+}
+.fundlink:hover {
+  background: #f33;
+  border: 1px solid rgba(255, 60, 60, 0.2);
+  transform: rotate(5deg) scale(1.1);
+}
+
+.demotip {
+  z-index: 6;
+  background: #ff7;
+  border: 1px solid #ee5;
+  color: #440;
+  position: absolute;
+  right: -20px;
+  bottom: 2px;
+  transform: rotate(-3deg);
+  padding: 4px 15px;
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 @media (min-width: 700px) {
@@ -43,22 +82,23 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
 .nav {
   width: 100%;
   display: block;
-  text-align: right;
-  margin-top: -20px;
-  z-index: 5;
+  text-align: center;
+  z-index: 7;
+  margin: 5px 0 1em;
 }
 
 .nav a {
   padding: 5px 20px;
   display: inline-block;
-  font-size: 16px;
+  font-size: 18px;
   text-decoration: none;
-  color: #08b;
+  background: #5ad;
+  color: white;
 }
 
 .nav a:hover {
-  color: white;
-  background: #5ad;
+  color: #08b;
+  background: white;
 }
 
 .submenu {
@@ -66,26 +106,25 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   display: none;
   position: absolute;
   left: 0;
-  top: 100%;
+  bottom: 100%;
   min-width: 5em;
-  z-index: 5;
 }
 
-.submenu a {
-  background: #5ad;
-  color: white;
+.nav .submenu a {
+  color: #08b;
+  background: white;
   white-space: pre;
   min-width: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
 .demos:hover > a {
-  background: #5ad;
-  color: white;
+  color: #08b;
+  background: white;
 }
 .submenu a:hover {
-  background: white;
-  color: #08b;
+  color: white;
+  background: #5ad;
 }
 
 .demos {
@@ -97,16 +136,18 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   display: block;
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 1100px) {
   .nav {
     text-align: left;
     padding-top: 10px;
     position: absolute;
     right: 20px;
+    top: -10px;
     width: auto;
   }
   .nav a {
     display: block;
+    background: transparent;
   }
   .demos {
     width: 100%;
@@ -116,6 +157,25 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
     left: auto;
     top: 0;
   }
+  .front div.ProseMirror {
+    margin-top: -15px;
+  }
+}
+
+.front .fronttitle {
+  margin-bottom: 0;
+  padding-bottom: 35px;
+}
+
+.front .ProseMirror {
+  margin: 4px -15px 1em;
+  border-radius: 10px;
+  background: white;
+  border-color: #5ad;
+}
+
+.front .ProseMirror-content {
+  outline: none;
 }
 
 article {
@@ -130,19 +190,6 @@ h3 {
   margin: 0;
 }
 
-@media (min-width: 1080px) {
-  h3 {
-    position: absolute;
-    width: -webkit-fit-content;
-    width: -moz-fit-content;
-    right: 101.5%;
-  }
-  .ProseMirror h3 {
-    position: static;
-  }
-}
-
- 
 abbr { border-bottom: 1px dotted }
 
 .subtle { color: #777 }
@@ -188,7 +235,11 @@ abbr { border-bottom: 1px dotted }
   color: #f88;
 }
 
-.ProseMirror { margin-top: 1em; border: 1px solid  #38a !important; border-radius: 4px }
+div.ProseMirror {
+  margin-top: 1em;
+  border: 1px solid  #38a;
+  border-radius: 4px
+}
 
 .ProseMirror-icon-comment:before { content: "\e600" }
 .ProseMirror-icon-comment { font-family: ProseMirror-demo-icons !important }
