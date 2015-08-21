@@ -141,7 +141,7 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
     text-align: left;
     padding-top: 10px;
     position: absolute;
-    right: 20px;
+    left: calc(50% + 380px);
     top: -10px;
     width: auto;
   }
