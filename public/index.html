@@ -98,7 +98,7 @@ that succeeds, all rights are reserved.</p>
 demos can attest, but there are without doubt a lot of wrinkles left
 that need to be ironed out with real-world testing.</p>
 
-<p>Curious? Check out
+<p id="demolist">Curious? Check out
 the <a href="https://github.com/prosemirror/prosemirror">source
 code</a> or play with the other demos:</p>
 
@@ -128,7 +128,7 @@ code</a> or play with the other demos:</p>
   var updated = false
   pm.content.addEventListener("focus", function() {
     if (updated) return
-    updated = document.querySelector(".demotip").textContent =
-      "Find more demos in the menu ↑"
+    updated = document.querySelector(".demotip").innerHTML =
+      "<a href='#demolist' style='text-decoration: none; pointer-events: auto; color: inherit'>Find more demos below ↓</a>"
   })
 </script>

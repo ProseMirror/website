@@ -74,6 +74,15 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   .front .subtitle { font-size: 22px }
   .front .logo { height: 140px }
 }
+@media (max-width: 650px) {
+  img.logo { display: none }
+}
+@media (max-width: 400px) {
+  .front .fronttitle h1 { font-size: 40px }
+  .fundlink { font-size: 18px }
+}
+
+
 
 .subtitle { font-size: 18px; }
 .logo { height: 100px; float: left; margin-right: 20px; margin-top: -6px; }
