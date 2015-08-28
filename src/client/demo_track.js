@@ -6,14 +6,13 @@ import "prosemirror/dist/menu/menubar"
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  menuBar: {float: true},
-  doc: "Type something, and then commit it.",
-  docFormat: "text"
+  menuBar: {float: true}
 })
 
 class Commit {
   constructor() {
     this.message = this.time = null
+    this.hidden = false
     this.steps = []
     this.maps = []
   }
@@ -24,9 +23,9 @@ class Commit {
   }
 }
 
-let commits = []
+let commits = window.commits = []
 let uncommitted = new Commit
-let blameMap = [{from: new Pos([], 0), to: new Pos([], 1), commit: {message: "Initial content"}}]
+let blameMap = [{from: new Pos([], 0), to: new Pos([], 1), commit: null}]
 
 pm.on("transform", transform => {
   let inverted = transform.steps.map((step, i) => invertStep(step, transform.docs[i], transform.maps[i]))
@@ -36,6 +35,10 @@ pm.on("transform", transform => {
   adjustBlameMap(transform.steps, transform.maps, uncommitted)
   setDisabled()
 })
+
+pm.apply(pm.tr.insertText(pm.selection.head, "Type something, and then commit it."))
+uncommitted.hidden = true
+doCommit("Initial content")
 
 function setDisabled() {
   let input = document.querySelector("#message")
@@ -91,7 +94,7 @@ function findInBlameMap(pos) {
 function renderCommits() {
   let out = document.querySelector("#commits")
   out.textContent = ""
-  commits.forEach(commit => {
+  commits.filter(c => !c.hidden).forEach(commit => {
     let node = elt("div", {class: "commit"},
                    elt("span", {class: "commit-time"},
                        commit.time.getHours() + ":" + (commit.time.getMinutes() < 10 ? "0" : "")
@@ -142,8 +145,14 @@ function revertCommit(commit) {
     let id = remap.addToFront(commit.maps[i])
     if (result) remap.addToBack(result.map, id)
   }
-  pm.apply(tr)
-  doCommit("Revert “" + commit.message + "”")
+  commit.hidden = true
+  if (tr.steps.length) {
+    pm.apply(tr)
+    uncommitted.hidden = true
+    doCommit("Revert “" + commit.message + "”")
+  } else {
+    renderCommits()
+  }
 }
   
 document.querySelector("#commit").addEventListener("submit", e => {
