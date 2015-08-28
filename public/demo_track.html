@@ -1,0 +1,103 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>ProseMirror Change Tracking</title>
+<link rel=stylesheet href=demo.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .commit {
+    margin-bottom: 4px;
+  }
+  .commit:hover {
+    background: #ff8;
+  }
+  .commit-revert {
+    color: #a22;
+  }
+  .commit-time {
+    background: #5ab;
+    padding: 0 5px;
+    color: white;
+    font-size: 90%;
+  }
+  .commit-blame {
+    background: #ff8;
+  }
+  .blame-info {
+    position: fixed;
+    border: 1px solid silver;
+    background: white;
+    padding: 3px 8px;
+  }
+  .blame-wrap {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  #commit {
+    margin: 6px 0;
+    position: relative;
+  }
+</style>
+
+<body>
+
+<div class="fronttitle">
+  <div class="fronttitle-inner">
+    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
+    <div class=subtitle>&nbsp;Change tracking demo</div>
+  </div>
+</div>
+
+<div class="nav">
+  <span class="demos">
+    <a href="#">Demos</a>
+    <div class=submenu>
+      <a href="demo_basic.html">Basics</a>
+      <a href="demo_markdown.html">User-friendly Markdown</a>
+      <a href="demo_dino.html">Dinos in the document</a>
+      <a href="demo_lint.html">Document checking</a>
+      <a href="demo_track.html">Change tracking</a>
+      <a href="demo_collab.html">Collaborative editing</a>
+    </div>
+  </span>
+  <a href="http://marijnhaverbeke.nl/blog/prosemirror.html">Background</a>
+  <a href="http://indiegogo.com/projects/prosemirror/">Fund it</a>
+  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
+</div>
+
+<article>
+
+<h3>Tracking changes</h3>
+
+<p>Changes are first-class values in ProseMirror. You can hold on to
+them, and do things with them. Such
+as <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">rebasing</a>
+them across other changes, or inverting them, or deriving information
+from them.</p>
+
+<p>This demo uses those properties to allow you to “commit” your
+changes, to revert individual commits, and to find out which commit a
+piece of text originates from.</p>
+
+<p>Note that, due to the implicit conflict resolution when moving
+changes across each other, outcomes of complicated reverts aren't
+always optimal.</p>
+
+<h3>Demo</h3>
+
+<p>The full source code for this demo
+is <a href="demo_track.js">here</a>.</p>
+
+<div id="editor"></div>
+
+<form id="commit">
+  Commit message: <input type=text id=message name=message> <button id=commitbutton type="submit">commit</button>
+    <div class=blame-wrap><button type=button id=blame>blame at cursor</button></div>
+</form>
+
+<div id="commits"></div>
+
+<p>Next demo: <a href="demo_collab.html">collaborative editing</a>.</p>
+
+<script src="demo_track_built.js"></script>
