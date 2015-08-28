@@ -7,7 +7,7 @@ import "prosemirror/dist/menu/menubar"
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   menuBar: {float: true},
-  doc: "Starting content.",
+  doc: "Type something, and then commit it.",
   docFormat: "text"
 })
 
@@ -139,8 +139,8 @@ function revertCommit(commit) {
   for (let i = commit.steps.length - 1; i >= 0; i--) {
     let remapped = mapStep(commit.steps[i], remap)
     let result = remapped && tr.step(remapped)
-    if (result) remap.addToBack(result.map, remap.head.length)
-    remap.addToFront(commit.maps[i].invert())
+    let id = remap.addToFront(commit.maps[i])
+    if (result) remap.addToBack(result.map, id)
   }
   pm.apply(tr)
   doCommit("Revert “" + commit.message + "”")
