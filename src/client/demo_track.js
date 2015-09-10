@@ -1,6 +1,6 @@
 import {ProseMirror, Range} from "prosemirror/dist/edit"
 import {Pos} from "prosemirror/dist/model"
-import {mapStep, Remapping, Transform, invertStep} from "prosemirror/dist/transform"
+import {mapStep, Remapping, Transform} from "prosemirror/dist/transform"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -28,7 +28,7 @@ let uncommitted = new Commit
 let blameMap = [{from: new Pos([], 0), to: new Pos([], 1), commit: null}]
 
 pm.on("transform", transform => {
-  let inverted = transform.steps.map((step, i) => invertStep(step, transform.docs[i], transform.maps[i]))
+  let inverted = transform.steps.map((step, i) => step.invertStep(transform.docs[i], transform.maps[i]))
   uncommitted.steps = uncommitted.steps.concat(inverted)
   uncommitted.maps = uncommitted.maps.concat(transform.maps)
 

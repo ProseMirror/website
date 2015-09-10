@@ -1,5 +1,4 @@
 import {Node, Span} from "prosemirror/dist/model"
-import {applyStep} from "prosemirror/dist/transform"
 
 import {Comments, Comment} from "./comments"
 import {populateDefaultInstances} from "./defaultinstances"
@@ -37,7 +36,7 @@ class Instance {
     let hash = getHash(ip + "t2ng1&")
     for (let i = 0; i < steps.length; i++) {
       steps[i].origin = hash
-      let result = applyStep(doc, steps[i])
+      let result = steps[i].apply(doc)
       doc = result.doc
       maps.push(result.map)
     }
