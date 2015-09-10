@@ -168,7 +168,7 @@ let info = {
   users: document.querySelector("#users"),
 }
 document.querySelector("#changedoc").addEventListener("click", e => {
-  GET("doc/", (err, data) => {
+  GET("docs/", (err, data) => {
     if (err) report.failure(err)
     else showDocList(e.target, JSON.parse(data))
   })
@@ -222,7 +222,7 @@ function newDocument() {
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
   if (isID) {
-    pm.mod.connection.start("doc/" + isID[1], () => pm.focus())
+    pm.mod.connection.start("docs/" + isID[1], () => pm.focus())
     info.name.textContent = decodeURIComponent(isID[1])
     return true
   }
