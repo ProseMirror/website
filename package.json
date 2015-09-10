@@ -19,12 +19,6 @@
     "watchify": "^3.2.0"
   },
   "scripts": {
-    "server": "node src/server/start.js",
-    "demo_basic": "node_modules/.bin/browserify --outfile public/demo_basic_built.js -t babelify src/client/demo_basic.js",
-    "demo_markdown": "node_modules/.bin/browserify --outfile public/demo_markdown_built.js -t babelify src/client/demo_markdown.js",
-    "demo_dino": "node_modules/.bin/browserify --outfile public/demo_dino_built.js -t babelify src/client/demo_dino.js",
-    "demo_lint": "node_modules/.bin/browserify --outfile public/demo_lint_built.js -t babelify src/client/demo_lint.js",
-    "demo_track": "node_modules/.bin/browserify --outfile public/demo_track_built.js -t babelify src/client/demo_track.js",
-    "demo_collab": "node_modules/.bin/browserify --outfile public/demo_collab_built.js -t babelify src/client/client.js"
+    "start": "node src/server/start.js"
   }
 }
