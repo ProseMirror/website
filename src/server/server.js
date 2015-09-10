@@ -145,10 +145,8 @@ handle("GET", [null, "events"], (id, req, resp) => {
   resp.on("close", () => wait.abort())
 })
 
-// FIXME this doesn't work -- we're always getting the proxy's IP, of
-// course. Start actively sending a random client ID?
 function reqIP(request) {
-  return request.socket.remoteAddress
+  return request.headers["x-forwarded-for"] || request.socket.remoteAddress
 }
 
 handle("POST", [null, "events"], (data, id, req) => {
