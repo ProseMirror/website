@@ -28,7 +28,7 @@ let uncommitted = new Commit
 let blameMap = [{from: new Pos([], 0), to: new Pos([], 1), commit: null}]
 
 pm.on("transform", transform => {
-  let inverted = transform.steps.map((step, i) => step.invertStep(transform.docs[i], transform.maps[i]))
+  let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i], transform.maps[i]))
   uncommitted.steps = uncommitted.steps.concat(inverted)
   uncommitted.maps = uncommitted.maps.concat(transform.maps)
 
