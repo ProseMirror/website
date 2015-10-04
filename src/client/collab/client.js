@@ -1,4 +1,4 @@
-import {Node, nodeTypes} from "prosemirror/dist/model"
+import {$fromJSON, nodeTypes} from "prosemirror/dist/model"
 import {Step} from "prosemirror/dist/transform"
 import {fromDOM} from "prosemirror/dist/convert/from_dom"
 import {elt} from "prosemirror/dist/dom"
@@ -46,7 +46,7 @@ class ServerConnection {
         this.report.success()
         data = JSON.parse(data)
         this.pm.setOption("collab", null)
-        this.pm.setDoc(Node.fromJSON(data.doc))
+        this.pm.setDoc($fromJSON(data.doc))
         this.pm.setOption("collab", {version: data.version})
         this.collab = this.pm.mod.collab
         this.collab.on("mustSend", () => this.mustSend())

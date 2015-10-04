@@ -1,5 +1,5 @@
 import {ProseMirror} from "prosemirror/dist/edit"
-import {Node, Span, Pos, getSpan} from "prosemirror/dist/model"
+import {$node, $text, Pos, getSpan} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -92,16 +92,16 @@ function lint(doc) {
     }
 
     if (node.type.block) {
-      if (!node.content.length) record("Empty block", 0)
+      if (!node.length) record("Empty block", 0)
       offset = 0
-      for (let i = 0; i < node.content.length; i++) {
-        scan(node.content[i])
-        offset += node.content[i].text.length
+      for (let i = 0; i < node.length; i++) {
+        scan(node.child(i))
+        offset += node.child(i).offset
       }
     } else {
-      for (let i = 0; i < node.content.length; i++) {
+      for (let i = 0; i < node.length; i++) {
         path.push(i)
-        scan(node.content[i])
+        scan(node.child(i))
         path.pop()
       }
     }
@@ -114,19 +114,19 @@ function lint(doc) {
 function fixPunc(match) {
   return (pm, prob) => {
     pm.apply(pm.tr.delete(prob.from, prob.to)
-                  .insertInline(prob.from, Span.text(match[1] + " ")))
+                  .insertInline(prob.from, $text(match[1] + " ")))
   }
 }
 
 function fixHeader(level) {
-  return (pm, prob) => pm.apply(pm.tr.setBlockType(prob.from, prob.to, new Node("heading", {level})))
+  return (pm, prob) => pm.apply(pm.tr.setBlockType(prob.from, prob.to, $node("heading", {level})))
 }
 
 function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
   if (!alt) return
   let img = getSpan(pm.doc, prob.to)
-  pm.apply(pm.tr.delete(prob.from, prob.to).insertInline(prob.from, new Span("image", {
+  pm.apply(pm.tr.delete(prob.from, prob.to).insertInline(prob.from, $node("image", {
     src: img.attrs.src,
     alt: alt,
     title: img.attrs.title

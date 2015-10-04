@@ -1,5 +1,5 @@
 import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
-import {nodeTypes, NodeType, Span} from "prosemirror/dist/model"
+import {nodeTypes, NodeType, $node} from "prosemirror/dist/model"
 import {render as renderDOM} from "prosemirror/dist/convert/to_dom"
 import {tags as parseTags} from "prosemirror/dist/convert/from_dom"
 import {registerItem, MenuItem} from "prosemirror/dist/menu/items"
@@ -24,7 +24,7 @@ renderDOM.dino = node => elt("img", {"dino-type": node.attrs.type,
 
 let oldImg = parseTags.img
 parseTags.img = (dom, context) => {
-  if (dom.className == "dinosaur") context.insert(new Span("dino", {type: dom.getAttribute("dino-type")}))
+  if (dom.className == "dinosaur") context.insert($node("dino", {type: dom.getAttribute("dino-type")}))
   else return oldImg(dom, context)
 }
 
@@ -48,7 +48,7 @@ let dinoItems = dinos.map(name => new DinoItem(name, pm => insertDino(pm, name))
 registerItem("inline", new DinoItem("brontosaurus", () => dinoItems))
 
 function insertDino(pm, name) {
-  pm.apply(pm.tr.insertInline(pm.selection.head, new Span("dino", {type: name})))
+  pm.apply(pm.tr.insertInline(pm.selection.head, $node("dino", {type: name})))
 }
 
 defineOption("dinos", false)
@@ -62,7 +62,7 @@ let pm = window.dinoPM = new ProseMirror({
 })
 addInputRules(pm, dinos.map(name => new Rule("]", new RegExp("\\[" + name + "\\]"), (pm, _, pos) => {
   let start = pos.shift(-(name.length + 2))
-  pm.apply(pm.tr.delete(start, pos).insertInline(start, new Span("dino", {type: name})))
+  pm.apply(pm.tr.delete(start, pos).insertInline(start, $node("dino", {type: name})))
 })))
 
 let tooltip = new Tooltip(pm, "below"), open
@@ -81,7 +81,7 @@ pm.on("textInput", text => {
 
 function showCompletions(dinos, from, to) {
   function applyCompletion(name) {
-    pm.apply(pm.tr.delete(from, to).insertInline(from, new Span("dino", {type: name})))
+    pm.apply(pm.tr.delete(from, to).insertInline(from, $node("dino", {type: name})))
     tooltip.close()
   }
   let items = dinos.map(name => {
