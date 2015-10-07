@@ -12,13 +12,12 @@ body {
 h1, h2, h3, strong, a, a:visited { color: #08b; }
 
 .fronttitle {
-  background: #5ae;
-  color: white;
+  color: #08b;
   width: 100%;
   padding: 20px 0 30px;
   margin: 0 0 1em;
 }
-.fronttitle a, .fronttitle h1 { color: white; text-decoration: none }
+.fronttitle a, .fronttitle h1 { color: inherit; text-decoration: none }
 .fronttitle-inner {
   max-width: 720px;
   padding: 0;
@@ -29,30 +28,6 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   font-size: 60px;
   letter-spacing: .5px;
   margin: 0;
-}
-
-.fundlink {
-  z-index: 6;
-  background: #e22;
-  color: white;
-  position: absolute;
-  right: 0px;
-  border-radius: 5px;
-  top: -5px;
-  transform: rotate(8deg);
-  transition: transform .3s linear;
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding;
-  background-clip: padding-box;   
-  border: 1px solid rgba(230, 34, 34, 0.2);
-  font-size: 25px;
-  font-weight: bold;
-  padding: 4px 15px;
-}
-.fundlink:hover {
-  background: #f33;
-  border: 1px solid rgba(255, 60, 60, 0.2);
-  transform: rotate(5deg) scale(1.1);
 }
 
 .demotip {
@@ -79,7 +54,6 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
 }
 @media (max-width: 400px) {
   .front .fronttitle h1 { font-size: 40px }
-  .fundlink { font-size: 18px }
 }
 
 
@@ -100,13 +74,12 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   display: inline-block;
   font-size: 18px;
   text-decoration: none;
-  background: #5ae;
-  color: white;
+  color: #08b;
 }
 
 .nav a:hover {
-  color: #08b;
-  background: white;
+  background: #5ae;
+  color: white;
 }
 
 .submenu {
@@ -119,20 +92,20 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
 }
 
 .nav .submenu a {
-  color: #08b;
-  background: white;
+  color: white;
+  background: #5ae;
   white-space: pre;
   min-width: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
 .demos:hover > a {
-  color: #08b;
-  background: white;
+  background: #5ae;
+  color: white;
 }
 .submenu a:hover {
-  color: white;
-  background: #5ae;
+  color: #08b;
+  background: white;
 }
 
 .demos {
@@ -155,7 +128,6 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   }
   .nav a {
     display: block;
-    background: transparent;
   }
   .demos {
     width: 100%;
