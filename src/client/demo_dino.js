@@ -1,7 +1,5 @@
 import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
-import {nodeTypes, NodeType, $node} from "prosemirror/dist/model"
-import {render as renderDOM} from "prosemirror/dist/convert/to_dom"
-import {tags as parseTags} from "prosemirror/dist/convert/from_dom"
+import {Inline, Attribute, Schema, defaultSchema} from "prosemirror/dist/model"
 import {registerItem, MenuItem} from "prosemirror/dist/menu/items"
 import {elt} from "prosemirror/dist/dom"
 import {addInputRules, Rule} from "prosemirror/dist/inputrules/inputrules"
@@ -11,22 +9,25 @@ import "prosemirror/dist/inputrules/autoinput"
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 
-nodeTypes.dino = new NodeType({name: "dino", type: "span", defaultAttrs: {type: "brontosaurus"}})
+class Dino extends Inline {}
+Dino.attributes = {type: new Attribute("brontosaurus")}
+Dino.register("parseDOM", {
+  tag: "img",
+  rank: 25,
+  parse: (dom, context, nodeType) => {
+    let type = dom.getAttribute("dino-type")
+    if (!type) return false
+    context.insert(nodeType.create({type}))
+  }
+})
+Dino.prototype.serializeDOM = node => elt("img", {
+  "dino-type": node.attrs.type,
+  class: "dinosaur",
+  src: "dino/" + node.attrs.type + ".png",
+  title: node.attrs.type
+})
 
-// NOTE: The code below, which defines a serializer and parser for the
-// dino type to the DOM format, is ad-hoc and hacky because no proper
-// API for such extensions exists yet.
-
-renderDOM.dino = node => elt("img", {"dino-type": node.attrs.type,
-                                     class: "dinosaur",
-                                     src: "dino/" + node.attrs.type + ".png",
-                                     title: node.attrs.type})
-
-let oldImg = parseTags.img
-parseTags.img = (dom, context) => {
-  if (dom.className == "dinosaur") context.insert($node("dino", {type: dom.getAttribute("dino-type")}))
-  else return oldImg(dom, context)
-}
+const dinoSchema = new Schema(defaultSchema.spec.updateNodes({dino: Dino}))
 
 class DinoItem extends MenuItem {
   constructor(image, action) {
@@ -34,7 +35,7 @@ class DinoItem extends MenuItem {
     this.image = image
     this.action = action
   }
-  select(pm) { return pm.getOption("dinos") }
+  select(pm) { return pm.schema.nodes.dino }
   render(menu) {
     let button = elt("img", {src: "dino/" + this.image + ".png", class: "dinoicon", title: "Insert dinosaur"})
     button.addEventListener("mousedown", e => {
@@ -48,21 +49,20 @@ let dinoItems = dinos.map(name => new DinoItem(name, pm => insertDino(pm, name))
 registerItem("inline", new DinoItem("brontosaurus", () => dinoItems))
 
 function insertDino(pm, name) {
-  pm.apply(pm.tr.insertInline(pm.selection.head, $node("dino", {type: name})))
+  pm.apply(pm.tr.insertInline(pm.selection.head, dinoSchema.node("dino", {type: name})))
 }
 
-defineOption("dinos", false)
 let pm = window.dinoPM = new ProseMirror({
   place: document.querySelector("#editor"),
   menuBar: true,
   doc: document.querySelector("#content").innerHTML,
   docFormat: "html",
-  dinos: true,
+  schema: dinoSchema,
   autoInput: true
 })
 addInputRules(pm, dinos.map(name => new Rule("]", new RegExp("\\[" + name + "\\]"), (pm, _, pos) => {
   let start = pos.shift(-(name.length + 2))
-  pm.apply(pm.tr.delete(start, pos).insertInline(start, $node("dino", {type: name})))
+  pm.apply(pm.tr.delete(start, pos).insertInline(start, dinoSchema.node("dino", {type: name})))
 })))
 
 let tooltip = new Tooltip(pm, "below"), open
@@ -81,7 +81,7 @@ pm.on("textInput", text => {
 
 function showCompletions(dinos, from, to) {
   function applyCompletion(name) {
-    pm.apply(pm.tr.delete(from, to).insertInline(from, $node("dino", {type: name})))
+    pm.apply(pm.tr.delete(from, to).insertInline(from, dinoSchema.node("dino", {type: name})))
     tooltip.close()
   }
   let items = dinos.map(name => {

@@ -2,7 +2,7 @@ import {createServer} from "http"
 import {Router} from "./route"
 
 import {Step} from "prosemirror/dist/transform"
-import {Pos} from "prosemirror/dist/model"
+import {Pos, defaultSchema as schema} from "prosemirror/dist/model"
 
 import {getInstance, instanceInfo} from "./instance"
 
@@ -151,7 +151,7 @@ function reqIP(request) {
 
 handle("POST", [null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
-  let steps = data.steps.map(s => Step.fromJSON(s))
+  let steps = data.steps.map(s => Step.fromJSON(schema, s))
   let comments = data.comment.map(e => {
     if (e.from) e.from = Pos.fromJSON(e.from)
     if (e.to) e.to = Pos.fromJSON(e.to)

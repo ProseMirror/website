@@ -1,7 +1,7 @@
 import {ProseMirror} from "prosemirror/dist/edit"
 import {elt} from "prosemirror/dist/dom"
-import "prosemirror/dist/convert/from_markdown"
-import "prosemirror/dist/convert/to_markdown"
+import "prosemirror/dist/parse/markdown"
+import "prosemirror/dist/serialize/markdown"
 import "prosemirror/dist/menu/inlinemenu"
 import "prosemirror/dist/menu/buttonmenu"
 

@@ -1,5 +1,5 @@
 import {ProseMirror} from "prosemirror/dist/edit"
-import {$node, $text, Pos, getSpan} from "prosemirror/dist/model"
+import {Pos, getSpan} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -77,7 +77,7 @@ function lint(doc) {
   }
 
   function scan(node) {
-    if (node.type.name == "text") {
+    if (node.isText) {
       let m
       while (m = badWords.exec(node.text))
         record("Try not to say '" + m[0] + "'", offset + m.index, offset + m.index + m[0].length)
@@ -91,7 +91,7 @@ function lint(doc) {
       if (!node.attrs.alt) record("Image without alt text", offset, offset + 1, addAlt)
     }
 
-    if (node.type.block) {
+    if (node.isTextblock) {
       if (!node.length) record("Empty block", 0)
       offset = 0
       for (let i = 0; i < node.length; i++) {
@@ -114,19 +114,19 @@ function lint(doc) {
 function fixPunc(match) {
   return (pm, prob) => {
     pm.apply(pm.tr.delete(prob.from, prob.to)
-                  .insertInline(prob.from, $text(match[1] + " ")))
+                  .insertInline(prob.from, pm.schema.text(match[1] + " ")))
   }
 }
 
 function fixHeader(level) {
-  return (pm, prob) => pm.apply(pm.tr.setBlockType(prob.from, prob.to, $node("heading", {level})))
+  return (pm, prob) => pm.apply(pm.tr.setBlockType(prob.from, prob.to, pm.schema.node("heading", {level})))
 }
 
 function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
   if (!alt) return
   let img = getSpan(pm.doc, prob.to)
-  pm.apply(pm.tr.delete(prob.from, prob.to).insertInline(prob.from, $node("image", {
+  pm.apply(pm.tr.delete(prob.from, prob.to).insertInline(prob.from, pm.schema.node("image", {
     src: img.attrs.src,
     alt: alt,
     title: img.attrs.title

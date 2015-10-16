@@ -1,4 +1,4 @@
-import {$fromJSON, nodeTypes} from "prosemirror/dist/model"
+import {defaultSchema as schema} from "prosemirror/dist/model"
 import {Step} from "prosemirror/dist/transform"
 import {fromDOM} from "prosemirror/dist/convert/from_dom"
 import {elt} from "prosemirror/dist/dom"
@@ -11,10 +11,6 @@ import {GET, POST} from "./http"
 import {Reporter} from "./reporter"
 import {CommentStore, CommentUI} from "./comment"
 import {showOrigins} from "./origins"
-
-// Crude way to prevent XSS (until we have configurable doc models)
-delete nodeTypes.html_block
-delete nodeTypes.html_tag
 
 const report = new Reporter()
 
@@ -46,7 +42,7 @@ class ServerConnection {
         this.report.success()
         data = JSON.parse(data)
         this.pm.setOption("collab", null)
-        this.pm.setDoc($fromJSON(data.doc))
+        this.pm.setDoc(this.pm.schema.nodeFromJSON(data.doc))
         this.pm.setOption("collab", {version: data.version})
         this.collab = this.pm.mod.collab
         this.collab.on("mustSend", () => this.mustSend())
@@ -78,7 +74,7 @@ class ServerConnection {
         data = JSON.parse(data)
         this.backOff = 0
         if (data.steps && data.steps.length) {
-          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(j)))
+          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(schema, j)))
           showOrigins(this.pm, data.steps, maps)
         }
         if (data.comment && data.comment.length)

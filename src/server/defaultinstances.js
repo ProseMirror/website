@@ -1,5 +1,8 @@
-import {$node, $text, style} from "prosemirror/dist/model"
+import {defaultSchema as schema, style} from "prosemirror/dist/model"
 import {newInstance} from "./instance"
+
+const $node = schema.node, $text = schema.text
+const em = schema.styles.em.create(), strong = schema.styles.strong.create()
 
 export function populateDefaultInstances() {
 
@@ -7,7 +10,7 @@ newInstance("Example", $node("doc", null, [
   $node("heading", {level: 2}, [$text("Example Document")]),
   $node("paragraph", null, [
     $text("There is nothing here yet. "),
-    $text("Add something!", [style.em])
+    $text("Add something!", [em])
   ])
 ]))
 
@@ -16,7 +19,7 @@ newInstance("Business Plan", $node("doc", null, [
   $node("ordered_list", null, [
     $node("list_item", null, [$node("paragraph", null, [$text("Give away software")])]),
     $node("list_item", null, [$node("paragraph", null, [$text("???")])]),
-    $node("list_item", null, [$node("paragraph", null, [$text("Profit!!!", [style.strong])])])
+    $node("list_item", null, [$node("paragraph", null, [$text("Profit!!!", [strong])])])
   ])
 ]))
 
@@ -43,7 +46,7 @@ newInstance("Nonsense", $node("doc", null, [
     ]),
     $node("paragraph", null, [
       $text("— Bob Dylan, "),
-      $text("Stuck Inside of Mobile with the Memphis Blues Again", [style.em])
+      $text("Stuck Inside of Mobile with the Memphis Blues Again", [em])
     ])
   ])
 ]))
@@ -53,7 +56,7 @@ newInstance("Comment Section", $node("doc", null, [
   $node("paragraph", null, [
     $text("The good thing about this comment section is that everybody can delete comments.")
   ]),
-  $node("heading", {level: 4}, [$text("From user21841. "), $text("20 seconds ago", [style.em])]),
+  $node("heading", {level: 4}, [$text("From user21841. "), $text("20 seconds ago", [em])]),
   $node("paragraph", null, [
     $text("If you look at it rationally you'll see that open-source software is communism and communism is bad because the free market is our God and savior. Also sheep caused 9/11.")
   ])

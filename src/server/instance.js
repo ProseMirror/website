@@ -1,4 +1,4 @@
-import {$node, $text, $fromJSON} from "prosemirror/dist/model"
+import {defaultSchema as schema} from "prosemirror/dist/model"
 
 import {Comments, Comment} from "./comments"
 import {populateDefaultInstances} from "./defaultinstances"
@@ -11,8 +11,8 @@ const MAX_STEP_HISTORY = 10000
 class Instance {
   constructor(id, doc, comments) {
     this.id = id
-    this.doc = doc || $node("doc", null, [$node("paragraph", null, [
-      $text("This is a collaborative test document. Start editing to make it more interesting!")
+    this.doc = doc || schema.node("doc", null, [schema.node("paragraph", null, [
+      schema.text("This is a collaborative test document. Start editing to make it more interesting!")
     ])])
     this.comments = comments || new Comments
     this.version = 0
@@ -117,7 +117,7 @@ if (process.argv.indexOf("--fresh") == -1) {
 
 if (json) {
   for (let prop in json)
-    newInstance(prop, $fromJSON(json[prop].doc),
+    newInstance(prop, schema.nodeFromJSON(json[prop].doc),
                 new Comments(json[prop].comments.map(c => Comment.fromJSON(c))))
 } else {
   populateDefaultInstances()
