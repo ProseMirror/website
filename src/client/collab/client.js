@@ -1,6 +1,6 @@
 import {defaultSchema as schema} from "prosemirror/dist/model"
 import {Step} from "prosemirror/dist/transform"
-import {fromDOM} from "prosemirror/dist/convert/from_dom"
+import {fromDOM} from "prosemirror/dist/parse/dom"
 import {elt} from "prosemirror/dist/dom"
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
