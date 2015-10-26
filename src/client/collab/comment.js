@@ -1,9 +1,8 @@
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
-import {eventMixin} from "prosemirror/dist/edit"
+import {eventMixin, defineCommand} from "prosemirror/dist/edit"
 import {Debounced} from "prosemirror/dist/util/debounce"
 
-import {registerItem, IconItem, DialogItem} from "prosemirror/dist/menu/items"
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
 class Comment {
@@ -115,34 +114,17 @@ function randomID() {
 
 // Inline menu item
 
-class CommentItem extends IconItem {
-  constructor() { super("comment", "Add annotation") }
-  select(pm) { return pm.mod.comments }
-  apply() { return [new CommentDialog] }
-}
-registerItem("inline", new CommentItem)
-
-class CommentDialog extends DialogItem {
-  form() {
-    let te = elt("textarea", {name: "text",
-                              placeholder: "Annotation text",
-                              style: "font: inherit; width: 14em"})
-    te.addEventListener("keydown", e => {
-      if (e.keyCode == 13 && (e.ctrlKey || e.metaKey || e.shiftKey)) {
-        e.preventDefault()
-        let val = te.value, selStart = te.selectionStart
-        te.value = val.slice(0, selStart) + "\n" + val.slice(te.selectionEnd)
-        te.selectionStart = selStart + 1
-      }
-    })
-    return elt("form", null, elt("div", null, te))
-  }
-
-  apply(form, pm) {
-    let input = form.elements.text, val = input.value
-    if (val) pm.mod.comments.createComment(val)
-  }
-}
+defineCommand("annotate", {
+  label: "Add annotation",
+  select(pm) { return pm.mod.comments },
+  run(pm, text) {
+    pm.mod.comments.createComment(text)
+  },
+  params: [
+    {name: "Annotation text", type: "text"}
+  ],
+  info: {menuGroup: "inline", menuRank: 99}
+})
 
 // Comment UI
 
