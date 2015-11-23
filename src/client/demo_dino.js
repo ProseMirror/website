@@ -30,7 +30,7 @@ Dino.prototype.serializeDOM = node => elt("img", {
 Dino.attachCommand("insertDino", type => ({
   label: "Insert dino",
   exec(pm) {
-    
+
   }
 }))
 
@@ -48,7 +48,8 @@ Dino.attachCommand("selectDino", nodeType => ({
     {name: "Dino type", type: "select", options: dinoOptions, default: dinoOptions[0]}
   ],
   display: "select",
-  info: {menuGroup: "inline", menuRank: 99}
+  menuGroup: "inline",
+  menuRank: 99
 }))
 
 const dinoSchema = new Schema(defaultSchema.spec.updateNodes({dino: Dino}))
