@@ -1,5 +1,5 @@
 import {elt} from "prosemirror/dist/dom"
-import insertCSS from "prosemirror/node_modules/insert-css"
+import {insertCSS} from "prosemirror/dist/dom"
 
 export class Reporter {
   constructor() {

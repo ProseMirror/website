@@ -36,7 +36,7 @@ pm.on("transform", transform => {
   setDisabled()
 })
 
-pm.apply(pm.tr.insertText(pm.selection.head, "Type something, and then commit it."))
+pm.tr.typeText("Type something, and then commit it.").apply()
 uncommitted.hidden = true
 doCommit("Initial content")
 
@@ -147,7 +147,7 @@ function revertCommit(commit) {
   }
   commit.hidden = true
   if (tr.steps.length) {
-    pm.apply(tr)
+    tr.apply()
     uncommitted.hidden = true
     doCommit("Revert “" + commit.message + "”")
   } else {

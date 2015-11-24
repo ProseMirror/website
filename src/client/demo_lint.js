@@ -1,5 +1,5 @@
 import {ProseMirror} from "prosemirror/dist/edit"
-import {Pos, getSpan} from "prosemirror/dist/model"
+import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -14,11 +14,12 @@ let delay = null
 
 pm.on("change", () => {
   clearTimeout(delay)
-  delay = setTimeout(runLint, 1000)
+  delay = setTimeout(runLint, 500)
 })
 
 let output = document.querySelector("#lint_output")
 function runLint() {
+  if (showingProb) clearProb(showingProb)
   delay = null
   output.textContent = ""
   lint(pm.doc).forEach(prob => {
@@ -113,24 +114,25 @@ function lint(doc) {
 
 function fixPunc(match) {
   return (pm, prob) => {
-    pm.apply(pm.tr.delete(prob.from, prob.to)
-                  .insertInline(prob.from, pm.schema.text(match[1] + " ")))
+    pm.tr.delete(prob.from, prob.to)
+         .insertInline(prob.from, pm.schema.text(match[1] + " "))
+         .apply()
   }
 }
 
 function fixHeader(level) {
-  return (pm, prob) => pm.apply(pm.tr.setBlockType(prob.from, prob.to, pm.schema.node("heading", {level})))
+  return (pm, prob) => pm.tr.setBlockType(prob.from, prob.to, pm.schema.node("heading", {level})).apply()
 }
 
 function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
   if (!alt) return
-  let img = getSpan(pm.doc, prob.to)
-  pm.apply(pm.tr.delete(prob.from, prob.to).insertInline(prob.from, pm.schema.node("image", {
+  let img = pm.doc.path(prob.from.path).childAfter(prob.from.offset).node
+  pm.tr.delete(prob.from, prob.to).insertInline(prob.from, img.type.create({
     src: img.attrs.src,
     alt: alt,
     title: img.attrs.title
-  })))
+  })).apply()
 }
 
 runLint()

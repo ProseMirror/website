@@ -17,7 +17,7 @@ Dino.register("parseDOM", {
   parse: (dom, context, nodeType) => {
     let type = dom.getAttribute("dino-type")
     if (!type) return false
-    context.insert(nodeType.create({type}))
+    context.insertFrom(dom, nodeType, {type})
   }
 })
 Dino.prototype.serializeDOM = node => elt("img", {
@@ -27,13 +27,6 @@ Dino.prototype.serializeDOM = node => elt("img", {
   title: node.attrs.type
 })
 
-Dino.attachCommand("insertDino", type => ({
-  label: "Insert dino",
-  exec(pm) {
-
-  }
-}))
-
 const dinoOptions = dinos.map(name => ({
   value: name,
   display: () => elt("img", {src: "dino/" + name + ".png", class: "dinoicon", title: "Insert " + name})
@@ -42,7 +35,7 @@ const dinoOptions = dinos.map(name => ({
 Dino.attachCommand("selectDino", nodeType => ({
   label: "Insert dino",
   run(pm, type) {
-    return pm.apply(pm.tr.insertInline(pm.selection.head, nodeType.create({type})))
+    return pm.tr.insertInline(pm.selection.head, nodeType.create({type})).apply()
   },
   params: [
     {name: "Dino type", type: "select", options: dinoOptions, default: dinoOptions[0]}
@@ -64,7 +57,7 @@ let pm = window.dinoPM = new ProseMirror({
 })
 addInputRules(pm, dinos.map(name => new Rule("]", new RegExp("\\[" + name + "\\]"), (pm, _, pos) => {
   let start = pos.move(-(name.length + 2))
-  pm.apply(pm.tr.delete(start, pos).insertInline(start, dinoSchema.node("dino", {type: name})))
+  pm.tr.delete(start, pos).insertInline(start, dinoSchema.node("dino", {type: name})).apply()
 })))
 
 let tooltip = new Tooltip(pm, "below"), open
@@ -83,7 +76,7 @@ pm.on("textInput", text => {
 
 function showCompletions(dinos, from, to) {
   function applyCompletion(name) {
-    pm.apply(pm.tr.delete(from, to).insertInline(from, dinoSchema.node("dino", {type: name})))
+    pm.tr.delete(from, to).insertInline(from, dinoSchema.node("dino", {type: name})).apply()
     tooltip.close()
   }
   let items = dinos.map(name => {

@@ -1,6 +1,6 @@
 import {Remapping} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
-import insertCSS from "prosemirror/node_modules/insert-css"
+import {insertCSS} from "prosemirror/dist/dom"
 
 function buildColor(hue, sat, light) {
   function hex(off) {
