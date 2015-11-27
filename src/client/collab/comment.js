@@ -1,7 +1,7 @@
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {eventMixin, defineCommand} from "prosemirror/dist/edit"
-import {Debounced} from "prosemirror/dist/util/debounce"
+import {MenuUpdate} from "prosemirror/dist/menu/update"
 
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
@@ -116,14 +116,18 @@ function randomID() {
 
 defineCommand("annotate", {
   label: "Add annotation",
-  select(pm) { return pm.mod.comments },
+  select(pm) { return pm.mod.comments && !pm.selection.empty },
   run(pm, text) {
     pm.mod.comments.createComment(text)
   },
   params: [
     {name: "Annotation text", type: "text"}
   ],
-  info: {menuGroup: "inline", menuRank: 99}
+  menuGroup: "inline", menuRank: 99,
+  icon: {
+    width: 1024, height: 1024,
+    path: "M512 219q-116 0-218 39t-161 107-59 145q0 64 40 122t115 100l49 28-15 54q-13 52-40 98 86-36 157-97l24-21 32 3q39 4 74 4 116 0 218-39t161-107 59-145-59-145-161-107-218-39zM1024 512q0 99-68 183t-186 133-257 48q-40 0-82-4-113 100-262 138-28 8-65 12h-2q-8 0-15-6t-9-15v-0q-1-2-0-6t1-5 2-5l3-5t4-4 4-5q4-4 17-19t19-21 17-22 18-29 15-33 14-43q-89-50-141-125t-51-160q0-99 68-183t186-133 257-48 257 48 186 133 68 183z"
+  }
 })
 
 // Comment UI
@@ -132,29 +136,27 @@ export class CommentUI {
   constructor(pm) {
     this.pm = pm
     pm.mod.commentUI = this
-    this.debounced = new Debounced(pm, 100, () => this.update())
-    pm.on("selectionChange", this.updateFunc = () => this.debounced.trigger())
-    pm.on("change", this.updateFunc)
-    pm.on("blur", this.updateFunc)
-    pm.on("focus", this.updateFunc)
+    this.update = new MenuUpdate(pm, "selectionChange change blur focus", () => this.prepareUpdate())
     this.tooltip = new Tooltip(pm, "below")
-    this.tooltip.reset = this.updateFunc
     this.highlighting = null
     this.displaying = null
   }
 
-  update() {
+  prepareUpdate() {
     let sel = this.pm.selection, comments
     if (!this.pm.mod.comments || !sel.empty || !this.pm.hasFocus() ||
         (comments = this.pm.mod.comments.findCommentsAt(sel.head)).length == 0) {
-      this.tooltip.close()
-      this.clearHighlight()
-      this.displaying = null
+      return () => {
+        this.tooltip.close()
+        this.clearHighlight()
+        this.displaying = null
+      }
     } else {
       let id = comments.map(c => c.id).join(" ")
       if (id != this.displaying) {
         this.displaying = id
-        this.tooltip.open(this.renderComments(comments), bottomCenterOfSelection())
+        let coords = bottomCenterOfSelection()
+        return () => this.tooltip.open(this.renderComments(comments), coords)
       }
     }
   }

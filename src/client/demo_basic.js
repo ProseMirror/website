@@ -1,7 +1,6 @@
 import {ProseMirror} from "prosemirror/dist/edit"
 import "prosemirror/dist/inputrules/autoinput"
-import "prosemirror/dist/menu/inlinemenu"
-import "prosemirror/dist/menu/buttonmenu"
+import "prosemirror/dist/menu/tooltipmenu"
 import "prosemirror/dist/menu/menubar"
 
 let place = document.querySelector("#editor");
@@ -18,12 +17,10 @@ setMenuStyle(place.getAttribute("menustyle") || "bar")
 function setMenuStyle(type) {
   if (type == "bar") {
     pm.setOption("menuBar", {float: true})
-    pm.setOption("inlineMenu", false)
-    pm.setOption("buttonMenu", false)
+    pm.setOption("tooltipMenu", false)
   } else {
     pm.setOption("menuBar", false)
-    pm.setOption("inlineMenu", true)
-    pm.setOption("buttonMenu", {followCursor: true})
+    pm.setOption("tooltipMenu", {emptyBlockMenu: true})
   }
 }
 

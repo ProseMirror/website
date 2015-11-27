@@ -2,8 +2,7 @@ import {ProseMirror} from "prosemirror/dist/edit"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/parse/markdown"
 import "prosemirror/dist/serialize/markdown"
-import "prosemirror/dist/menu/inlinemenu"
-import "prosemirror/dist/menu/buttonmenu"
+import "prosemirror/dist/menu/tooltipmenu"
 
 let place = document.querySelector("#editor")
 
@@ -19,8 +18,7 @@ function toProseMirror(content) {
     place: place,
     doc: content,
     docFormat: "markdown",
-    inlineMenu: true,
-    buttonMenu: true
+    tooltipMenu: true
   })
   pm.focus()
   getContent = () => pm.getContent("markdown")
