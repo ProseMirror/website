@@ -50,6 +50,7 @@ insertCSS(`
   border-style: solid;
   padding: 3px 27px 5px 12px;
   white-space: pre;
+  z-index: 1000;
 }
 
 .ProseMirror-report-fail {
