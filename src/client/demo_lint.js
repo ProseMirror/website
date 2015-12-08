@@ -69,7 +69,7 @@ let badWords = /obviously|clearly|evidently|actually/ig
 let badPunc = / ([,\.!?:]) ?/g
 
 function lint(doc) {
-  let result = [], lastHead = null, path = [], offset
+  let result = [], lastHead = null, path = []
 
   function record(msg, from, to, fix) {
     from = new Pos(path.slice(), from)
@@ -77,7 +77,10 @@ function lint(doc) {
     result.push({msg, from, to, fix})
   }
 
-  function scan(node) {
+  function scan(node, offset) {
+    let updatePath = node.isBlock && offset != null
+    if (updatePath) path.push(offset)
+
     if (node.isText) {
       let m
       while (m = badWords.exec(node.text))
@@ -92,20 +95,10 @@ function lint(doc) {
       if (!node.attrs.alt) record("Image without alt text", offset, offset + 1, addAlt)
     }
 
-    if (node.isTextblock) {
-      if (!node.length) record("Empty block", 0)
-      offset = 0
-      for (let i = 0; i < node.length; i++) {
-        scan(node.child(i))
-        offset += node.child(i).offset
-      }
-    } else {
-      for (let i = 0; i < node.length; i++) {
-        path.push(i)
-        scan(node.child(i))
-        path.pop()
-      }
-    }
+    if (node.isTextblock && !node.size) record("Empty block", 0)
+
+    node.forEach(scan)
+    if (updatePath) path.pop()
   }
 
   scan(doc)
@@ -121,13 +114,13 @@ function fixPunc(match) {
 }
 
 function fixHeader(level) {
-  return (pm, prob) => pm.tr.setBlockType(prob.from, prob.to, pm.schema.node("heading", {level})).apply()
+  return (pm, prob) => pm.tr.setBlockType(prob.from, prob.to, pm.schema.nodeType("heading"), {level}).apply()
 }
 
 function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
   if (!alt) return
-  let img = pm.doc.path(prob.from.path).childAfter(prob.from.offset).node
+  let img = pm.doc.nodeAfter(prob.from)
   pm.tr.delete(prob.from, prob.to).insertInline(prob.from, img.type.create({
     src: img.attrs.src,
     alt: alt,

@@ -1,8 +1,8 @@
-import {defaultSchema as schema, style} from "prosemirror/dist/model"
+import {defaultSchema as schema} from "prosemirror/dist/model"
 import {newInstance} from "./instance"
 
 const $node = schema.node, $text = schema.text
-const em = schema.styles.em.create(), strong = schema.styles.strong.create()
+const em = schema.marks.em.create(), strong = schema.marks.strong.create()
 
 export function populateDefaultInstances() {
 

@@ -65,8 +65,11 @@ pm.content.addEventListener("keydown", () => { tooltip.close(); open = null })
 pm.content.addEventListener("mousedown", () => { tooltip.close(); open = null })
 pm.on("textInput", text => {
   if (!/[\[\w]/.test(text)) return
-  let pos = pm.selection.head
-  let line = pm.doc.path(pos.path).textContent
+  let pos = pm.selection.head, line = ""
+  for (let i = pm.doc.path(pos.path).iter(0, pos.offset), child; child = i.next().value;) {
+    if (child.isText) line += child.text
+    else line = ""
+  }
   let bracket = line.lastIndexOf("[", pos.offset)
   if (bracket == -1) return
   let word = line.slice(bracket + 1, pos.offset)

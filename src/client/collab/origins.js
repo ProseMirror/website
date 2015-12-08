@@ -35,7 +35,7 @@ function getClass(origin) {
 export function showOrigins(pm, steps, maps) {
   let collab = pm.mod.collab
   steps.forEach((step, i) => {
-    if (step.origin && step.name == "replace" && step.param && step.param.nodes.length) {
+    if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
       let remap = new Remapping([], maps.slice(i).concat(collab.unconfirmedMaps))
       let start = remap.map(Pos.fromJSON(step.from), -1).pos
       let end = remap.map(Pos.fromJSON(step.to, 1)).pos
