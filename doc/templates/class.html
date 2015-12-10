@@ -1,0 +1,54 @@
+<?do var item = $arg.item;?>
+
+<h3 id="<?t $arg.name?>"><?t $arg.name?></h3>
+
+<?if item.description?><p><?h render(item.description)?></p><?/if?>
+
+<?if item.constructor?>
+  <h4 id="<?t $arg.name?>_constructor">Constructor</h4>
+
+  <dl>
+    <?define {name: $arg.name, item: item.constructor, id: $arg.name + ".constructor"}?>
+  </dl>
+
+<?/if?>
+
+<?if item.instanceProperties?>
+  <?do
+    var methods = {}, props = {}
+    for (var prop in item.instanceProperties) {
+      var ip = item.instanceProperties[prop]
+      if (ip.type == "Function") methods[prop] = ip
+      else props[prop] = ip
+    }
+
+    var context = $arg.context ? $arg.context + "." + $arg.name : $arg.name
+  ?>
+
+  <?if !isEmpty(props)?>
+    <h4 id="<?t $arg.name?>_properties">Properties</h4>
+    <dl>
+      <?for name, prop in props?>
+        <?define {name: name, item: prop, context: context, id: $arg.name + "." + name}?>
+      <?/for?>
+    </dl>
+  <?/if?>
+
+  <?if !isEmpty(methods)?>
+    <h4 id="<?t $arg.name?>_methods">Methods</h4>
+    <dl>
+      <?for name, prop in methods?>
+        <?define {name: name, item: prop, context: context, id: $arg.name + "." + name}?>
+      <?/for?>
+    </dl>
+  <?/if?>
+<?/if?>
+
+<?if item.properties?>
+  <h4 id="<?t $arg.name?>_static">Static properties</h4>
+  <dl>
+    <?for name, prop in item.properties?>
+      <?define {name: name, item: prop, context: context, id: $arg.name + "." + name}?>
+    <?/for?>
+  </dl>
+<?/if?>

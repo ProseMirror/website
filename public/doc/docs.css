@@ -7,9 +7,14 @@ body, html {
 
 body {
   font-family: Lato;
+  line-height: 1.4;
 }
 
-h1, h2, h3, h4, h5, a, a:visited { color: #08b; }
+.fronttitle h1, h2, h3, h4, h5, a, a:visited { color: #08b; }
+
+h1 { font-size: 32px; }
+h2 { font-size: 24px; }
+h3 { font-size: 20px; }
 
 .fronttitle {
   color: #08b;
@@ -126,10 +131,6 @@ article {
   position: relative;
 }
 
-h3 {
-  font-size: 18px;
-}
-
 .subtle { color: #777 }
 
 a[name]:after {
@@ -144,3 +145,8 @@ dt {
   font-family: monospace;
 }
 
+.kind {
+  font-size: 50%;
+  color: #5ad;
+  display: block;
+}

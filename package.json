@@ -16,7 +16,11 @@
     "babel": "^5.4.7",
     "babelify": "^6.0.2",
     "browserify": "^11.0.1",
-    "watchify": "^3.2.0"
+    "watchify": "^3.2.0",
+    "getdocs": "0.0.1",
+    "glob": "^6.0.1",
+    "markdown-it": "^4.4.0",
+    "mold-template": "^1.0.0"
   },
   "scripts": {
     "start": "node src/server/start.js"

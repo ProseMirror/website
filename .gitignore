@@ -1,5 +1,5 @@
 /node_modules
 /public/*_bundle.js
-/public/doc/manual.html
+/public/doc/*.html
 .tern-port
 /demo-instances.json
