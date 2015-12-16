@@ -8,8 +8,8 @@ all: public/doc/manual.html \
 
 BUILD:=browserify
 
-public/doc/manual.html: node_modules/prosemirror/doc/manual.md template/manual.template
-	pandoc node_modules/prosemirror/doc/manual.md -f markdown-auto_identifiers -s --template=template/manual.template > $@
+public/doc/manual.html: node_modules/prosemirror/src/*/*.js src/templates/* src/doc/build-manual.js
+	node src/doc/build-manual.js > $@
 
 public/demo_collab_bundle.js: src/client/collab/*.js node_modules/prosemirror/dist/**/*.js
 	node_modules/.bin/$(BUILD) --outfile $@ -t babelify src/client/collab/client.js

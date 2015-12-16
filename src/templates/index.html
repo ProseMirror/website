@@ -1,7 +1,7 @@
 <!doctype html>
 
 <meta charset="utf-8">
-<title>ProseMirror: <?t title?></title>
+<title>ProseMirror: Reference Guid</title>
 <link rel=stylesheet href=docs.css>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -30,48 +30,17 @@
   <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
 </div>
 
-<?do
-  var classes = {}, functions = {}, vars = {}
-  for (var prop in $arg) {
-    var item = $arg[prop]
-    if (item.kind == "class") classes[prop] = item
-    else if (item.type == "Function") functions[prop] = item
-    else vars[prop] = item
-  }
-?>
-
 <article>
 
-  <h1><span class=kind>module</span> <?t title?></h1>
+  <<markdown intro>>
 
-  <?if intro?>
-    <p><?h render(intro)?></p>
-  <?/if?>
+  <h2>Contents</h2>
 
-  <?if !isEmpty(classes)?>
-    <h2 id=classes>Classes</h2>
-    <?for name, item in classes?>
-      <?class {name: name, item: item}?>
-    <?/for?>
-  <?/if?>
+  <<toc>>
 
-  <?if !isEmpty(functions)?>
-    <h2 id=functions>Functions</h2>
-    <dl>
-      <?for name, item in functions?>
-        <?define {name: name, item: item}?>
-      <?/for?>
-    </dl>
-  <?/if?>
-
-  <?if !isEmpty(vars)?>
-    <h2 id=variables>Variables</h2>
-    <dl>
-      <?for name, item in vars?>
-        <?define {name: name, item: item}?>
-      <?/for?>
-    </dl>
-  <?/if?>
+  <<for name, mod in modules>>
+    <<module {name: name, mod: mod}>>
+  <</for>>
 
 </article>
 

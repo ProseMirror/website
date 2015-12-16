@@ -1,7 +1,7 @@
 {
   "name": "prosemirror-website",
   "version": "0.0.1",
-  "description": "Demo of ProseMirror's collaborative editing",
+  "description": "ProseMirror's website, documentation system, and demos",
   "maintainers": [
     {
       "name": "Marijn Haverbeke",
@@ -16,13 +16,19 @@
     "babel": "^5.4.7",
     "babelify": "^6.0.2",
     "browserify": "^11.0.1",
-    "watchify": "^3.2.0",
-    "getdocs": "0.0.1",
+    "getdocs": "^0.1.0",
     "glob": "^6.0.1",
-    "markdown-it": "^4.4.0",
-    "mold-template": "^1.0.0"
+    "markdown-it": "^5.0.2",
+    "markdown-it-deflist": "^2.0.0",
+    "mold-template": "^2.0.0",
+    "watchify": "^3.2.0"
   },
   "scripts": {
     "start": "node src/server/start.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/prosemirror/website.git"
   }
 }

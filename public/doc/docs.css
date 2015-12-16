@@ -12,9 +12,9 @@ body {
 
 .fronttitle h1, h2, h3, h4, h5, a, a:visited { color: #08b; }
 
-h1 { font-size: 32px; }
-h2 { font-size: 24px; }
-h3 { font-size: 20px; }
+h2 { font-size: 30px; }
+h3 { font-size: 22px; }
+h4 { font-size: 18px; }
 
 .fronttitle {
   color: #08b;
@@ -143,10 +143,16 @@ dd { margin-left: 20px }
 dt {
   margin-top: 1em;
   font-family: monospace;
+  padding-left: 20px;
+  text-indent: -20px;
 }
 
 .kind {
-  font-size: 50%;
-  color: #5ad;
-  display: block;
+  font-weight: normal;
+  font-size: 85%;
+}
+
+code a, h2 a, h3 a, code a:visited, h2 a:visited, h3 a:visited {
+  color: inherit;
+  text-decoration: none;
 }

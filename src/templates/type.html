@@ -1,0 +1,12 @@
+<<if $in.optional>>?<</if>>
+<<if $in.type == "Function">>
+  fn<<fntype $in>>
+<<elif $in.type == "Array">>
+  [<<for elt $in.content || []>><<if $i>>, <</if>><<type elt>><</for>>]
+<<elif $in.properties>>
+  {<<for name, prop in $in.properties>><<if $i>>, <</if>><<t name>>: <<type prop>><</for>>}
+<<else>>
+  <<do var found = findLink($in)>>
+  <<if found>><a href="<<t found>>"><<t $in.type>></a><<else>><<t $in.type>><</if>>
+  <<if $in.content>>&lt;<<for elt $in.content>><<if $i>>, <</if>><<type elt>><</for>>&gt;<</if>>
+<</if>>

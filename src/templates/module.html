@@ -1,0 +1,52 @@
+<<in {name, mod}>>
+
+<h2 id="<<t name>>"><a href="#<<t name>>"><span class=kind>module</span> <<t name>></a></h2>
+
+<<if mod.text>><<markdown mod.text>><</if>>
+
+<<if mod.options>>
+  <h3 id="<<t name>>_options">Options</h3>
+  <dl>
+    <<for name, item in mod.options>>
+      <<define {name: name, item: item}>>
+    <</for>>
+  </dl>
+<</if>>
+
+<<if mod.classes>>
+  <<if mod.options>><h3>Classes</h3><</if>>
+  <<for name, item in mod.classes>>
+    <<if item.kind == "interface">>
+      <<interface {name: name, item: item}>>
+    <<else>>
+      <<class {name: name, item: item}>>
+    <</if>>
+  <</for>>
+<</if>>
+
+<<if mod.commands>>
+  <h3 id="<<t name>>_commands">Commands</h3>
+  <dl>
+    <<for name, item in mod.commands>>
+      <<define {name: name, item: item}>>
+    <</for>>
+  </dl>
+<</if>>
+
+<<if mod.functions>>
+  <h3 id="<<t name>>_functions">Functions</h3>
+  <dl>
+    <<for name, item in mod.functions>>
+      <<define {name: name, item: item}>>
+    <</for>>
+  </dl>
+<</if>>
+
+<<if mod.vars>>
+  <h3 id="<<t name>>_consts">Constants</h3>
+  <dl>
+    <<for name, item in mod.vars>>
+      <<define {name: name, item: item}>>
+    <</for>>
+  </dl>
+<</if>>

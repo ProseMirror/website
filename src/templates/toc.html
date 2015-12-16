@@ -1,0 +1,26 @@
+<ul>
+  <<for name, mod in modules>>
+    <li><a href="#<<t name>>"><<t name>></a>
+      <ul>
+        <<do var empty = true>>
+        <<if mod.options>>
+          <<do empty = false>>
+          <li><a href="#<<t name>>_options">options</a></li>
+        <</if>>
+        <<for cname, cls in mod.classes>>
+          <<do tag = cls.tags && cls.tags.toc>>
+          <<if tag != "false">>
+            <<do empty = false>>
+            <li><a href="#<<t cname>>"><<t tag || cname>></a></li>
+          <</if>>
+        <</for>>
+        <<if mod.functions && !empty>>
+          <li><a href="#<<t name>>_functions">functions</a></li>
+        <</if>>
+        <<if mod.vars && !empty>>
+          <li><a href="#<<t name>>_consts">constants</a></li>
+        <</if>>
+      </ul>
+    </li>
+  <</for>>
+</ul>
