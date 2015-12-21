@@ -53,6 +53,7 @@ var externalTypes = {
   DOMFragment: "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
   DOMDocument: "https://developer.mozilla.org/en-US/docs/Web/API/Document",
   KeyboardEvent: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent",
+  MouseEvent: "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
   any: false,
   union: false,
   ProseMirrorError: false // FIXME
@@ -152,8 +153,10 @@ modules.forEach(function(module) {
     if (extraText) text = (text ? text + "\n\n" : "") + extraText
   })
   for (var prop in items) {
+    var item = items[prop]
+    if (item.$noAnchor) continue
     if (config.items[prop]) throw new Error("Duplicate definition of " + prop)
-    config.items[prop] = items[prop]
+    config.items[prop] = item
   }
   var org = organize(items)
   org.text = text

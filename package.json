@@ -16,7 +16,7 @@
     "babel": "^5.4.7",
     "babelify": "^6.0.2",
     "browserify": "^11.0.1",
-    "getdocs": "^0.1.0",
+    "getdocs": "^0.2.0",
     "glob": "^6.0.1",
     "markdown-it": "^5.0.2",
     "markdown-it-deflist": "^2.0.0",

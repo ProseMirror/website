@@ -8,10 +8,9 @@
           <li><a href="#<<t name>>_options">options</a></li>
         <</if>>
         <<for cname, cls in mod.classes>>
-          <<do tag = cls.tags && cls.tags.toc>>
-          <<if tag != "false">>
+          <<if cls.$toc != "false" && !cls.noAnchor>>
             <<do empty = false>>
-            <li><a href="#<<t cname>>"><<t tag || cname>></a></li>
+            <li><a href="#<<t cname>>"><<t cls.$toc || cname>></a></li>
           <</if>>
         <</for>>
         <<if mod.functions && !empty>>
