@@ -46,7 +46,7 @@ Dino.register("command", {
   menuRank: 99
 })
 
-const dinoSchema = new Schema(defaultSchema.spec.updateNodes({dino: Dino}))
+const dinoSchema = new Schema(defaultSchema.spec.update({dino: Dino}))
 
 let pm = window.dinoPM = new ProseMirror({
   place: document.querySelector("#editor"),

@@ -14,7 +14,6 @@
 <</if>>
 
 <<if mod.classes>>
-  <<if mod.options>><h3>Classes</h3><</if>>
   <<for name, item in mod.classes>>
     <<if item.kind == "interface">>
       <<interface {name: name, item: item}>>
