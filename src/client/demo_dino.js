@@ -14,10 +14,10 @@ Dino.attributes = {type: new Attribute("brontosaurus")}
 Dino.register("parseDOM", {
   tag: "img",
   rank: 25,
-  parse: (dom, context, nodeType) => {
+  parse: function(dom, context) {
     let type = dom.getAttribute("dino-type")
     if (!type) return false
-    context.insertFrom(dom, nodeType, {type})
+    context.insertFrom(dom, this, {type})
   }
 })
 Dino.prototype.serializeDOM = node => elt("img", {
@@ -32,10 +32,11 @@ const dinoOptions = dinos.map(name => ({
   display: () => elt("img", {src: "dino/" + name + ".png", class: "dinoicon", title: "Insert " + name})
 }))
 
-Dino.attachCommand("selectDino", nodeType => ({
+Dino.register("command", {
+  name: "selectDino",
   label: "Insert dino",
   run(pm, type) {
-    return pm.tr.insertInline(pm.selection.head, nodeType.create({type})).apply()
+    return pm.tr.replaceSelection(this.create({type}), true).apply()
   },
   params: [
     {name: "Dino type", type: "select", options: dinoOptions, default: dinoOptions[0]}
@@ -43,7 +44,7 @@ Dino.attachCommand("selectDino", nodeType => ({
   display: "select",
   menuGroup: "inline",
   menuRank: 99
-}))
+})
 
 const dinoSchema = new Schema(defaultSchema.spec.updateNodes({dino: Dino}))
 
@@ -57,7 +58,7 @@ let pm = window.dinoPM = new ProseMirror({
 })
 addInputRules(pm, dinos.map(name => new Rule("]", new RegExp("\\[" + name + "\\]"), (pm, _, pos) => {
   let start = pos.move(-(name.length + 2))
-  pm.tr.delete(start, pos).insertInline(start, dinoSchema.node("dino", {type: name})).apply()
+  pm.tr.delete(start, pos).insert(start, dinoSchema.node("dino", {type: name})).apply()
 })))
 
 let tooltip = new Tooltip(pm, "below"), open
@@ -79,7 +80,7 @@ pm.on("textInput", text => {
 
 function showCompletions(dinos, from, to) {
   function applyCompletion(name) {
-    pm.tr.delete(from, to).insertInline(from, dinoSchema.node("dino", {type: name})).apply()
+    pm.tr.delete(from, to).insert(from, dinoSchema.node("dino", {type: name})).apply()
     tooltip.close()
   }
   let items = dinos.map(name => {

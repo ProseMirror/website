@@ -39,7 +39,7 @@ function runLint() {
     })
     note.addEventListener("click", () => {
       if (delay == null) {
-        pm.setSelection(prob.from, prob.to)
+        pm.setTextSelection(prob.from, prob.to)
         pm.focus()
       }
     })
@@ -108,7 +108,7 @@ function lint(doc) {
 function fixPunc(match) {
   return (pm, prob) => {
     pm.tr.delete(prob.from, prob.to)
-         .insertInline(prob.from, pm.schema.text(match[1] + " "))
+         .insert(prob.from, pm.schema.text(match[1] + " "))
          .apply()
   }
 }
@@ -121,11 +121,13 @@ function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
   if (!alt) return
   let img = pm.doc.nodeAfter(prob.from)
-  pm.tr.delete(prob.from, prob.to).insertInline(prob.from, img.type.create({
-    src: img.attrs.src,
-    alt: alt,
-    title: img.attrs.title
-  })).apply()
+  pm.tr.delete(prob.from, prob.to)
+       .insert(prob.from, img.type.create({
+         src: img.attrs.src,
+         alt: alt,
+         title: img.attrs.title
+       }, null, img.marks))
+       .apply()
 }
 
 runLint()

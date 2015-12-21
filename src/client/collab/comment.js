@@ -1,6 +1,7 @@
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
-import {eventMixin, defineCommand} from "prosemirror/dist/edit"
+import {defineCommand} from "prosemirror/dist/edit"
+import {eventMixin} from "prosemirror/dist/util/event"
 import {MenuUpdate} from "prosemirror/dist/menu/update"
 
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
@@ -114,7 +115,8 @@ function randomID() {
 
 // Inline menu item
 
-defineCommand("annotate", {
+defineCommand({
+  name: "annotate",
   label: "Add annotation",
   select(pm) { return pm.mod.comments && !pm.selection.empty },
   run(pm, text) {

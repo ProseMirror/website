@@ -1,6 +1,6 @@
 import {ProseMirror, Range} from "prosemirror/dist/edit"
 import {Pos} from "prosemirror/dist/model"
-import {mapStep, Remapping, Transform} from "prosemirror/dist/transform"
+import {Remapping, Transform} from "prosemirror/dist/transform"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -65,7 +65,7 @@ function adjustBlameMap(steps, maps, commit) {
       if (!span.from.cmp(span.to)) blameMap.splice(j--, 1)
     }
     let step = steps[i], to
-    if (step.name == "replace" && (to = map.map(step.to, 1).pos) && step.from.cmp(to)) {
+    if (step.type == "replace" && (to = map.map(step.to, 1).pos) && step.from.cmp(to)) {
       let pos = 0, span = {from: step.from, to, commit}
       while (pos < blameMap.length && blameMap[pos].to.cmp(step.from) <= 0) ++pos
       let after = blameMap[pos]
@@ -140,7 +140,7 @@ function revertCommit(commit) {
   let remap = new Remapping([], commits.slice(found + 1).reduce((maps, c) => maps.concat(c.maps), []))
   let tr = pm.tr
   for (let i = commit.steps.length - 1; i >= 0; i--) {
-    let remapped = mapStep(commit.steps[i], remap)
+    let remapped = commit.steps[i].map(remap)
     let result = remapped && tr.step(remapped)
     let id = remap.addToFront(commit.maps[i])
     if (result) remap.addToBack(result.map, id)
