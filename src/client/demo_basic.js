@@ -20,7 +20,7 @@ function setMenuStyle(type) {
     pm.setOption("tooltipMenu", false)
   } else {
     pm.setOption("menuBar", false)
-    pm.setOption("tooltipMenu", {emptyBlockMenu: true})
+    pm.setOption("tooltipMenu", {selectedBlockMenu: true})
   }
 }
 
