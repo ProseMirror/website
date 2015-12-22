@@ -1,7 +1,7 @@
-import {ProseMirror, defineOption, Keymap, registerCommand} from "prosemirror/dist/edit"
+import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
 import {Inline, Attribute, Schema, defaultSchema} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
-import {addInputRules, Rule} from "prosemirror/dist/inputrules/inputrules"
+import {InputRule} from "prosemirror/dist/inputrules"
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 import "prosemirror/dist/menu/menubar"
 import "prosemirror/dist/inputrules/autoinput"
@@ -46,6 +46,11 @@ Dino.register("command", {
   menuRank: 99
 })
 
+Dino.register("autoInput", new InputRule("autoDino", new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
+  let start = pos.move(-match[0].length)
+  pm.tr.delete(start, pos).insertInline(start, this.create({type: match[1]})).apply()
+}))
+
 const dinoSchema = new Schema(defaultSchema.spec.update({dino: Dino}))
 
 let pm = window.dinoPM = new ProseMirror({
@@ -56,10 +61,6 @@ let pm = window.dinoPM = new ProseMirror({
   schema: dinoSchema,
   autoInput: true
 })
-addInputRules(pm, dinos.map(name => new Rule("]", new RegExp("\\[" + name + "\\]"), (pm, _, pos) => {
-  let start = pos.move(-(name.length + 2))
-  pm.tr.delete(start, pos).insert(start, dinoSchema.node("dino", {type: name})).apply()
-})))
 
 let tooltip = new Tooltip(pm, "below"), open
 pm.content.addEventListener("keydown", () => { tooltip.close(); open = null })
@@ -80,7 +81,7 @@ pm.on("textInput", text => {
 
 function showCompletions(dinos, from, to) {
   function applyCompletion(name) {
-    pm.tr.delete(from, to).insert(from, dinoSchema.node("dino", {type: name})).apply()
+    pm.tr.delete(from, to).insertInline(from, dinoSchema.node("dino", {type: name})).apply()
     tooltip.close()
   }
   let items = dinos.map(name => {
