@@ -36,6 +36,10 @@ var modules = [{
   files: "src/serialize/*.js",
   order: "index dom markdown text"
 }, {
+  name: "inputrules",
+  files: "src/inputrules/*.js",
+  order: "index inputrules autoinput"
+}, {
   name: "util/event",
   files: "src/util/event.js"
 }]
