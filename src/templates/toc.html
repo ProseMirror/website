@@ -13,6 +13,9 @@
             <li><a href="#<<t cname>>"><<t cls.$toc || cname>></a></li>
           <</if>>
         <</for>>
+        <<if mod.commands && !empty>>
+          <li><a href="#<<t name>>_commands">commands</a></li>
+        <</if>>
         <<if mod.functions && !empty>>
           <li><a href="#<<t name>>_functions">functions</a></li>
         <</if>>
