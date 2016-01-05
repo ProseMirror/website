@@ -4,7 +4,7 @@ import {defineCommand} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/util/event"
 import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
-import {Tooltip} from "prosemirror/dist/menu/tooltip"
+import {Tooltip} from "prosemirror/dist/ui/tooltip"
 
 class Comment {
   constructor(text, id, range) {
