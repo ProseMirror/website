@@ -8,8 +8,9 @@ import "prosemirror/dist/inputrules/autoinput"
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 
-class Dino extends Inline {}
-Dino.attributes = {type: new Attribute("brontosaurus")}
+class Dino extends Inline {
+  get attrs() { return {type: new Attribute("brontosaurus")} }
+}
 
 Dino.register("parseDOM", {
   tag: "img",

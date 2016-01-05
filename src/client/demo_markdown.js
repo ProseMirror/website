@@ -1,7 +1,6 @@
 import {ProseMirror} from "prosemirror/dist/edit"
 import {elt} from "prosemirror/dist/dom"
-import "prosemirror/dist/parse/markdown"
-import "prosemirror/dist/serialize/markdown"
+import "prosemirror/dist/markdown"
 import "prosemirror/dist/menu/tooltipmenu"
 
 let place = document.querySelector("#editor")
