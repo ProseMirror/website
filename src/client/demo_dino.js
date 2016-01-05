@@ -2,7 +2,7 @@ import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
 import {Inline, Attribute, Schema, defaultSchema} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {InputRule} from "prosemirror/dist/inputrules"
-import {Tooltip} from "prosemirror/dist/menu/tooltip"
+import {Tooltip} from "prosemirror/dist/ui/tooltip"
 import "prosemirror/dist/menu/menubar"
 import "prosemirror/dist/inputrules/autoinput"
 
@@ -15,10 +15,10 @@ class Dino extends Inline {
 Dino.register("parseDOM", {
   tag: "img",
   rank: 25,
-  parse: function(dom, context) {
+  parse: function(dom, state) {
     let type = dom.getAttribute("dino-type")
     if (!type) return false
-    context.insertFrom(dom, this, {type})
+    state.insert(this, {type})
   }
 })
 Dino.prototype.serializeDOM = node => elt("img", {
@@ -42,7 +42,9 @@ Dino.register("command", {
   params: [
     {name: "Dino type", type: "select", options: dinoOptions, default: dinoOptions[0]}
   ],
-  display: "select",
+  display: {
+    type: "param"
+  },
   menuGroup: "inline",
   menuRank: 99
 })
@@ -63,7 +65,7 @@ let pm = window.dinoPM = new ProseMirror({
   autoInput: true
 })
 
-let tooltip = new Tooltip(pm, "below"), open
+let tooltip = new Tooltip(pm.wrapper, "below"), open
 pm.content.addEventListener("keydown", () => { tooltip.close(); open = null })
 pm.content.addEventListener("mousedown", () => { tooltip.close(); open = null })
 pm.on("textInput", text => {
