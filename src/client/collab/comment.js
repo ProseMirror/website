@@ -2,7 +2,7 @@ import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {defineCommand} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/util/event"
-import {MenuUpdate} from "prosemirror/dist/menu/update"
+import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
@@ -138,7 +138,7 @@ export class CommentUI {
   constructor(pm) {
     this.pm = pm
     pm.mod.commentUI = this
-    this.update = new MenuUpdate(pm, "selectionChange change blur focus", () => this.prepareUpdate())
+    this.update = new UpdateScheduler(pm, "selectionChange change blur focus", () => this.prepareUpdate())
     this.tooltip = new Tooltip(pm, "below")
     this.highlighting = null
     this.displaying = null
