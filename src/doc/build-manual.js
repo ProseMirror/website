@@ -28,13 +28,13 @@ var modules = [{
   files: "src/transform/*.js",
   order: "index step map transform join split ancestor replace mark"
 }, {
-  name: "parse",
-  files: "src/parse/*.js",
-  order: "index dom markdown text"
+  name: "format",
+  files: "src/format/*.js",
+  order: "index register from_dom to_dom from_text to_text"
 }, {
-  name: "serialize",
-  files: "src/serialize/*.js",
-  order: "index dom markdown text"
+  name: "markdown",
+  files: "src/markdown/*.js",
+  order: "index from_markdown to_markdown"
 }, {
   name: "inputrules",
   files: "src/inputrules/*.js",
