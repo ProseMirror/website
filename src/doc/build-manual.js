@@ -40,6 +40,12 @@ var modules = [{
   files: "src/inputrules/*.js",
   order: "index inputrules autoinput"
 }, {
+  name: "menu/menubar",
+  files: "src/menu/menubar.js"
+}, {
+  name: "menu/tooltipmenu",
+  files: "src/menu/tooltipmenu.js"
+}, {
   name: "ui/tooltip",
   files: "src/ui/tooltip.js"
 }, {
