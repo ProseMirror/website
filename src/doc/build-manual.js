@@ -18,7 +18,7 @@ var config = {
 var modules = [{
   name: "edit",
   files: "src/edit/*.js",
-  order: "index main commands options selection keys range"
+  order: "index main commands options selection range"
 }, {
   name: "model",
   files: "src/model/*.js",
@@ -46,6 +46,9 @@ var modules = [{
   name: "menu/tooltipmenu",
   files: "src/menu/tooltipmenu.js"
 }, {
+  name: "menu/menu",
+  files: "src/menu/menu.js"
+}, {
   name: "ui/tooltip",
   files: "src/ui/tooltip.js"
 }, {
@@ -70,6 +73,7 @@ var externalTypes = {
   DOMDocument: "https://developer.mozilla.org/en-US/docs/Web/API/Document",
   KeyboardEvent: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent",
   MouseEvent: "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
+  Keymap: "https://github.com/marijnh/browserkeymap#an-object-type-for-keymaps",
   any: false,
   union: false,
   ProseMirrorError: false // FIXME
