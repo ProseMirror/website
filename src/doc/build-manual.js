@@ -57,6 +57,9 @@ var modules = [{
 }, {
   name: "util/event",
   files: "src/util/event.js"
+}, {
+  name: "util/error",
+  files: "src/util/error.js"
 }]
 
 var externalTypes = {
@@ -74,9 +77,9 @@ var externalTypes = {
   KeyboardEvent: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent",
   MouseEvent: "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
   Keymap: "https://github.com/marijnh/browserkeymap#an-object-type-for-keymaps",
+  Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
   any: false,
-  union: false,
-  ProseMirrorError: false // FIXME
+  union: false
 }
 
 function propID(clss, prop, static) {
