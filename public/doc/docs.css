@@ -163,14 +163,12 @@ code a, h2 a, h3 a, code a:visited, h2 a:visited, h3 a:visited {
 }
 
 a.code-link {
-  display: none;
-}
-
-*:hover > a.code-link {
-  display: inline;
-  color: #888;
-  font-size: 15px;
+  float: right;
+  color: #999;
+  font-size: 16px;
   font-weight: normal;
-  font-family: Lato;
+  font-family: monospace;
   line-height: .7;
+  text-decoration: none;
+  text-indent: 0;
 }
