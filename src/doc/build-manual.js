@@ -5,14 +5,17 @@ var Mold = require("mold-template")
 var glob = require("glob")
 var getdocs = require("getdocs")
 
+var sourceDir = __dirname + "/../../node_modules/prosemirror/"
+
 var config = {
-  sourceDir: __dirname + "/../../node_modules/prosemirror/",
+  sourceDir: sourceDir,
   intro: "",
   modules: Object.create(null),
   items: Object.create(null),
   findLink: findLink,
   propID: propID,
-  intro: fs.readFileSync(__dirname + "/intro.md", "utf8")
+  intro: fs.readFileSync(__dirname + "/intro.md", "utf8"),
+  revision: getRevision(sourceDir)
 }
 
 var modules = [{
@@ -116,7 +119,7 @@ function renderMarkdown(text) {
 }
 
 function filesFor(module) {
-  var files = module.files.split(" ").reduce(function(set, pat) { return set.concat(glob.sync(pat, {cwd: config.sourceDir})) }, [])
+  var files = module.files.split(" ").reduce(function(set, pat) { return set.concat(glob.sync(pat, {cwd: sourceDir})) }, [])
   if (module.order) for (var order = module.order.split(" "), i = order.length - 1; i >= 0; i--)  {
     for (var j = 0; j < files.length; j++) if (files[j].match(new RegExp("\\/" + order[i] + "\\.js$"))) {
       files.unshift(files.splice(j, 1)[0])
@@ -167,10 +170,21 @@ function organizeClass(type) {
   return type
 }
 
+function getRevision(dir) {
+  var file = dir + ".git/HEAD"
+  for (;;) {
+    var content = fs.readFileSync(file, "utf8"), ref
+    if (ref = /^ref: (.*)/.exec(content))
+      file = dir + ".git/" + ref[1]
+    else
+      return content
+  }
+}
+
 modules.forEach(function(module) {
   var items = Object.create(null), text = ""
   filesFor(module).forEach(function(filename) {
-    var file = fs.readFileSync(config.sourceDir + filename, "utf8")
+    var file = fs.readFileSync(sourceDir + filename, "utf8")
     getdocs.gather(file, filename, items)
     var extraText = getExtra(file)
     if (extraText) text = (text ? text + "\n\n" : "") + extraText

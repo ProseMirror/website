@@ -1,6 +1,9 @@
 <<in {name, item}>>
 
-<h3 <<if !item.$noAnchor>>id="<<t name>>"<</if>>><a href="#<<t name>>"><span class=kind><<t item.kind>></span> <<t name>></a></h3>
+<h3 <<if !item.$noAnchor>>id="<<t name>>"<</if>>><a href="#<<t name>>">
+  <span class=kind><<t item.kind>></span> <<t name>></a>
+  <<codelink item>>
+</h3>
 
 <<if item.extends>><p>Extends <code><<type item.extends>></code>.</p><</if>>
 

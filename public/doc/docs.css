@@ -8,6 +8,7 @@ body, html {
 body {
   font-family: Lato;
   line-height: 1.4;
+  font-size: 16px;
 }
 
 .fronttitle h1, h2, h3, h4, h5, a, a:visited { color: #08b; }
@@ -142,9 +143,13 @@ dl { margin: 0 }
 dd { margin-left: 20px }
 dt {
   margin-top: 1em;
-  font-family: monospace;
   padding-left: 20px;
   text-indent: -20px;
+}
+
+code, dt, pre {
+  font-family: monospace;
+  font-size: 14px;
 }
 
 .kind {
@@ -155,4 +160,17 @@ dt {
 code a, h2 a, h3 a, code a:visited, h2 a:visited, h3 a:visited {
   color: inherit;
   text-decoration: none;
+}
+
+a.code-link {
+  display: none;
+}
+
+*:hover > a.code-link {
+  display: inline;
+  color: #888;
+  font-size: 15px;
+  font-weight: normal;
+  font-family: Lato;
+  line-height: .7;
 }
