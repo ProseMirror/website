@@ -139,7 +139,7 @@ export class CommentUI {
     this.pm = pm
     pm.mod.commentUI = this
     this.update = new UpdateScheduler(pm, "selectionChange change blur focus", () => this.prepareUpdate())
-    this.tooltip = new Tooltip(pm, "below")
+    this.tooltip = new Tooltip(pm.wrapper, "below")
     this.highlighting = null
     this.displaying = null
   }
