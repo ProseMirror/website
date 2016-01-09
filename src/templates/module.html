@@ -23,15 +23,6 @@
   <</for>>
 <</if>>
 
-<<if mod.commands>>
-  <h3 id="<<t name>>_commands">Commands</h3>
-  <dl>
-    <<for name, item in mod.commands>>
-      <<define {name: name, item: item}>>
-    <</for>>
-  </dl>
-<</if>>
-
 <<if mod.functions>>
   <h3 id="<<t name>>_functions">Functions</h3>
   <dl>
@@ -45,6 +36,15 @@
   <h3 id="<<t name>>_consts">Constants</h3>
   <dl>
     <<for name, item in mod.vars>>
+      <<define {name: name, item: item}>>
+    <</for>>
+  </dl>
+<</if>>
+
+<<if mod.commands>>
+  <h3 id="<<t name>>_commands">Commands</h3>
+  <dl>
+    <<for name, item in mod.commands>>
       <<define {name: name, item: item}>>
     <</for>>
   </dl>

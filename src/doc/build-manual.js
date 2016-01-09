@@ -21,7 +21,7 @@ var config = {
 var modules = [{
   name: "edit",
   files: "src/edit/*.js",
-  order: "index main commands options selection range"
+  order: "index main options selection range command base_commands schema_commands"
 }, {
   name: "model",
   files: "src/model/*.js",

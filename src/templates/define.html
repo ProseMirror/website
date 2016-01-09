@@ -1,5 +1,10 @@
 <<in {item, id, name}>>
 
+<<do
+  var documentedProps = false
+  if (item.properties) for (var n in item.properties) if (item.properties[n].description) documentedProps = true
+>>
+
 <dt id="<<t id || name>>">
   <<if item.type == "Function">>
     <code><<if item.kind == "constructor">>new <</if>><strong><a href="#<<t id || name>>"><<t name>></a></strong><<fntype item>></code>
@@ -10,5 +15,16 @@
 </dt>
 
 <<if item.description>>
-  <dd><<markdown item.description>></dd>
+  <dd>
+    <<markdown item.description>>
+    <<if documentedProps>>
+      <dl>
+        <<for pname, prop in item.properties>>
+          <<if prop.description>>
+            <<define {item: prop, id: (id || name) + "." + pname, name: pname}>>
+          <</if>>
+        <</for>>
+      </dl>
+    <</if>>
+  </dd>
 <</if>>
