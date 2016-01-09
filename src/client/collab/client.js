@@ -2,14 +2,14 @@ import {defaultSchema as schema} from "prosemirror/dist/model"
 import {Step} from "prosemirror/dist/transform"
 import {fromDOM} from "prosemirror/dist/format"
 import {elt} from "prosemirror/dist/dom"
-import {ProseMirror} from "prosemirror/dist/edit"
+import {ProseMirror, CommandSet} from "prosemirror/dist/edit"
 import "prosemirror/dist/collab"
 import "prosemirror/dist/inputrules/autoinput"
 import "prosemirror/dist/menu/menubar"
 
 import {GET, POST} from "./http"
 import {Reporter} from "./reporter"
-import {CommentStore, CommentUI} from "./comment"
+import {CommentStore, CommentUI, commands} from "./comment"
 import {showOrigins} from "./origins"
 
 const report = new Reporter()
@@ -155,7 +155,8 @@ class ServerConnection {
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   autoInput: true,
-  menuBar: {float: true}
+  menuBar: {float: true},
+  commands: CommandSet.default.add(commands)
 })
 new ServerConnection(pm, report)
 
