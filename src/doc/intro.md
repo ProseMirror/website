@@ -1,3 +1,9 @@
+This is the reference manual for the
+[ProseMirror](http://prosemirror.net) rich text editor. It
+lists and describes the full public API exported by the library.
+
+FIXME write and link introduction guides
+
 ProseMirror is distributed as a set of JavaScript modules. This
 reference manual describes the exported API per module. So if you want
 to use something from the [`edit`](#edit) module, you have to import

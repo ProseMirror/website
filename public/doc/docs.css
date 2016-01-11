@@ -139,7 +139,7 @@ a[name]:after {
 }
 
 dd p { margin: 0 }
-dl { margin: 0 }
+dl { margin: 1em 0 }
 dd { margin-left: 20px }
 dt {
   margin-top: 1em;
