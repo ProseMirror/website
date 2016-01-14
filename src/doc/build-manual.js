@@ -4,7 +4,7 @@ var markdown = (new (require("markdown-it"))).use(require("markdown-it-deflist")
 var Mold = require("mold-template")
 var glob = require("glob")
 var getdocs = require("getdocs")
-
+var packageJSON = require('../../package.json')
 var sourceDir = __dirname + "/../../node_modules/prosemirror/"
 
 var config = {
@@ -15,7 +15,7 @@ var config = {
   findLink: findLink,
   propID: propID,
   intro: fs.readFileSync(__dirname + "/intro.md", "utf8"),
-  revision: getRevision(sourceDir)
+  revision: packageJSON.dependencies.prosemirror
 }
 
 var modules = [{
@@ -168,17 +168,6 @@ function organizeClass(type) {
   type.methods = notEmpty(methods)
   type.members = notEmpty(members)
   return type
-}
-
-function getRevision(dir) {
-  var file = dir + ".git/HEAD"
-  for (;;) {
-    var content = fs.readFileSync(file, "utf8"), ref
-    if (ref = /^ref: (.*)/.exec(content))
-      file = dir + ".git/" + ref[1]
-    else
-      return content
-  }
 }
 
 modules.forEach(function(module) {
