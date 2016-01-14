@@ -1,9 +1,7 @@
 var fs = require("fs")
-
-var markdown = (new (require("markdown-it"))).use(require("markdown-it-deflist"))
-var Mold = require("mold-template")
 var glob = require("glob")
 var getdocs = require("getdocs")
+var loadTemplates = require("./mold")
 
 var sourceDir = __dirname + "/../../node_modules/prosemirror/"
 
@@ -58,6 +56,10 @@ var modules = [{
   name: "ui/update",
   files: "src/ui/update.js"
 }, {
+  name: "collab",
+  files: "src/collab/*.js",
+  order: "index rebase"
+}, {
   name: "util/event",
   files: "src/util/event.js"
 }, {
@@ -109,13 +111,6 @@ function exists(path) {
   return item &&
     (path.length == 1 || (item.properties && item.properties[path[1]]) ||
      (item.instanceProperties && item.instanceProperties[path[1]]))
-}
-
-function renderMarkdown(text) {
-  if (!text) return ""
-  return markdown.render(text.replace(/`([\w\.$]+)`(?!\])/g, function(all, word) {
-    return exists(word) ? "[`" + word + "`](#" + word + ")" : all
-  }))
 }
 
 function filesFor(module) {
@@ -200,17 +195,14 @@ modules.forEach(function(module) {
   config.modules[module.name] = org
 })
 
-function loadTemplates(templateDir, env) {
-  var mold = new Mold(env)
-  fs.readdirSync(templateDir).forEach(function(filename) {
-    var match = /^(.*?)\.html$/.exec(filename)
-    if (match)
-      mold.bake(match[1], fs.readFileSync(templateDir + match[1] + ".html", "utf8").trim())
-  })
-  mold.defs.markdown = renderMarkdown
-  return mold
-}
-
-var templates = loadTemplates(__dirname + "/../templates/", config)
+var templates = loadTemplates({
+  dir: __dirname + "/../templates/",
+  env: config,
+  markdownFilter: function(text) {
+    return text.replace(/`([\w\.$]+)`(?!\])/g, function(all, word) {
+      return exists(word) ? "[`" + word + "`](#" + word + ")" : all
+    })
+  }
+})
 
 console.log(templates.defs.index())

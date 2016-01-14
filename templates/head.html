@@ -1,0 +1,34 @@
+<<in {title, meta, nav}>>
+<!doctype html>
+
+<meta charset="utf-8">
+<link rel=stylesheet href=site.css>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title><<t title>></title>
+
+<<for name, value in meta || {}>>
+  <meta property="<<t name>>" content="<<t value>>">
+<</for>>
+
+<nav>
+  <div class=menubutton>☰</div>
+  <a href="http://prosemirror.net">
+    <h1>ProseMirror</h1>
+    <img id=logo src="logo.png">
+  </a>
+  <<if nav>>
+    <ul>
+      <<for title, href in nav>>
+        <li><a href="<<t href>>"><<t title>></a></li>
+      <</for>>
+    </ul>
+  <</if>>
+  <ul>
+    <li><a href="doc/manual.html">docs</a>
+    <li><a href="http://discuss.prosemirror.net/">discuss</a>
+    <li><a href="https://github.com/prosemirror/prosemirror">github</a>
+  </ul>
+</nav>
+
+<article>

@@ -1,0 +1,218 @@
+<<head {
+  title: "ProseMirror",
+  meta: {"og:title": "ProseMirror",
+         "og:type": "website",
+         "og:url": "http://prosemirror.net/",
+         "og:image": "http://prosemirror.net/picture.png",
+         "og:description": "In-browser structured text editing component"},
+  nav: {features: "#features",
+        project: "#project",
+        demos: "#demos"}
+}>>
+
+<style>
+.demoblocks {
+  margin: 0 -20px;
+}
+
+.demoblock {
+  display: inline-block;
+  vertical-align: top;
+  padding: 5px;
+  text-indent: 5px;
+  border: 1px solid white;
+}
+
+.demoblock:hover {
+  border-radius: 5px;
+  border: 1px solid #7cf;
+}
+
+.demoblock a {
+  text-decoration: none;
+  color: #777;
+}
+
+.demotip {
+  z-index: 6;
+  background: #ff7;
+  border: 1px solid #ee5;
+  color: #440;
+  position: absolute;
+  right: -20px;
+  bottom: 2px;
+  transform: rotate(-3deg);
+  padding: 4px 15px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.ProseMirror {
+  margin: 4px -15px 1em;
+  border-radius: 10px;
+  background: white;
+  border-color: #5ad;
+}
+
+.ProseMirror-content {
+  outline: none;
+}
+</style>
+
+<p>ProseMirror is an in-browser semantic rich text editor component.
+This is what it might look like:</p>
+
+<div id="content">
+  <h3>Control your Content</h3>
+
+  <p>There is something of a gap between <a href="http://commonmark.org">MarkDown</a> textareas
+  (limited, hard to use) and classical HTML WYSIWYG editors (content
+  becomes a non-semantic blob). ProseMirror aims to fill this gap.</p>
+
+  <p>It does this by decoupling its content model from HTML.
+  ProseMirror ships with a default document <em>schema</em> that is
+  quite close to <a href="http://commonmark.org">CommonMark</a>, but
+  allows you to define your own content schema, including exactly the
+  elements you need, and possibly adding your
+  own <a href="demo_dino.html">custom elements</a>.</p>
+
+  <ul>
+    <li>Users get a clean, consistent interface that allows them to enter
+    only documents that fit the schema.
+    <li>You get clean, consistent content that you can format
+    or <a href="demo_lint.html">analyze</a>.
+  </ul>
+
+  <p>ProseMirror is open-source under
+  an <a href="https://github.com/ProseMirror/prosemirror/blob/master/LICENSE">MIT</a>
+  license.</p>
+</div>
+
+<div id=editor menustyle=tooltip style="position: relative">
+  <div class=demotip>↖ You can edit this</div>
+</div>
+
+<h3 id=features>Features</h3>
+
+<p>ProseMirror is designed to allow customization and extension
+throughout.</p>
+
+<ul>
+  <li>Support for <a href="demo_collab.html">collaborative editing</a>
+  (<a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">details</a>)
+
+  <li>Export and import from ProseMirror's document format to HTML or
+  Markdown
+
+  <li>A clean, immutable document data structure (not the DOM) to
+  program against
+
+  <li>Document schemas that can be modified
+  and <a href="demo_dino.html">extended</a> without having to rewrite
+  the whole editor
+
+  <li>A rich set of
+  editing <a href="doc/manual.html#Command">commands</a> that can
+  appear in the menu or be bound to keys, and the ability to define
+  your own
+
+  <li>Two menu styles (<a href="doc/manual.html#menu/menubar">bar</a>
+  and <a href="doc/manual.html#menu/tooltipmenu">tooltip</a>) in the
+  distribution, and a programming interface to implement your own
+  style
+
+  <li>Support
+  for <a href="doc/manual.html#ProseMirror.markRange">marking</a>
+  pieces of the document, optionally stylng them, and keeping track of
+  where that piece is even after the document changes
+
+  <li>The ability to enable and
+  define <a href="doc/manual.html#inputrules">input rules</a>, making
+  things (text shortcuts, wrapping in markup) happen whenever certain
+  strings are typed
+
+  <li>Changes are first-class values and can be stored, inspected,
+  and <a href="demo_track.html">manipulated</a>
+
+  <li>The look of the editor can, to a great extent, be changed simply
+  by adding CSS rules
+</ul>
+
+<h3 id=project>Project</h3>
+
+<p>ProseMirror
+is <a href="https://github.com/ProseMirror/prosemirror/blob/master/LICENSE">open
+source</a>, and you are legally free to use it commercially. Yet,
+writing, maintening, supporting, and setting up infrastructure for
+such a project takes a lot of work and energy. Therefore...</p>
+
+<p class=callout>If you are using ProseMirror to make profit, there is
+a <u>social</u> expectation that you
+help <a href="http://marijnhaverbeke.nl/fund/">fund</a> its
+maintenance.</p>
+
+<p>ProseMirror is being developed
+on <a href="https://github.com/prosemirror/prosemirror">GitHub</a>.
+You can find a git
+mirror <a href="http://marijnhaverbeke.nl/git/prosemirror">here</a> as
+well. Contributions
+are <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">welcome</a>.</p>
+
+<p>The easiest way to install ProseMirror is
+with <a href="https://www.npmjs.com/package/prosemirror">npm</a>. It
+is currently in <strong>beta</strong> stage, meaning that you are
+encouraged to try it out
+and <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">report</a>
+issues, but that you are still likely to run into bugs.</p>
+
+<p>Discussing the project, or asking questions, is best done on
+the <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">forum</a>.
+Bugs should be reported through
+the <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">issue
+tracker</a>. We aim to be an inclusive, welcoming community. To make
+that explicit, we have
+a <a href="http://contributor-covenant.org/version/1/1/0/">code of
+conduct</a> that applies to communication around the project.</p>
+
+<p>Initial development of the software
+was <a href="https://www.indiegogo.com/projects/prosemirror/">crowd-funded</a>
+by these 414 excellent <a href="backers.html">individuals and
+organizations</a>.</p>
+
+<h3 id="demos">Demos</h3>
+
+<p>Get a feel for the editor's possibilities by playing with these:</p>
+
+<div class=demoblocks>
+  <div class=demoblock>
+    <a href="demo_basic.html">Basics<br><img src="demo_basic.png"></a>
+  </div>
+  <div class=demoblock>
+    <a href="demo_markdown.html">User-friendly Markdown input<br><img src="demo_markdown.png"></a>
+  </div>
+  <div class=demoblock>
+    <a href="demo_dino.html">Extending the document model<br><img src="demo_dino.png"></a>
+  </div>
+  <div class=demoblock>
+    <a href="demo_lint.html">Document inspection and manipulation<br><img src="demo_lint.png"></a>
+  </div>
+  <div class=demoblock>
+    <a href="demo_track.html">Change tracking<br><img src="demo_track.png"></a>
+  </div>
+  <div class=demoblock>
+    <a href="demo_collab.html">Collaborative editing<br><img src="demo_collab.png"></a>
+  </div>
+</div>
+
+<script src="demo_basic_bundle.js"></script>
+
+<script>
+  var updated = false
+  pm.content.addEventListener("focus", function() {
+    if (updated) return
+    updated = document.querySelector(".demotip").innerHTML =
+      "<a href='#demos' style='text-decoration: none; pointer-events: auto; color: inherit'>Find more demos below ↓</a>"
+  })
+</script>
+
+<<foot>>

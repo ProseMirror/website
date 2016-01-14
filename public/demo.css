@@ -30,20 +30,6 @@ h1, h2, h3, strong, a, a:visited { color: #08b; }
   margin: 0;
 }
 
-.demotip {
-  z-index: 6;
-  background: #ff7;
-  border: 1px solid #ee5;
-  color: #440;
-  position: absolute;
-  right: -20px;
-  bottom: 2px;
-  transform: rotate(-3deg);
-  padding: 4px 15px;
-  border-radius: 4px;
-  pointer-events: none;
-}
-
 @media (min-width: 700px) {
   .front .fronttitle h1 { font-size: 90px }
   .front .subtitle { font-size: 22px }
@@ -260,23 +246,4 @@ div.ProseMirror {
 pre {
   padding-left: 15px;
   line-height: 1.4;
-}
-
-.demoblock {
-  display: inline-block;
-  vertical-align: top;
-  padding: 5px;
-  text-align: center;
-  border: 1px solid white;
-}
-
-.demoblock:hover {
-  border-radius: 5px;
-  border: 1px solid #7cf;
-}
-
-.demoblock a {
-  text-decoration: none;
-  color: #777;
-  font-size: 14px;
 }
