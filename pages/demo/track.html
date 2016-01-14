@@ -1,9 +1,6 @@
-<!doctype html>
+<<head {title: "ProseMirror Change Tracking",
+        nav: {demos: "index.html#demos"}}>>
 
-<meta charset="utf-8">
-<title>ProseMirror Change Tracking</title>
-<link rel=stylesheet href=demo.css>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   .commit {
     margin-bottom: 4px;
@@ -40,34 +37,6 @@
   }
 </style>
 
-<body>
-
-<div class="fronttitle">
-  <div class="fronttitle-inner">
-    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
-    <div class=subtitle>&nbsp;Change tracking demo</div>
-  </div>
-</div>
-
-<div class="nav">
-  <span class="demos">
-    <a href="#">Demos</a>
-    <div class=submenu>
-      <a href="demo_basic.html">Basics</a>
-      <a href="demo_markdown.html">User-friendly Markdown</a>
-      <a href="demo_dino.html">Dinos in the document</a>
-      <a href="demo_lint.html">Document checking</a>
-      <a href="demo_track.html">Change tracking</a>
-      <a href="demo_collab.html">Collaborative editing</a>
-    </div>
-  </span>
-  <a href="doc/manual.html">Docs</a>
-  <a href="http://discuss.prosemirror.net/">Discuss</a>
-  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
-</div>
-
-<article>
-
 <h3>Tracking changes</h3>
 
 <p>Changes are first-class values in ProseMirror. You can hold on to
@@ -87,7 +56,7 @@ always optimal.</p>
 <h3>Demo</h3>
 
 <p>The full source code for this demo
-is <a href="demo_track.js">here</a>.</p>
+is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/track.js">here</a>.</p>
 
 <div id="editor"></div>
 
@@ -100,6 +69,8 @@ is <a href="demo_track.js">here</a>.</p>
 
 <p>Hover over commits to highlight the text they introduced.</p>
 
-<p>Next demo: <a href="demo_collab.html">collaborative editing</a>.</p>
+<p>Next demo: <a href="collab.html">collaborative editing</a>.</p>
 
-<script src="demo_track_bundle.js"></script>
+<script src="bundle_track.js"></script>
+
+<<foot>>

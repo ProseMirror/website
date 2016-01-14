@@ -1,42 +1,11 @@
-<!doctype html>
+<<head {title: "ProseMirror Document Model Extension",
+        nav: {demos: "index.html#demos"}}>>
 
-<meta charset="utf-8">
-<title>ProseMirror Document Model Extension</title>
-<link rel=stylesheet href=demo.css>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   img.dinosaur { height: 40px; vertical-align: bottom; border: 1px solid #0ae; border-radius: 4px; background: #ddf6ff }
   .dinoicon { height: 20px; vertical-align: bottom }
   .ProseMirror-tooltip .dinoicon { vertical-align: middle }
 </style>
-
-<body>
-
-<div class="fronttitle">
-  <div class="fronttitle-inner">
-    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
-    <div class=subtitle>&nbsp;Document extension demo</div>
-  </div>
-</div>
-
-<div class="nav">
-  <span class="demos">
-    <a href="#">Demos</a>
-    <div class=submenu>
-      <a href="demo_basic.html">Basics</a>
-      <a href="demo_markdown.html">User-friendly Markdown</a>
-      <a href="demo_dino.html">Dinos in the document</a>
-      <a href="demo_lint.html">Document checking</a>
-      <a href="demo_track.html">Change tracking</a>
-      <a href="demo_collab.html">Collaborative editing</a>
-    </div>
-  </span>
-  <a href="doc/manual.html">Docs</a>
-  <a href="http://discuss.prosemirror.net/">Discuss</a>
-  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
-</div>
-
-<article>
 
 <h3>Extending the document model</h3>
 
@@ -53,10 +22,10 @@ semantic element in your document format.</p>
 <p>In the editor below, dinosaurs are first-class elements in the
 document model. They can appear anywhere where text can appear.</p>
 
-<h3>Demo</h3>
+<h3>Dinos in the Document</h3>
 
 <p>The full source code for this demo
-is <a href="demo_dino.js">here</a>.</p>
+is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/dino.js">here</a>.</p>
 
 <div id="editor"></div>
 
@@ -79,6 +48,8 @@ finished yet. It is powerful enough to kludge in something like this,
 but there's a bunch of work to do before we can write robust
 extensions that interact properly with all parts of the system.</p>
 
-<p>Next demo: <a href="demo_lint.html">inspecting and manipulating documents</a>.</p>
+<p>Next demo: <a href="lint.html">inspecting and manipulating documents</a>.</p>
 
-<script src="demo_dino_bundle.js"></script>
+<script src="bundle_dino.js"></script>
+
+<<foot>>

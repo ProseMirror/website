@@ -53,7 +53,7 @@ function showProb(prob) {
   showingProb = prob
   if (prob.from.cmp(prob.to))
     range = pm.markRange(prob.from, prob.to, {className: "markprob"})
-  overlay = document.body.appendChild(elt("img", {src: "bouncing_arrow.gif", class: "probarrow"}))
+  overlay = document.body.appendChild(elt("img", {src: "/img/bouncing_arrow.gif", class: "probarrow"}))
   let coords = pm.coordsAtPos(prob.from)
   overlay.style.left = (coords.left - 55) + "px"
   overlay.style.top = (((coords.top + coords.bottom) / 2) - 16) + "px"

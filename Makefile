@@ -1,18 +1,24 @@
+PAGES:=$(wildcard pages/*.html) $(wildcard pages/**/*.html)
+
 all: public/doc/manual.html \
-     public/demo_basic_bundle.js \
-     public/demo_markdown_bundle.js \
-     public/demo_dino_bundle.js \
-     public/demo_lint_bundle.js \
-     public/demo_track_bundle.js \
-     public/demo_collab_bundle.js
+     $(PAGES:pages/%=public/%) \
+     public/demo/bundle_basic.js \
+     public/demo/bundle_markdown.js \
+     public/demo/bundle_dino.js \
+     public/demo/bundle_lint.js \
+     public/demo/bundle_track.js \
+     public/demo/bundle_collab.js
 
 BUILD:=browserify
 
 public/doc/manual.html: node_modules/prosemirror/src/*/*.js src/templates/* src/doc/build-manual.js
 	node src/doc/build-manual.js > $@
 
-public/demo_collab_bundle.js: src/client/collab/*.js node_modules/prosemirror/dist/**/*.js
-	node_modules/.bin/$(BUILD) --outfile $@ -t babelify src/client/collab/client.js
+%.html: $($@:public/%=pages/%)
+	node src/generate.js $@
 
-public/demo_%_bundle.js: src/client/demo_%.js node_modules/prosemirror/dist/**/*.js
+public/demo/bundle_collab.js: src/demo/collab/client/*.js node_modules/prosemirror/dist/**/*.js
+	node_modules/.bin/$(BUILD) --outfile $@ -t babelify src/demo/collab/client/collab.js
+
+public/demo/bundle_%.js: src/demo/%.js node_modules/prosemirror/dist/**/*.js
 	node_modules/.bin/$(BUILD) --outfile $@ -t babelify $<

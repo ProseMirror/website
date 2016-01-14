@@ -24,30 +24,20 @@ Dino.register("parseDOM", {
 Dino.prototype.serializeDOM = node => elt("img", {
   "dino-type": node.attrs.type,
   class: "dinosaur",
-  src: "dino/" + node.attrs.type + ".png",
+  src: "/img/dino/" + node.attrs.type + ".png",
   title: node.attrs.type
 })
 
-const dinoOptions = dinos.map(name => ({
-  value: name,
-  display: () => elt("img", {src: "dino/" + name + ".png", class: "dinoicon", title: "Insert " + name})
-}))
+// FIXME restore icon-based selection
+const dinoOptions = dinos.map(name => ({value: name, label: name}))
 
 Dino.register("command", {
-  name: "selectDino",
-  label: "Insert dino",
-  run(pm, type) {
-    return pm.tr.replaceSelection(this.create({type}), true).apply()
-  },
-  params: [
-    {name: "Dino type", type: "select", options: dinoOptions, default: dinoOptions[0]}
-  ],
-  display: {
-    type: "param"
-  },
-  menuGroup: "inline",
-  menuRank: 99
+  name: "insert",
+  derive: {params: [{label: "Type", attr: "type", type: "select", options: dinoOptions, default: dinoOptions[0]}]},
+  label: "Insert dino"
 })
+
+Dino.prototype.insertMenuOptions = [{label: "Dino", command: "insert", rank: 1}]
 
 Dino.register("autoInput", new InputRule("autoDino", new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
   let start = pos.move(-match[0].length)
@@ -88,7 +78,7 @@ function showCompletions(dinos, from, to) {
     tooltip.close()
   }
   let items = dinos.map(name => {
-    let icon = elt("img", {src: "dino/" + name + ".png", class: "dinoicon", title: name})
+    let icon = elt("img", {src: "/img/dino/" + name + ".png", class: "dinoicon", title: name})
     let item = elt("div", {style: "cursor: pointer"}, icon, " " + name)
     item.addEventListener("mousedown", e => {
       e.preventDefault()

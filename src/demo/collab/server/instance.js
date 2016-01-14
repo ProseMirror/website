@@ -108,7 +108,7 @@ const instances = Object.create(null)
 let instanceCount = 0
 let maxCount = 20
 
-let saveFile = "./demo-instances.json", json
+let saveFile = __dirname + "/../demo-instances.json", json
 if (process.argv.indexOf("--fresh") == -1) {
   try {
     json = JSON.parse(readFileSync(saveFile, "utf8"))

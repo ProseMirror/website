@@ -1,12 +1,15 @@
+var path = require("path")
 var fs = require("fs")
 var loadTemplates = require("./doc/mold")
-var glob = require("glob")
 
 var mold = loadTemplates({
   dir: __dirname + "/../templates/"
 })
 
-var pageDir = __dirname + "/../pages/"
-glob.sync("**/*.html", {cwd: pageDir}).forEach(function(file) {
-  fs.writeFileSync(__dirname + "/../public/" + file, mold.bake(file, fs.readFileSync(pageDir + file, "utf8"))(), "utf8")
-})
+var pageDir = path.resolve(__dirname + "/../pages/")
+var outDir = path.resolve(__dirname + "/../public/")
+
+for (var i = 2; i < process.argv.length; i++) {
+  var outfile = path.resolve(process.argv[i]), infile = pageDir + outfile.slice(outDir.length)
+  fs.writeFileSync(outfile, mold.bake(infile, fs.readFileSync(infile, "utf8"))(), "utf8")
+}

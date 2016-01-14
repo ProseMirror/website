@@ -1,37 +1,13 @@
-<!doctype html>
+<<head {title: "ProseMirror demo",
+        nav: {demos: "index.html#demos"}}>>
 
-<meta charset="utf-8">
-<title>ProseMirror Demo</title>
-<link rel=stylesheet href=demo.css>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<body>
-
-<div class="fronttitle">
-  <div class="fronttitle-inner">
-    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
-    <div class=subtitle>&nbsp;Basic editing demo</div>
-  </div>
-</div>
-
-<div class="nav">
-  <span class="demos">
-    <a href="#">Demos</a>
-    <div class=submenu>
-      <a href="demo_basic.html">Basics</a>
-      <a href="demo_markdown.html">User-friendly Markdown</a>
-      <a href="demo_dino.html">Dinos in the document</a>
-      <a href="demo_lint.html">Document checking</a>
-      <a href="demo_track.html">Change tracking</a>
-      <a href="demo_collab.html">Collaborative editing</a>
-    </div>
-  </span>
-  <a href="doc/manual.html">Docs</a>
-  <a href="http://discuss.prosemirror.net/">Discuss</a>
-  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
-</div>
-
-<article>
+<style>
+.menustyle {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+</style>
 
 <h3>Editing with ProseMirror</h3>
 
@@ -55,11 +31,11 @@ work with that.</p>
 <h3>Demo</h3>
 
 <p>The full source code for this demo
-is <a href="demo_basic.js">here</a>.</p>
+is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/basic.js">here</a>.</p>
 
 <div id=editor></div>
 
-<div class=docinfo>
+<div style="position: relative">
   <div class=menustyle>
     Menu style: <select id=menustyle>
       <option selected value=bar>top bar</option>
@@ -67,7 +43,7 @@ is <a href="demo_basic.js">here</a>.</p>
     </select></div>
 </div>
 
-<p>Next demo: <a href="demo_markdown.html">editing markdown</a>.</p>
+<p>Next demo: <a href="markdown.html">editing markdown</a>.</p>
 
 <div style="display: none" id="content">
   <h1>Using ProseMirror</h1>
@@ -77,7 +53,7 @@ is <a href="demo_basic.js">here</a>.</p>
   <p>To apply styling, you can select a piece of text and manipulate
   its styling from the menu. You get <em>emphasis</em>, <strong>strong
   text</strong>, <a href="http://marijnhaverbeke.nl/blog">links</a>, <code>code
-  font</code>, and <img src="img.png"> images.</p>
+  font</code>, and <img src="/img/smiley.png"> images.</p>
 
   <p>Block-level structure is manipulated, depending on the current
   menu style, either through the top menubar, or through the
@@ -96,4 +72,6 @@ is <a href="demo_basic.js">here</a>.</p>
   do.</p>
 </div>
 
-<script src="demo_basic_bundle.js"></script>
+<script src="bundle_basic.js"></script>
+
+<<foot>>

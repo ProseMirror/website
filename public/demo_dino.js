@@ -1,1 +1,0 @@
-../src/client/demo_dino.js

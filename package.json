@@ -10,6 +10,7 @@
     }
   ],
   "dependencies": {
+    "babel-register": "^6.4.3",
     "prosemirror": "~0.1.1"
   },
   "devDependencies": {
@@ -24,7 +25,7 @@
     "watchify": "^3.2.0"
   },
   "scripts": {
-    "start": "node src/server/start.js"
+    "start": "node src/demo/collab/server/start.js"
   },
   "license": "MIT",
   "repository": {

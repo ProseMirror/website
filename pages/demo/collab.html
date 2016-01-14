@@ -1,0 +1,113 @@
+<<head {title: "ProseMirror Collaborative Demo",
+        nav: {demos: "index.html#demos",
+              "blog post": "http://marijnhaverbeke.nl/blog/collaborative-editing.html"}}>>
+
+<style>
+.subtle { color: #777 }
+
+.comment { background-color: #ff8 }
+.currentComment { background-color: #fe0 }
+
+.commentList, .commentText {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.commentList {
+  width: 15em;
+}
+
+.commentText {
+  padding: 2px 20px 2px 5px;
+  position: relative;
+}
+
+.commentText:hover {
+  background: #525252;
+}
+
+.commentText + .commentText {
+  border-top: 1px solid white;
+}
+
+.commentDelete {
+  position: absolute;
+  right: 0;
+  border: 0;
+  font: inherit;
+  display: inline;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.commentDelete:hover {
+  color: #f88;
+}
+
+.doclist {
+  display: block;
+  padding: 2px 2px;
+  margin: 0;
+  border: 1px solid silver;
+  position: absolute;
+  background: white;
+  font-size: 90%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  max-height: 15em;
+  overflow-y: auto;
+}
+.doclist li {
+ display: block;
+  padding: 1px 3px;
+  margin: 0;
+  cursor: pointer;
+}
+.doclist li:hover {
+  background: #5ae;
+  color: white;
+}
+
+.docinfo {
+  position: relative;
+}
+</style>
+
+<h3>Collaborate</h3>
+
+<p>The editor below talks to a simple server-side service to allow
+real-time <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">collaborative
+editing</a>. Everybody connected to a given document sees the same
+document, and has their changes sent over to other people working on
+the document.</p>
+
+<p>The demo also (crudely) shows how ProseMirror can be used to
+implement something like out-of-line annotations. If you select text
+and click the speech bubble icon in the menu, you'll be prompted to
+enter an annotation. These are synced to other users and show up as
+text with yellow background. Put the cursor in an annotation to see
+what it says.</p>
+
+<h3>Demo</h3>
+
+<p><strong>Disclaimer:</strong> Since this demo is open for everybody,
+you might run into people typing stupid, mean, and disgusting things.
+Try not to be such a person.</p>
+
+<div id=editor></div>
+
+<div class=docinfo>
+  Connected to: <span id="connected">
+    <span id="docname">None</span>
+    <span id="users"></span>
+    <button type=button id="changedoc">Change</button>
+  </span>
+</div>
+
+<p>Next demo: <a href="basic.html">basic use</a>.</p>
+
+<script src="bundle_collab.js"></script>
+
+<<foot>>

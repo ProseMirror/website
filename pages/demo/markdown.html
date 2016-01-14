@@ -1,43 +1,12 @@
-<!doctype html>
+<<head {title: "ProseMirror Markdown Demo",
+        nav: {demos: "index.html#demos"}}>>
 
-<meta charset="utf-8">
-<title>ProseMirror Markdown Demo</title>
-<link rel=stylesheet href=demo.css>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   .ProseMirror-content { height: 120px; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
   textarea { width: 100%; height: 123px; border: 1px solid silver; box-sizing: border-box; -moz-box-sizing: border-box; padding: 3px 10px;
              border-radius: 3px; border: 1px solid #38a }
   .ProseMirror, #markdown textarea { display: block; margin-bottom: 4px }
 </style>
-
-<body>
-
-<div class="fronttitle">
-  <div class="fronttitle-inner">
-    <h1><a href="index.html"><img src="logo.png" class=logo> ProseMirror</a></h1>
-    <div class=subtitle>&nbsp;Markdown editing demo</div>
-  </div>
-</div>
-
-<div class="nav">
-  <span class="demos">
-    <a href="#">Demos</a>
-    <div class=submenu>
-      <a href="demo_basic.html">Basics</a>
-      <a href="demo_markdown.html">User-friendly Markdown</a>
-      <a href="demo_dino.html">Dinos in the document</a>
-      <a href="demo_lint.html">Document checking</a>
-      <a href="demo_track.html">Change tracking</a>
-      <a href="demo_collab.html">Collaborative editing</a>
-    </div>
-  </span>
-  <a href="doc/manual.html">Docs</a>
-  <a href="http://discuss.prosemirror.net/">Discuss</a>
-  <a href="https://github.com/prosemirror/prosemirror">GitHub</a>
-</div>
-
-<article>
 
 <h3>Friendly Markdown</h3>
 
@@ -58,18 +27,20 @@ the edited document can meaningfully be serialized in that format.</p>
 <h3>Demo</h3>
 
 <p>The full source code for this demo
-is <a href="demo_markdown.js">here</a>.</p>
+is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/markdown.js">here</a>.</p>
 
 <div id="editor"></div>
 <div style="text-align: center">
   <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
 </div>
 
-<p>Next demo: <a href="demo_dino.html">extending the document model</a>.</p>
+<p>Next demo: <a href="dino.html">extending the document model</a>.</p>
 
 <div style="display: none" id="markdown_content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?
 
 So we've given people the **choice** to use a more familiar, discoverable interface.
 </div>
 
-<script src="demo_markdown_bundle.js"></script>
+<script src="bundle_markdown.js"></script>
+
+<<foot>>
