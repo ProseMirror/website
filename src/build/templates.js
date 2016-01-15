@@ -14,7 +14,7 @@ module.exports = function loadTemplates(options) {
     return markdown.render(options.markdownFilter ? options.markdownFilter(text) : text)
   }
   mold.defs.markdownFile = function(name) {
-    return mold.defs.markdown(fs.readFileSync(options.markdownDir + name, "utf8"))
+    return mold.defs.markdown(fs.readFileSync(options.markdownDir + name + ".md", "utf8"))
   }
   return mold
 }

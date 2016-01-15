@@ -1,18 +1,15 @@
 var fs = require("fs")
 var glob = require("glob")
 var getdocs = require("getdocs")
-var loadTemplates = require("./mold")
 
 var sourceDir = __dirname + "/../../node_modules/prosemirror/"
 
 var config = {
   sourceDir: sourceDir,
-  intro: "",
   modules: Object.create(null),
   items: Object.create(null),
   findLink: findLink,
   propID: propID,
-  intro: fs.readFileSync(__dirname + "/intro.md", "utf8"),
   revision: getRevision(sourceDir)
 }
 
@@ -195,14 +192,11 @@ modules.forEach(function(module) {
   config.modules[module.name] = org
 })
 
-var templates = loadTemplates({
-  dir: __dirname + "/../templates/",
+module.exports = {
   env: config,
   markdownFilter: function(text) {
     return text.replace(/`([\w\.$]+)`(?!\])/g, function(all, word) {
       return exists(word) ? "[`" + word + "`](#" + word + ")" : all
     })
   }
-})
-
-console.log(templates.defs.index())
+}

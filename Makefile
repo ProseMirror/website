@@ -1,7 +1,6 @@
 PAGES:=$(wildcard pages/*.html) $(wildcard pages/**/*.html)
 
-all: public/doc/manual.html \
-     $(PAGES:pages/%=public/%) \
+all: $(PAGES:pages/%=public/%) \
      public/demo/bundle_basic.js \
      public/demo/bundle_markdown.js \
      public/demo/bundle_dino.js \
@@ -11,11 +10,11 @@ all: public/doc/manual.html \
 
 BUILD:=browserify
 
-public/doc/manual.html: node_modules/prosemirror/src/*/*.js src/templates/* src/doc/build-manual.js
-	node src/doc/build-manual.js > $@
+public/ref.html: node_modules/prosemirror/src/*/*.js pages/ref.html templates/* src/build/*.js
+	node src/build/build.js --ref $@
 
-%.html: $($@:public/%=pages/%)
-	node src/generate.js $@
+public/%.html: pages/%.html templates/* src/build/*.js
+	node src/build/build.js $@
 
 public/demo/bundle_collab.js: src/demo/collab/client/*.js node_modules/prosemirror/dist/**/*.js
 	node_modules/.bin/$(BUILD) --outfile $@ -t babelify src/demo/collab/client/collab.js
