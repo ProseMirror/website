@@ -164,6 +164,8 @@ function organizeClass(type) {
 
 function getRevision(dir) {
   var file = dir + ".git/HEAD"
+  if (!fs.existsSync(file)) // Not a git repository, return version number
+    return require(dir + "package.json").version
   for (;;) {
     var content = fs.readFileSync(file, "utf8"), ref
     if (ref = /^ref: (.*)/.exec(content))
