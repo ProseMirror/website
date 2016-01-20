@@ -4,7 +4,12 @@ var loadTemplates = require("./templates")
 
 var config = {
   dir: __dirname + "/../../templates/",
-  markdownDir: __dirname + "/../../markdown/"
+  markdownDir: __dirname + "/../../markdown/",
+  markdownFilter: function(text) {
+    return text.replace(/\(##([^)]+)\)/g, function(_, anchor) {
+      return "(../ref.html#" + anchor + ")"
+    })
+  }
 }
 
 var files = process.argv.slice(2)
@@ -20,6 +25,16 @@ var pageDir = path.resolve(__dirname + "/../../pages/")
 var outDir = path.resolve(__dirname + "/../../public/")
 
 files.forEach(function(file) {
-  var outfile = path.resolve(file), infile = pageDir + outfile.slice(outDir.length)
-  fs.writeFileSync(outfile, mold.bake(infile, fs.readFileSync(infile, "utf8"))(), "utf8")
+  var text = fs.readFileSync(file, "utf8"), result
+  if (/\.md$/.test(file)) {
+    var meta = /^!(\{[^]*?\})\n\n/.exec(text)
+    if (!meta) throw new Error("Missing or invalid metainfo on " + file)
+    var data = JSON.parse(meta[1])
+    data.content = text.slice(meta[0].length)
+    result = mold.defs[data.template](data)
+  } else {
+    result = mold.bake(file, text)()
+  }
+  var outfile = outDir + path.resolve(file).slice(pageDir.length).replace(/\.\w+$/, ".html")
+  fs.writeFileSync(outfile, result, "utf8")
 })

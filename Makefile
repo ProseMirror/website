@@ -1,6 +1,6 @@
-PAGES:=$(wildcard pages/*.html) $(wildcard pages/**/*.html)
+PAGES:=$(wildcard pages/*.html) $(wildcard pages/**/*.html) $(wildcard pages/*.md) $(wildcard pages/**/*.md)
 
-all: $(PAGES:pages/%=public/%) \
+all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      public/demo/bundle_basic.js \
      public/demo/bundle_markdown.js \
      public/demo/bundle_dino.js \
@@ -10,11 +10,11 @@ all: $(PAGES:pages/%=public/%) \
 
 BUILD:=browserify
 
-public/ref.html: node_modules/prosemirror/src/*/*.js pages/ref.html templates/* src/build/*.js
-	node src/build/build.js --ref $@
+public/ref.html: pages/ref.html node_modules/prosemirror/src/*/*.js templates/* src/build/*.js
+	node src/build/build.js --ref $<
 
-public/%.html: pages/%.html templates/* src/build/*.js
-	node src/build/build.js $@
+public/%.html: pages/%.* templates/* src/build/*.js
+	node src/build/build.js $<
 
 public/demo/bundle_collab.js: src/demo/collab/client/*.js node_modules/prosemirror/dist/**/*.js
 	node_modules/.bin/$(BUILD) --outfile $@ -t babelify src/demo/collab/client/collab.js
