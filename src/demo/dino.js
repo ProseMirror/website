@@ -12,8 +12,7 @@ class Dino extends Inline {
   get attrs() { return {type: new Attribute("brontosaurus")} }
 }
 
-Dino.register("parseDOM", {
-  tag: "img",
+Dino.register("parseDOM", "img", {
   rank: 25,
   parse: function(dom, state) {
     let type = dom.getAttribute("dino-type")
@@ -31,15 +30,14 @@ Dino.prototype.serializeDOM = node => elt("img", {
 // FIXME restore icon-based selection
 const dinoOptions = dinos.map(name => ({value: name, label: name}))
 
-Dino.register("command", {
-  name: "insert",
+Dino.register("command", "insert", {
   derive: {params: [{label: "Type", attr: "type", type: "select", options: dinoOptions, default: dinoOptions[0]}]},
   label: "Insert dino"
 })
 
-Dino.prototype.insertMenuOptions = [{label: "Dino", command: "insert", rank: 1}]
+Dino.register("insertMenu", "main", {label: "Dino", command: "insert", rank: 1})
 
-Dino.register("autoInput", new InputRule("autoDino", new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
+Dino.register("autoInput", "autoDino", new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
   let start = pos.move(-match[0].length)
   pm.tr.delete(start, pos).insertInline(start, this.create({type: match[1]})).apply()
 }))
