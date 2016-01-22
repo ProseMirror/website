@@ -30,6 +30,7 @@ body {
   background: #fafaff;
   font-family: Lato;
   line-height: 1.5;
+  overflow-y: scroll;
 }
 
 nav {
