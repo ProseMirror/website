@@ -119,12 +119,22 @@ optionally constrainted to a certain range.
 
 ProseMirror represents its documents as
 [persistent](https://en.wikipedia.org/wiki/Persistent_data_structure)
-data structures. That means, you should **never mutate them**.
+data structures. That means, you should **never mutate them**. If you
+have a handle to a document (or node, or fragment) that object will
+stay the same.
 
-Instead, you can use methods like [`slice`](##Node.slice),
-[`splice`](##Node.splice), [`append`](##Node.append), and
-[`replace`](##Node.replace) to create new node objects based on
-existing ones.
+This has a bunch of advantages. It makes it impossible to have an
+editor in an invalid intermediate state, for example, since a new
+document can be swapped in instantaneously. It also makes it easier to
+reason about documents in a mathematics-like way, which is really hard
+if your values keep changing underneath you. For example, it allows
+ProseMirror to run a very efficient DOM [update](##ProseMirror.flush)
+algorithm by comparing the last document it drew to the screen to the
+current document.
+
+To create updated, new versions of a node, you can use methods like
+[`slice`](##Node.slice), [`splice`](##Node.splice),
+[`append`](##Node.append), and [`replace`](##Node.replace).
 
 Or, if you need to leave a record of your changes (which is necessary
 when the document is in an editor), you'll go through the
@@ -139,3 +149,14 @@ So this is going to break things:
 Whereas this works:
 
     editor.tr.insertText(pos, "!").apply()
+
+## Positions
+
+Positions in a document are represented using the [`Pos`](##Pos) type,
+which wraps a path into the document—an array of offsets into
+subsequent nodes, bringing us to the position's parent node—and an
+offset into that parent node.
+
+The editor selection is represented as a pair of such positions, but
+they also come up in almost all computation that you might want to do
+on a document.
