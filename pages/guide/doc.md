@@ -4,7 +4,8 @@
 # Guide to the Document Data Structure
 
 ProseMirror defines a set of data structures (in the
-[model module](##model)) to represent documents.
+[model module](##model)) to represent documents. This guide explains
+the basics of those data structures.
 
 ## Structure
 
