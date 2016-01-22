@@ -174,6 +174,15 @@ few addon modules that add behavior, such as a
 [text macros](##inputrules), and a system for
 [collaborative editing](##collab).
 
+```javascript
+var prosemirror = require("prosemirror")
+require("prosemirror/dist/menu/menubar")
+
+var editor = new prosemirror.ProseMirror({
+  menuBar: true
+})
+```
+
 Most addon modules work by [defining](##defineOption) a new option,
 which must be set to enable their behavior. That way, simply loading a
 module doesn't force you to use the new behavior in all editors on the
