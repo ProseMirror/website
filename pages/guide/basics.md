@@ -87,7 +87,7 @@ editable content has the class `ProseMirror-content`.
 ## Options
 
 The object passed to the `ProseMirror` constructor lists the options
-for this To add some content to your editor, you can use the
+for the instance. To add some content to your editor, you can use the
 [`doc`](##doc) option to set the initial content of the editor. This
 option normally expects a [document node](##Node) as its value, but
 you can use the [`docFormat`](##docFormat) to select another
@@ -130,7 +130,7 @@ To destroy an editor, simply remove its
 ProseMirror represents most editing actions the user can take as
 [commands](##Command), which are objects that implement the
 action and provide some information about it. Keys can be bound to
-commands, the the items in the menus are also derived from commands.
+commands. The items in the menus are also derived from commands.
 
 The set of commands available in a given editor is determined with the
 [`commands`](##commands) option. By default, it'll pull in a set of
