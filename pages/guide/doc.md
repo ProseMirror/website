@@ -38,7 +38,7 @@ looks like this:
     </p>
 
 It is flat. This more closely matches the way we tend to think about
-and work with such text. It allows us to represents positions in a
+and work with such text. It allows us to represent positions in a
 paragraph using a character offset rather than a path in a tree, and
 makes it easier to perform operations like splitting or changing the
 style of the content without performing awkward tree manipulation.
