@@ -32,10 +32,12 @@ const dinoOptions = dinos.map(name => ({value: name, label: name}))
 
 Dino.register("command", "insert", {
   derive: {params: [{label: "Type", attr: "type", type: "select", options: dinoOptions, default: dinoOptions[0]}]},
-  label: "Insert dino"
+  label: "Insert dino",
+  menu: {
+    group: "insert", rank: 1,
+    display: {type: "label", label: "Dino"}
+  }
 })
-
-Dino.register("insertMenu", "main", {label: "Dino", command: "insert", rank: 1})
 
 Dino.register("autoInput", "autoDino", new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
   let start = pos.move(-match[0].length)
