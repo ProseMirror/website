@@ -47,6 +47,9 @@ var modules = [{
   name: "menu/menu",
   files: "src/menu/menu.js"
 }, {
+  name: "ui/prompt",
+  files: "src/ui/prompt.js"
+}, {
   name: "ui/tooltip",
   files: "src/ui/tooltip.js"
 }, {
@@ -122,7 +125,7 @@ function filesFor(module) {
 }
 
 function getExtra(text) {
-  var match = /(?:\n|^)\s*\/\/(\s*)!!(.*(?:\n\s*\/\/.*)*)/.exec(text)
+  var match = /(?:\n|^)\s*\/\/(\s*)!!(.*(?:\n *\/\/.*)*)/.exec(text)
   if (match) return match[2].replace(/\n\s*\/\/ ?/g, "\n")
 }
 
