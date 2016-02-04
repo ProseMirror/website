@@ -13,6 +13,9 @@ BUILD:=browserify
 public/ref.html: pages/ref.html node_modules/prosemirror/src/*/*.js templates/* src/build/*.js
 	node src/build/build.js --ref $<
 
+public/changelog.html: pages/changelog.html node_modules/prosemirror/CHANGELOG.md
+	node src/build/build.js $<
+
 public/%.html: pages/%.* templates/* src/build/*.js
 	node src/build/build.js $<
 
