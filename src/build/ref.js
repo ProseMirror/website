@@ -79,6 +79,7 @@ var externalTypes = {
   DOMNode: "https://developer.mozilla.org/en-US/docs/Web/API/Node",
   DOMFragment: "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
   DOMDocument: "https://developer.mozilla.org/en-US/docs/Web/API/Document",
+  DOMEvent: "https://developer.mozilla.org/en-US/docs/Web/API/Event",
   KeyboardEvent: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent",
   MouseEvent: "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
   Keymap: "https://github.com/marijnh/browserkeymap#an-object-type-for-keymaps",
