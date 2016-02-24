@@ -85,7 +85,8 @@ var externalTypes = {
   Keymap: "https://github.com/marijnh/browserkeymap#an-object-type-for-keymaps",
   Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
   any: false,
-  union: false
+  union: false,
+  constructor: false
 }
 
 function propID(clss, prop, static) {
@@ -96,6 +97,7 @@ function propID(clss, prop, static) {
 
 function findLink(node) {
   if (externalTypes.hasOwnProperty(node.type)) return externalTypes[node.type]
+  if (node.type.charAt(0) == '"') return false
   if (config.items[node.type]) return "#" + node.type
   throw new Error("Unknown type referenced: " + node.type + " at " + node.loc.file + ":" + node.loc.line)
 }
