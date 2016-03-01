@@ -33,7 +33,7 @@ and has commands that invoke them in its `Makefile`. For example:
 
     browserify main.js --outfile main_bundle.js
 
-This will find all depdendencies declared in your `main.js` file, and
+This will find all dependencies declared in your `main.js` file, and
 the dependencies of those modules, and put them together in a big file
 called `main_bundle.js`.
 
