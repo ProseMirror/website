@@ -40,7 +40,7 @@ Dino.register("command", "insert", {
 })
 
 Dino.register("autoInput", "autoDino", new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
-  let start = pos.move(-match[0].length)
+  let start = pos - match[0].length
   pm.tr.delete(start, pos).insertInline(start, this.create({type: match[1]})).apply()
 }))
 
@@ -60,16 +60,26 @@ pm.content.addEventListener("keydown", () => { tooltip.close(); open = null })
 pm.content.addEventListener("mousedown", () => { tooltip.close(); open = null })
 pm.on("textInput", text => {
   if (!/[\[\w]/.test(text)) return
-  let pos = pm.selection.head, line = ""
-  for (let i = pm.doc.path(pos.path).iter(0, pos.offset), child; child = i.next().value;) {
-    if (child.isText) line += child.text
+  let head = pm.selection.head
+  if (head == null) return
+  let $pos = pm.doc.resolve(head), line = ""
+  for (let i = 0, rem = $pos.parentOffset; rem > 0; i++) {
+    let child = $pos.parent.child(i)
+    if (child.isText) line += child.text.slice(0, rem)
     else line = ""
+    rem -= child.nodeSize
   }
-  let bracket = line.lastIndexOf("[", pos.offset)
+  let bracket = line.lastIndexOf("[")
   if (bracket == -1) return
-  let word = line.slice(bracket + 1, pos.offset)
+  let word = line.slice(bracket + 1)
   let completions = dinos.filter(name => name.indexOf(word) == 0)
-  if (completions.length) showCompletions(completions, pos.move(-(word.length + 1)), pos)
+  if (completions.length) {
+    let flush = () => {
+      pm.off("flush", flush)
+      showCompletions(completions, head - word.length - 1, head)
+    }
+    pm.on("flush", flush)
+  }
 })
 
 function showCompletions(dinos, from, to) {

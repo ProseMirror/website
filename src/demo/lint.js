@@ -1,5 +1,4 @@
 import {ProseMirror} from "prosemirror/dist/edit"
-import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -69,39 +68,33 @@ let badWords = /obviously|clearly|evidently|actually/ig
 let badPunc = / ([,\.!?:]) ?/g
 
 function lint(doc) {
-  let result = [], lastHead = null, path = []
+  let result = [], lastHead = null
 
   function record(msg, from, to, fix) {
-    from = new Pos(path.slice(), from)
-    to = to == null ? from : new Pos(from.path, to)
     result.push({msg, from, to, fix})
   }
 
-  function scan(node, offset) {
-    let updatePath = node.isBlock && offset != null
-    if (updatePath) path.push(offset)
-
+  function scan(node, pos) {
     if (node.isText) {
       let m
       while (m = badWords.exec(node.text))
-        record("Try not to say '" + m[0] + "'", offset + m.index, offset + m.index + m[0].length)
+        record("Try not to say '" + m[0] + "'", pos + m.index, pos + m.index + m[0].length)
       while (m = badPunc.exec(node.text))
-        record("Suspicious spacing around punctuation", offset + m.index, offset + m.index + m[0].length, fixPunc(m))
+        record("Suspicious spacing around punctuation", pos + m.index, pos + m.index + m[0].length, fixPunc(m))
     } else if (node.type.name == "heading") {
       if (lastHead != null && node.attrs.level > lastHead + 1)
-        record("Heading too small (" + node.attrs.level + " under " + lastHead + ")", 0, node.maxOffset, fixHeader(lastHead + 1))
+        record("Heading too small (" + node.attrs.level + " under " + lastHead + ")", pos + 1, pos + 1 + node.content.size, fixHeader(lastHead + 1))
       lastHead = node.attrs.level
     } else if (node.type.name == "image") {
-      if (!node.attrs.alt) record("Image without alt text", offset, offset + 1, addAlt)
+      if (!node.attrs.alt) record("Image without alt text", pos, pos + 1, addAlt)
     }
 
-    if (node.isTextblock && !node.size) record("Empty block", 0)
+    if (node.isTextblock && !node.size) record("Empty block", pos + 1, pos + 1)
 
-    node.forEach(scan)
-    if (updatePath) path.pop()
+    node.forEach((child, offset) => scan(child, node + 1 + offset))
   }
 
-  scan(doc)
+  scan(doc, 0)
   return result
 }
 

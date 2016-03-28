@@ -1,5 +1,4 @@
 import {ProseMirror, Range} from "prosemirror/dist/edit"
-import {Pos} from "prosemirror/dist/model"
 import {Remapping, Transform} from "prosemirror/dist/transform"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
@@ -25,7 +24,7 @@ class Commit {
 
 let commits = window.commits = []
 let uncommitted = new Commit
-let blameMap = [{from: new Pos([], 0), to: new Pos([], 1), commit: null}]
+let blameMap = [{from: 0, to: 2, commit: null}]
 
 pm.on("transform", transform => {
   let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i], transform.maps[i]))

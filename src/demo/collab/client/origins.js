@@ -1,5 +1,4 @@
 import {Remapping} from "prosemirror/dist/transform"
-import {Pos} from "prosemirror/dist/model"
 import {insertCSS} from "prosemirror/dist/dom"
 
 function buildColor(hue, sat, light) {
@@ -37,8 +36,8 @@ export function showOrigins(pm, steps, maps) {
   steps.forEach((step, i) => {
     if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
       let remap = new Remapping([], maps.slice(i).concat(collab.unconfirmedMaps))
-      let start = remap.map(Pos.fromJSON(step.from), -1).pos
-      let end = remap.map(Pos.fromJSON(step.to, 1)).pos
+      let start = remap.map(step.from, -1).pos
+      let end = remap.map(step.to, 1).pos
       if (start.cmp(end) < 0) {
         let range = pm.markRange(start, end, {className: getClass(step.origin)})
         setTimeout(() => pm.removeRange(range), 1000)

@@ -1,5 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
-
 export class Comment {
   constructor(from, to, text, id) {
     this.from = from
@@ -9,7 +7,7 @@ export class Comment {
   }
 
   static fromJSON(json) {
-    return new Comment(Pos.fromJSON(json.from), Pos.fromJSON(json.to), json.text, json.id)
+    return new Comment(json.from, json.to, json.text, json.id)
   }
 }
 
@@ -38,10 +36,7 @@ export class Comments {
   }
 
   created(data) {
-    this.comments.push(new Comment(Pos.fromJSON(data.from),
-                                   Pos.fromJSON(data.to),
-                                   data.text,
-                                   data.id))
+    this.comments.push(new Comment(data.from, data.to, data.text, data.id))
     this.events.push({type: "create", id: data.id})
     this.version++
   }

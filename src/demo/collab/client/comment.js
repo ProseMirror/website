@@ -1,4 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {eventMixin} from "prosemirror/dist/util/event"
 import {UpdateScheduler} from "prosemirror/dist/ui/update"
@@ -39,7 +38,7 @@ export class CommentStore {
   }
 
   addJSONComment(obj) {
-    this.addComment(Pos.fromJSON(obj.from), Pos.fromJSON(obj.to), obj.text, obj.id)
+    this.addComment(obj.from, obj.to, obj.text, obj.id)
   }
 
   removeComment(id) {

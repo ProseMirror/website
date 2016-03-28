@@ -90,7 +90,7 @@ class ServerConnection {
     // current action to complete
     if (this.state == "poll") {
       this.request.abort()
-      if (this.pm.doc.size > 40000) {
+      if (this.pm.doc.content.size > 40000) {
         this.pm.setOption("collab", null)
         this.report.failure("Document too big. Detached.")
         return
