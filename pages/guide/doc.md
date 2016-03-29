@@ -11,7 +11,7 @@ the basics of those data structures.
 
 A ProseMirror document is tree-shaped, much like the
 [browser DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model).
-ProseMirror documents are made up of [nodes](##Node), each
+Documents are made up of [nodes](##Node), each
 of which contains a [fragment](##Fragment) containing zero
 or more child nodes.
 
@@ -22,9 +22,8 @@ even appear multiple times in a single document.
 An important difference between the DOM and ProseMirror's data model
 is that inline content is *flat* in a ProseMirror document. The tree
 shape is not used to represent things like strong or emphasized text.
-Instead, text (and other inline content) can have
-[marks](##Mark) associated with it to indicate such
-styling. In HTML, you'd have this:
+Instead, text (and other inline content) can have [marks](##Mark)
+associated with it to indicate such styling. In HTML, you'd have this:
 
     <p>This is <strong>strong text with <em>emphasis</em></strong></p>
 
@@ -84,36 +83,47 @@ node. For single-level traversal, the easies way is to use the
 [`forEach`](##Node.forEach) method, which, much like `Array.forEach`,
 will call your function for each child node.
 
-For more complicated iteration, you can use [iterators](##Node.iter),
-which are
-[ES6-style](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
-iterators that run over direct child nodes, either within a given
-range, or through the whole node. Even if you don't use ES6-style
-`for/of` syntax, you can use them quite easily like this:
+For iteration that isn't simply start-to-end, you can use indexing.
+The [`child`](##Node.child) method gives you the child at a given
+offset, and the [`childCount`](##Node.childCount) property tells you
+how many a node has.
 
-    for (var iter = parent.iter(), child; child = iter.next().value;)
-      ; // Do something with child
+To run over all nodes between a pair of positions, the
+[`nodesBetween`](##Node.nodesBetween) method can be convenient. It
+will call a callback for each descendant node in the given range.
 
-This works because `iter.next().value` will be `null` when the
-iterator reaches its end. There are also
-[reverse iterators](##Node.reverseIter) for when you want to iterate
-in the other direction.
+## Indexing
 
-You should usually not use [indexed access](##Node.child) to nodes.
-Indices into nodes are character-based, which means they treat text
-nodes specially—in a node that contains the word `"foo"` and an image,
-indices 0 to 2 all point at the text node, and 3 points at the image.
-Thus, looping from 0 to [`parent.size`](##Node.size) and calling
-[`child`](##Node.child) for each index will rarely do what you want.
+Positions in a document are represented as integers, indicating the
+amount of “tokens” that come before the given position. These tokens
+don't actually exist as objects, they are just a counting convention.
 
-The exception to this is when descending the document along a
-[path](##Pos.path). In that case, the path elements refer to parent
-nodes, which can not be text nodes, and thus you can safely call
-[`child`](##node.child).
+ * The start of the document, right before the first content, is
+   position 0.
 
-For deep traversal, the [`nodesBetween`](##Node.nodesBetween) method
-can be convenient. It will call a callback for each descendant node,
-optionally constrainted to a certain range.
+ * When entering or leaving a node that can have content, that counts
+   as one token. So if the document starts with a paragraph, the start
+   of that paragraph couns as position 1.
+
+ * Each character counts as one token. So if the paragraph at the
+   start of the document contains the word “hi”, position 2 is after
+   the “h”, position 3 after the “i”, and position 4 after the whole
+   paragraph.
+
+ * Nodes that do not allow content (such as images) count as a single
+   token.
+
+Interpreting such position involves quite a lot of counting. You can
+call [`Node.resolve`](##Node.resolve) to get a more descriptive
+[data structure](##ResolvedPos) for a position. This data structure
+will tell you what the parent node of the position it, what its offset
+into that parent is, what ancestors the parent has, and a few other
+things.
+
+Take good care to distinguish between child indices (as per
+[`childCount`](##Node.childCount)), document-wide positions, and
+node-local offsets (sometimes used in recursive functions to represent
+a position into the node that's currently being handled).
 
 ## Changing
 
@@ -132,9 +142,15 @@ ProseMirror to run a very efficient DOM [update](##ProseMirror.flush)
 algorithm by comparing the last document it drew to the screen to the
 current document.
 
-To create updated, new versions of a node, you can use methods like
-[`slice`](##Node.slice), [`splice`](##Node.splice),
-[`append`](##Node.append), and [`replace`](##Node.replace).
+To create an updated version of a whole document, you'll usually want
+to use [`Node.replace`](##Node.replace), which replaces a given range
+of the document with a [“slice”](##Slice) of new content.
+
+To update a node shallowly, you'll usually want to use its
+[`copy`](##Node.copy) method, which creates a similar node with new
+content, along with update methods on fragments, such as
+[`replaceChild`](##Fragment.replaceChild) or
+[`append`](##Fragment.append).
 
 Or, if you need to leave a record of your changes (which is necessary
 when the document is in an editor), you'll go through the
@@ -144,19 +160,8 @@ immediately create a new document for every step.
 
 So this is going to break things:
 
-    editor.doc.nodeAfter(pos).text += "!" // BAD!
+    editor.doc.nodeAt(pos).text += "!" // BAD!
 
 Whereas this works:
 
     editor.tr.insertText(pos, "!").apply()
-
-## Positions
-
-Positions in a document are represented using the [`Pos`](##Pos) type,
-which wraps a path into the document—an array of offsets into
-subsequent nodes, bringing us to the position's parent node—and an
-offset into that parent node.
-
-The editor selection is represented as a pair of such positions, but
-they also come up in almost all computation that you might want to do
-on a document.
