@@ -34,17 +34,20 @@ describe an update. You usually don't need to work with these
 directly, but it is useful to know how they work.
 
 Examples of steps are [`"join"`](##Transform.join) to join two
-adjacent nodes together, or [`"addMark`](##Transform.addMark) to add a
+adjacent nodes together, or [`"addMark"`](##Transform.addMark) to add a
 mark to a given range.
 
-When a step is applied to a document, it produces a new document,
-along with a [position map](##PosMap) that can be used to map
-[positions](##Pos) in the old document to positions in the new one (or
-[vice-versa](##PosMap.invert)).
-
-A step can be [inverted](##Step.invert), producing a new step that
+When a step is applied to a document, it returns a
+[value](##StepResult) that holds either a new document or a failure
+message, if the step can't be meaningfully applied to the document. A
+step can be [inverted](##Step.invert), producing a new step that
 exactly undoes the thing the step did. This is how the undo history is
 implemented.
+
+You can also [get](##Step.posMap) a [position map](##PosMap) from a
+step. This can be used to map [positions](./doc.html#indexing) in the
+old document to positions in the new one (or
+[vice-versa](##PosMap.invert)).
 
 ## Transforms
 
@@ -74,8 +77,8 @@ Rebasing, in the simple case, is the process of taking two steps that
 start with the same document, and transform one of them so that it can
 be applied to the document created by the other instead. In pseudocode:
 
-    stepA(doc0) = (docA, mapA)
-    stepB(doc0) = (docB, mapB)
+    stepA(doc0) = docA
+    stepB(doc0) = docB
     stepB(docA) = MISMATCH!
     rebase(stepB, mapA) = stepB'
     stepB'(docA) = docAB
@@ -89,8 +92,8 @@ step applied to was deleted by the steps that produced the mapping.
 Things get more complicated when you want to rebase a chain of steps
 over another chain of steps.
 
-    stepA2(stepA1(doc0)) = (docA, mapA)
-    stepB2(stepB1(doc0)) = (docB, mapB)
+    stepA2(stepA1(doc0)) = docA
+    stepB2(stepB1(doc0)) = docB
     ???(docA) = docAB
 
 We can map `stepB1` over `stepA1` and then `stepA2`, to get `stepB1'`.
