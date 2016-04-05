@@ -50,7 +50,7 @@ function showProb(prob) {
   if (showingProb) clearProb(showingProb)
   if (delay != null) return
   showingProb = prob
-  if (prob.from.cmp(prob.to))
+  if (prob.from != prob.to)
     range = pm.markRange(prob.from, prob.to, {className: "markprob"})
   overlay = document.body.appendChild(elt("img", {src: "/img/bouncing_arrow.gif", class: "probarrow"}))
   let coords = pm.coordsAtPos(prob.from)
@@ -74,6 +74,10 @@ function lint(doc) {
     result.push({msg, from, to, fix})
   }
 
+  function scanFragment(frag, pos) {
+    frag.forEach((child, offset) => scan(child, pos + offset))
+  }
+
   function scan(node, pos) {
     if (node.isText) {
       let m
@@ -82,19 +86,22 @@ function lint(doc) {
       while (m = badPunc.exec(node.text))
         record("Suspicious spacing around punctuation", pos + m.index, pos + m.index + m[0].length, fixPunc(m))
     } else if (node.type.name == "heading") {
-      if (lastHead != null && node.attrs.level > lastHead + 1)
-        record("Heading too small (" + node.attrs.level + " under " + lastHead + ")", pos + 1, pos + 1 + node.content.size, fixHeader(lastHead + 1))
-      lastHead = node.attrs.level
+      let level = +node.attrs.level
+      if (lastHead != null && level > lastHead + 1)
+        record("Heading too small (" + level + " under " + lastHead + ")",
+               pos + 1, pos + 1 + node.content.size,
+               fixHeader(lastHead + 1))
+      lastHead = level
     } else if (node.type.name == "image") {
       if (!node.attrs.alt) record("Image without alt text", pos, pos + 1, addAlt)
     }
 
-    if (node.isTextblock && !node.size) record("Empty block", pos + 1, pos + 1)
+    if (node.isTextblock && !node.content.size) record("Empty block", pos, pos)
 
-    node.forEach((child, offset) => scan(child, node + 1 + offset))
+    scanFragment(node.content, pos + 1)
   }
 
-  scan(doc, 0)
+  scanFragment(doc.content, 0)
   return result
 }
 
@@ -112,15 +119,12 @@ function fixHeader(level) {
 
 function addAlt(pm, prob) {
   let alt = prompt("Alt text", "")
-  if (!alt) return
-  let img = pm.doc.nodeAfter(prob.from)
-  pm.tr.delete(prob.from, prob.to)
-       .insert(prob.from, img.type.create({
-         src: img.attrs.src,
-         alt: alt,
-         title: img.attrs.title
-       }, null, img.marks))
-       .apply()
+  let img = pm.doc.nodeAt(prob.from)
+  if (alt) pm.tr.setNodeType(prob.from, null, {
+    src: img.attrs.src,
+    alt: alt,
+    title: img.attrs.title
+  }).apply()
 }
 
 runLint()
