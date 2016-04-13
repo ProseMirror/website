@@ -177,7 +177,7 @@ function getRevision(dir) {
     if (ref = /^ref: (.*)/.exec(content))
       file = dir + ".git/" + ref[1]
     else
-      return content
+      return content.trim()
   }
 }
 
