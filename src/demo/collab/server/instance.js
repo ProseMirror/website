@@ -38,7 +38,7 @@ class Instance {
       steps[i].origin = hash
       let result = steps[i].apply(doc)
       doc = result.doc
-      maps.push(result.map)
+      maps.push(steps[i].posMap())
     }
     this.doc = doc
     this.version += steps.length

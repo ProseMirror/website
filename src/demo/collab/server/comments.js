@@ -23,10 +23,10 @@ export class Comments {
       let comment = this.comments[i]
       let from = comment.from, to = comment.to
       for (let j = 0; j < maps.length; j++) {
-        from = maps[j].map(from, 1).pos
-        to = maps[j].map(to, -1).pos
+        from = maps[j].map(from, 1)
+        to = maps[j].map(to, -1)
       }
-      if (from.cmp(to) >= 0) {
+      if (from >= to) {
         this.comments.splice(i, 1)
       } else {
         comment.from = from

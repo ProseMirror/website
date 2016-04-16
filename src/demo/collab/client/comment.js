@@ -98,7 +98,7 @@ export class CommentStore {
     let found = []
     for (let id in this.comments) {
       let comment = this.comments[id]
-      if (comment.range.from.cmp(pos) < 0 && comment.range.to.cmp(pos) > 0)
+      if (comment.range.from < pos && comment.range.to > pos)
         found.push(comment)
     }
     return found

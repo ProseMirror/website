@@ -36,9 +36,9 @@ export function showOrigins(pm, steps, maps) {
   steps.forEach((step, i) => {
     if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
       let remap = new Remapping([], maps.slice(i).concat(collab.unconfirmedMaps))
-      let start = remap.map(step.from, -1).pos
-      let end = remap.map(step.to, 1).pos
-      if (start.cmp(end) < 0) {
+      let start = remap.map(step.from, -1)
+      let end = remap.map(step.to, 1)
+      if (start < end) {
         let range = pm.markRange(start, end, {className: getClass(step.origin)})
         setTimeout(() => pm.removeRange(range), 1000)
       }
