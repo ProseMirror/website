@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "babel-register": "^6.4.3",
-    "prosemirror": "~0.3.0"
+    "prosemirror": "~0.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",
