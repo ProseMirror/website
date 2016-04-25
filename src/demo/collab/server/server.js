@@ -16,6 +16,7 @@ const server = createServer((req, resp) => {
 })
 
 server.listen(port)
+console.log("Collab demo server listening on " + port)
 
 class Output {
   constructor(code, body, type) {
@@ -116,7 +117,7 @@ class Waiting {
 }
 
 function stepJSON(step) {
-  var obj = step.toJSON()
+  let obj = step.toJSON()
   obj.origin = step.origin
   return obj
 }
@@ -125,6 +126,7 @@ function outputEvents(inst, data) {
   return Output.json({version: inst.version,
                       commentVersion: inst.comments.version,
                       steps: data.steps.map(stepJSON),
+                      clientIDs: data.steps.map(step => step.clientID),
                       comment: data.comment})
 }
 
@@ -153,7 +155,7 @@ handle("POST", [null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(schema, s))
   let ip = reqIP(req)
-  let result = getInstance(id, ip).addEvents(version, steps, data.comment, ip)
+  let result = getInstance(id, ip).addEvents(version, steps, data.comment, ip, data.clientID)
   if (!result)
     return new Output(409, "Version not current")
   else

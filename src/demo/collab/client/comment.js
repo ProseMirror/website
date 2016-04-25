@@ -12,20 +12,23 @@ class Comment {
   }
 }
 
+function notEmpty(obj) { for (let _ in obj) return true }
+
 export class CommentStore {
   constructor(pm, version) {
     pm.mod.comments = this
     this.pm = pm
     this.comments = Object.create(null)
     this.version = version
-    this.unsent = []
+    this.created = Object.create(null)
+    this.deleted = Object.create(null)
   }
 
   createComment(text) {
     let id = randomID()
     let sel = this.pm.selection
     this.addComment(sel.from, sel.to, text, id)
-    this.unsent.push({type: "create", id: id})
+    this.created[id] = true
     this.signal("mustSend")
   }
 
@@ -52,30 +55,26 @@ export class CommentStore {
 
   deleteComment(id) {
     if (this.removeComment(id)) {
-      this.unsent.push({type: "delete", id: id})
+      this.deleted[id] = true
       this.signal("mustSend")
     }
   }
 
   hasUnsentEvents() {
-    return this.unsent.length
+    return notEmpty(this.created) || notEmpty(this.deleted)
   }
 
   unsentEvents() {
     let result = []
-    for (let i = 0; i < this.unsent.length; i++) {
-      let event = this.unsent[i]
-      if (event.type == "delete") {
-        result.push({type: "delete", id: event.id})
-      } else { // "create"
-        let found = this.comments[event.id]
-        if (!found || !found.range.from) continue
-        result.push({type: "create",
-                     from: found.range.from,
-                     to: found.range.to,
-                     id: found.id,
-                     text: found.text})
-      }
+    for (let id in this.created) {
+      let found = this.comments[id]
+      if (found) result.push({type: "create", id,
+                              from: found.range.from,
+                              to: found.range.to,
+                              text: found.text})
+    }
+    for (let id in this.deleted) {
+      if (!(id in this.created)) result.push({type: "delete", id})
     }
     return result
   }
@@ -86,10 +85,13 @@ export class CommentStore {
 
   receive(events, version) {
     events.forEach(event => {
-      if (event.type == "delete")
-        this.removeComment(event.id)
-      else // "create"
-        this.addJSONComment(event)
+      if (event.type == "delete") {
+        if (event.id in this.deleted) delete this.deleted[event.id]
+        else this.removeComment(event.id)
+      } else { // "create"
+        if (event.id in this.created) delete this.created[event.id]
+        else this.addJSONComment(event)
+      }
     })
     this.version = version
   }
@@ -181,7 +183,7 @@ export class CommentUI {
     btn.addEventListener("click", () => {
       this.clearHighlight()
       this.pm.mod.comments.deleteComment(comment.id)
-      this.update()
+      this.prepareUpdate()
     })
     let li = elt("li", {class: "commentText"}, comment.text, btn)
     li.addEventListener("mouseover", e => {
@@ -200,7 +202,7 @@ export class CommentUI {
 }
 
 function bottomCenterOfSelection() {
-  let rects = window.getSelection().getRangeAt(0).getClientRects()
-  let {left, right, bottom} = rects[rects.length - 1]
+  let range = window.getSelection().getRangeAt(0), rects = range.getClientRects()
+  let {left, right, bottom} = rects[rects.length - 1] || range.getBoundingClientRect()
   return {top: bottom, left: (left + right) / 2}
 }

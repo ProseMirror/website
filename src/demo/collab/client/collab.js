@@ -74,12 +74,12 @@ class ServerConnection {
         data = JSON.parse(data)
         this.backOff = 0
         if (data.steps && data.steps.length) {
-          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(schema, j)))
-          showOrigins(this.pm, data.steps, maps)
+          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
+          showOrigins(this.pm, data.steps.slice(data.steps.length - maps.length), maps)
         }
         if (data.comment && data.comment.length)
           this.comments.receive(data.comment, data.commentVersion)
-        this.sendOrPoll()
+        this.poll()
         info.users.textContent = userString(data.users)
       }
     })
@@ -99,6 +99,13 @@ class ServerConnection {
     }
   }
 
+  sendOrPoll() {
+    if (this.collab.hasSendableSteps() || this.comments.hasUnsentEvents())
+      this.send()
+    else
+      this.poll()
+  }
+
   send() {
     this.state = "send"
     let sendable = this.collab.sendableSteps()
@@ -106,6 +113,7 @@ class ServerConnection {
     let comments = this.comments.unsentEvents()
     let json = JSON.stringify({version: sendable.version,
                                steps: sendable.steps.map(s => s.toJSON()),
+                               clientID: sendable.clientID,
                                comment: comments})
 
     let req = this.request = POST(this.url + "/events", json, "application/json", err => {
@@ -122,18 +130,9 @@ class ServerConnection {
       } else {
         this.report.success()
         this.backOff = 0
-        this.collab.confirmSteps(sendable)
-        if (nComments) this.comments.eventsSent(nComments)
-        this.sendOrPoll()
+        this.poll()
       }
     })
-  }
-
-  sendOrPoll() {
-    if (this.collab.hasSendableSteps() || this.comments.hasUnsentEvents())
-      this.send()
-    else
-      this.poll()
   }
 
   recover(err) {

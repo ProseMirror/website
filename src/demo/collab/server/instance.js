@@ -29,13 +29,14 @@ class Instance {
     if (this.collecting != null) clearInterval(this.collecting)
   }
 
-  addEvents(version, steps, comments, ip) {
+  addEvents(version, steps, comments, ip, clientID) {
     this.checkVersion(version)
     if (this.version != version) return false
     let doc = this.doc, maps = []
     let hash = getHash(ip + "t2ng1&")
     for (let i = 0; i < steps.length; i++) {
       steps[i].origin = hash
+      steps[i].clientID = clientID
       let result = steps[i].apply(doc)
       doc = result.doc
       maps.push(steps[i].posMap())

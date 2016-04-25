@@ -18,12 +18,12 @@ editing functionality.
 ProseMirror's collaborative editing system employs a central authority
 which determines in which order changes are applied. If two editors
 make changes concurrently, they will both go to this authority with
-their changes. The authority will tell one of them that yes, their
-changes are accepted, and broadcase these changes to the other
-editors. The other will get a reply saying that nope, their version of
-the document is not up to date, and they have to receive changes,
-[rebase](transform.html#rebasing) their local changes on top of those,
-and try to submit them again.
+their changes. The authority will accept the changes from one of them,
+and broadcast these changes to all editors. The other's changes will
+not be accepted, and when that editor receives new changes from the
+server, it'll have to [rebase](transform.html#rebasing) its local
+changes on top of those from the other editor, and try to submit them
+again.
 
 ## The Authority
 
@@ -31,11 +31,10 @@ The role of the central authority is actually rather simple. It must...
 
  - Track a current document version
 
- - Tell editors that submit changes whether their changes are accepted
-   (which can be done simply by comparing that editor's current
-   version with the central version)
+ - Accept changes from editors, and when these can be applied, add
+   them to its list of changes
 
- - Provide a way for editors to receive new changes made by peers
+ - Provide a way for editors to fetch changes since a given version
 
 Let's implement a trivial central authority that runs in the same
 JavaScript environment as the editors.
@@ -44,43 +43,46 @@ JavaScript environment as the editors.
 function Authority(doc) {
   this.doc = doc
   this.steps = []
+  this.stepClientIDs = []
 }
 
 require("prosemirror/dist/util/event").eventMixin(Authority)
 
-Authority.prototype.receiveSteps = function(version, steps) {
-  if (version != this.steps.length) return false
+Authority.prototype.receiveSteps = function(version, steps, clientID) {
+  if (version != this.steps.length) return
 
   var self = this
   // Apply and accumulate new steps
   steps.forEach(function(step) {
     self.doc = step.apply(self.doc).doc
     self.steps.push(step)
+    self.stepClientIDs.push(clientID)
   })
-  // Signal listeners (after we return)
-  setTimeout(function() { self.signal("newSteps") }, 100)
-  return true
+  // Signal listeners
+  self.signal("newSteps")
+}
+
+Authority.prototype.stepsSince = function(version) {
+  return {
+    steps: this.steps.slice(version),
+    clientIDs: this.stepClientIDs.slice(version)
+  }
 }
 ```
 
 When an editor wants to try and submit their changes to the authority,
 they can call `receiveSteps` on it, passing the last version number
-they received, along with the new changes they added on top of that.
-The method will return `true` if the changes are accepted, and `false`
-otherwise.
+they received, along with the new changes they added, and their client
+ID (which is a way for them to later recognize which changes came from
+them).
 
 This implementation of an authority keeps an endlessly growing array
 of steps, the length of which denotes its current version.
 
 The `eventMixin` call adds event-related methods to this type, such as
 [`on`](##EventMixin.on) and [`signal`](##EventMixin.signal). The
-timeout is needed because our communication channels are synchronous,
-and it would confuse the editor that is submitting the changes if the
-event that there are new changes came in before its changes were
-confirmed. It also models the fact that typical communication channels
-are asynchronous—without it, it wouldn't even be possible in this
-example setup to have concurrent changes. You could raise the timeout
-delay if you wanted to experiment with conflicts.
+`stepsSince` function can be used by an editor to know which new
+changes, if any, happened since a given version.
 
 ## The `collab` Module
 
@@ -104,15 +106,14 @@ function collabEditor(authority, place) {
 
   function send() {
     var data = collab.sendableSteps()
-    if (authority.receiveSteps(data.version, data.steps))
-      collab.confirmSteps(data)
+    authority.receiveSteps(data.version, data.steps, data.clientID)
   }
 
   collab.on("mustSend", send)
 
   authority.on("newSteps", function() {
-    var newSteps = authority.steps.slice(collab.version)
-    if (newSteps.length) collab.receive(newSteps)
+    var newData = authority.stepsSince(collab.version)
+    collab.receive(newData.steps, newData.clientIDs)
     if (collab.hasSendableSteps()) send()
   })
 
@@ -120,14 +121,13 @@ function collabEditor(authority, place) {
 }
 ```
 
-Here we load and the `collab` module, and define a function that
-produces an editor wired up to a collaboration authority.
+Here we load the `collab` module, and define a function that produces
+an editor wired up to a collaboration authority.
 
 To do so, it wires up the `send` function to the collab module's
 [`"mustSend"`](##Collab.event_mustSend) event. The function retrieves
 the unconfirmed steps that the editor has and passes them to
-`receiveSteps`, confirming them in the editor when that returns
-`true`.
+`receiveSteps`.
 
 It also listens for the authority's `"newSteps"` event, and when that
 fires, fetches the steps it did not have yet, and pushes them into the
