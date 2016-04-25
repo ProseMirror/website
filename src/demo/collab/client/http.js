@@ -1,3 +1,4 @@
+// A simple wrapper for XHR.
 export function req(conf, callback) {
   let req = new XMLHttpRequest()
   req.open(conf.method, conf.url, true)

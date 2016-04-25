@@ -1,5 +1,6 @@
 import {parse} from "url"
 
+// A URL router for the server.
 export class Router {
   constructor() { this.routes = [] }
 
@@ -7,6 +8,8 @@ export class Router {
     this.routes.push({method, url, handler})
   }
 
+  // : (union<string, RegExp, Array>, string) → union<Array, null>
+  // Check whether a route pattern matches a given URL path.
   match(pattern, path) {
     if (typeof pattern == "string") {
       if (pattern == path) return []
@@ -30,6 +33,7 @@ export class Router {
     }
   }
 
+  // Resolve a request, letting the matching route write a response.
   resolve(request, response) {
     let parsed = parse(request.url, true)
     let path = parsed.pathname

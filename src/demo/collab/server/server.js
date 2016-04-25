@@ -10,6 +10,7 @@ const port = 8000
 
 const router = new Router
 
+// The collaborative editing document server.
 const server = createServer((req, resp) => {
   if (!router.resolve(req, resp))
     new Output(404, "Not found").resp(resp)
@@ -18,6 +19,7 @@ const server = createServer((req, resp) => {
 server.listen(port)
 console.log("Collab demo server listening on " + port)
 
+// An object for outputting an HTTP request.
 class Output {
   constructor(code, body, type) {
     this.code = code
@@ -29,12 +31,15 @@ class Output {
     return new Output(200, JSON.stringify(data), "application/json")
   }
 
+  // Write the response.
   resp(resp) {
     resp.writeHead(this.code, {"Content-Type": this.type})
     resp.end(this.body)
   }
 }
 
+// : (stream.Readable, Function)
+// Invoke a callback with a stream's data.
 function readStreamAsJSON(stream, callback) {
   let data = ""
   stream.on("data", chunk => data += chunk)
@@ -47,6 +52,8 @@ function readStreamAsJSON(stream, callback) {
   stream.on("error", e => callback(e))
 }
 
+// : (string, Array, Function)
+// Register a server route.
 function handle(method, url, f) {
   router.add(method, url, (req, resp, ...args) => {
     function finish() {
@@ -70,10 +77,13 @@ function handle(method, url, f) {
   })
 }
 
+// The root endpoint outputs a list of the collaborative
+// editing document instances.
 handle("GET", [], () => {
   return Output.json(instanceInfo())
 })
 
+// Output the current state of a document instance.
 handle("GET", [null], (id, req) => {
   let inst = getInstance(id, reqIP(req))
   return Output.json({doc: inst.doc.toJSON(),
@@ -91,6 +101,9 @@ function nonNegInteger(str) {
   throw err
 }
 
+// An object to assist in waiting for a collaborative editing
+// instance to publish a new version before sending the version
+// event data to the client.
 class Waiting {
   constructor(resp, inst, ip, finish) {
     this.resp = resp
@@ -130,6 +143,9 @@ function outputEvents(inst, data) {
                       comment: data.comment})
 }
 
+// An endpoint for a collaborative document instance which
+// returns all events between a given version and the server's
+// current version of the document.
 handle("GET", [null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
   let commentVersion = nonNegInteger(req.query.commentVersion)
@@ -138,8 +154,12 @@ handle("GET", [null, "events"], (id, req, resp) => {
   let data = inst.getEvents(version, commentVersion)
   if (data === false)
     return new Output(410, "History no longer available")
+  // If the server version is greater than the given version,
+  // return the data immediately.
   if (data.steps.length || data.comment.length)
     return outputEvents(inst, data)
+  // If the server version matches the given version,
+  // wait until a new version is published to return the event data.
   let wait = new Waiting(resp, inst, reqIP(req), () => {
     wait.send(outputEvents(inst, inst.getEvents(version, commentVersion)))
   })
@@ -151,6 +171,7 @@ function reqIP(request) {
   return request.headers["x-forwarded-for"] || request.socket.remoteAddress
 }
 
+// The event submission endpoint, which a client sends an event to.
 handle("POST", [null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(schema, s))
