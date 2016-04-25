@@ -8,6 +8,7 @@ import {createHash} from "crypto"
 
 const MAX_STEP_HISTORY = 10000
 
+// A collaborative editing document instance.
 class Instance {
   constructor(id, doc, comments) {
     this.id = id
@@ -15,6 +16,7 @@ class Instance {
       schema.text("This is a collaborative test document. Start editing to make it more interesting!")
     ])])
     this.comments = comments || new Comments
+    // The version number of the document instance.
     this.version = 0
     this.steps = []
     this.lastActive = Date.now()
@@ -61,6 +63,9 @@ class Instance {
     return {version: this.version, commentVersion: this.comments.version}
   }
 
+  // : (Number)
+  // Check if a document version number relates to an existing
+  // document version.
   checkVersion(version) {
     if (version < 0 || version > this.version) {
       let err = new Error("Invalid version " + version)
@@ -69,6 +74,9 @@ class Instance {
     }
   }
 
+  // : (Number, Number)
+  // Get events between a given document version and
+  // the current document version.
   getEvents(version, commentVersion) {
     this.checkVersion(version)
     let startIndex = this.steps.length - (this.version - version)

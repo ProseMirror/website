@@ -18,6 +18,8 @@ function badVersion(err) {
   return err.status == 400 && /invalid version/i.test(err)
 }
 
+// A class to manage the connection to the collaborative editing server,
+// sending and retrieving the document state.
 class ServerConnection {
   constructor(pm, report) {
     this.pm = pm
@@ -30,6 +32,8 @@ class ServerConnection {
     this.backOff = 0
   }
 
+  // Get the current state of the document from the collaboration
+  // server and bootstrap the editor instance with the data.
   start(url, c) {
     this.state = "start"
     this.url = url
@@ -57,6 +61,10 @@ class ServerConnection {
     })
   }
 
+  // Send a request for events that have happened since the version
+  // of the document that the client knows about. This request waits
+  // for a new version of the document to be created if the client
+  // is already up-to-date.
   poll() {
     this.state = "poll"
     let url = this.url + "/events?version=" + this.collab.version + "&commentVersion=" + this.comments.version
@@ -106,6 +114,7 @@ class ServerConnection {
       this.poll()
   }
 
+  // Send all unshared events to the server.
   send() {
     this.state = "send"
     let sendable = this.collab.sendableSteps()
@@ -119,7 +128,9 @@ class ServerConnection {
     let req = this.request = POST(this.url + "/events", json, "application/json", err => {
       if (this.request != req) return
 
-      if (err && err.status == 409) { // Conflict
+      if (err && err.status == 409) {
+        // The client's document conflicts with the server's version.
+        // Poll for changes and then try again.
         this.backOff = 0
         this.poll()
       } else if (err && badVersion(err)) {
