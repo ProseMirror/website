@@ -17,14 +17,6 @@ Install node submodules
 npm install
 ```
 
-Build ProseMirror
-
-```bash
-cd node_modules/prosemirror
-npm run dist
-cd ../../
-```
-
 Build the documentation and all the demos' JavaScript source
 
 ```bash
