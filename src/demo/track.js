@@ -59,16 +59,16 @@ function adjustBlameMap(steps, maps, commit) {
     let map = maps[i]
     for (let j = 0; j < blameMap.length; j++) {
       let span = blameMap[j]
-      span.from = map.map(span.from, 1).pos
-      span.to = map.map(span.to, -1).pos
-      if (!span.from.cmp(span.to)) blameMap.splice(j--, 1)
+      span.from = map.map(span.from, 1)
+      span.to = map.map(span.to, -1)
+      if (span.from == span.to) blameMap.splice(j--, 1)
     }
     let step = steps[i], to
-    if (step.type == "replace" && (to = map.map(step.to, 1).pos) && step.from.cmp(to)) {
+    if (step.type == "replace" && (to = map.map(step.to, 1)) && step.from != to) {
       let pos = 0, span = {from: step.from, to, commit}
-      while (pos < blameMap.length && blameMap[pos].to.cmp(step.from) <= 0) ++pos
+      while (pos < blameMap.length && blameMap[pos].to <= step.from) ++pos
       let after = blameMap[pos]
-      if (after && after.from.cmp(span.to) < 0) {
+      if (after && after.from < span.to) {
         blameMap.splice(pos, 1, {from: after.from, to: span.from, commit: after.commit},
                         span, {from: span.to, to: after.to, commit: after.commit})
       } else {
@@ -87,7 +87,7 @@ function adjustBlameMap(steps, maps, commit) {
 
 function findInBlameMap(pos) {
   for (let i = 0; i < blameMap.length; i++)
-    if (blameMap[i].to.cmp(pos) >= 0 && blameMap[i].commit) return blameMap[i].commit
+    if (blameMap[i].to >= pos && blameMap[i].commit) return blameMap[i].commit
 }
 
 function renderCommits() {
@@ -140,9 +140,9 @@ function revertCommit(commit) {
   let tr = pm.tr
   for (let i = commit.steps.length - 1; i >= 0; i--) {
     let remapped = commit.steps[i].map(remap)
-    let result = remapped && tr.step(remapped)
+    let result = remapped && tr.maybeStep(remapped)
     let id = remap.addToFront(commit.maps[i])
-    if (result) remap.addToBack(result.map, id)
+    if (result.doc) remap.addToBack(remapped.posMap(), id)
   }
   commit.hidden = true
   if (tr.steps.length) {
