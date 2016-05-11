@@ -2,4 +2,4 @@
 /public/**/*.html
 /public/demo/bundle_*.js
 .tern-port
-/src/demo/collab/server/demo-instances.json
+/src/demo/collab/demo-instances.json

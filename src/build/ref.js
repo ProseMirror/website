@@ -20,11 +20,11 @@ var modules = [{
 }, {
   name: "model",
   files: "src/model/*.js",
-  order: "index node fragment mark pos schema defaultschema"
+  order: "index node fragment mark pos schema content defaultschema"
 }, {
   name: "transform",
   files: "src/transform/*.js",
-  order: "index step map transform join split ancestor replace mark"
+  order: "index step mark_step replace_step map transform mark replace structure"
 }, {
   name: "format",
   files: "src/format/*.js",
