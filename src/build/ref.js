@@ -60,6 +60,9 @@ var modules = [{
   files: "src/collab/*.js",
   order: "index rebase"
 }, {
+  name: "util/orderedmap",
+  files: "src/util/orderedmap.js"
+}, {
   name: "util/event",
   files: "src/util/event.js"
 }, {
