@@ -44,7 +44,10 @@ Dino.register("autoInput", "autoDino", new InputRule(new RegExp("\\[(" + dinos.j
   pm.tr.delete(start, pos).insertInline(start, this.create({type: match[1]})).apply()
 }))
 
-const dinoSchema = new Schema(defaultSchema.spec.update({dino: Dino}))
+const dinoSchema = new Schema({
+  nodes: defaultSchema.nodeSpec.addToEnd("dino", {type: Dino, group: "inline"}),
+  marks: defaultSchema.markSpec
+})
 
 let pm = window.dinoPM = new ProseMirror({
   place: document.querySelector("#editor"),

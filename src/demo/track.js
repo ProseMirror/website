@@ -1,5 +1,5 @@
 import {ProseMirror, Range} from "prosemirror/dist/edit"
-import {Remapping, Transform} from "prosemirror/dist/transform"
+import {Remapping, Transform, ReplaceStep} from "prosemirror/dist/transform"
 import {elt} from "prosemirror/dist/dom"
 import "prosemirror/dist/menu/menubar"
 
@@ -64,7 +64,7 @@ function adjustBlameMap(steps, maps, commit) {
       if (span.from == span.to) blameMap.splice(j--, 1)
     }
     let step = steps[i], to
-    if (step.type == "replace" && (to = map.map(step.to, 1)) && step.from != to) {
+    if (step instanceof ReplaceStep && !step.structure && (to = map.map(step.to, 1)) && step.from != to) {
       let pos = 0, span = {from: step.from, to, commit}
       while (pos < blameMap.length && blameMap[pos].to <= step.from) ++pos
       let after = blameMap[pos]
