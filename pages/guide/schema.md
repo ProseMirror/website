@@ -59,7 +59,11 @@ You can say, for example `"paragraph"` for “one paragraph”, or
 `"paragraph*"` means “zero or more paragraphs” and `"caption?"` means
 “zero or one caption node”. You can also use regular-expression-like
 ranges, such as `{2}` (“exactly two”) `{1, 5}` (“one to five”) or
-`{2,}` (“two or more”) after node names.
+`{2,}` (“two or more”) after node names. In brace notation, you can
+substitute a reference to an [attribute](##NodeType.attrs) of the
+parent node for any of the numbers. For example `"table_cell{.width}"`
+to require that the node contain the number of table cells specified
+by the parent node's `width` attribute.
 
 Often, you'll want not just a single node type, but any of a set of
 node types, to appear in a position. You can use parentheses and the
@@ -68,21 +72,17 @@ pipe `|` operator (for “or”) to express this. For example `"(paragraph
 
 Some groups of element types will appear multiple types in your
 schema—for example you might have a concept of “block” nodes, that may
-appear at the top level but also nested inside of blockquotes. If you
-include a `groups` property in your schema definition
-[spec](##SchemaSpec), the groups defined there can be referred to in
-content expressions.
+appear at the top level but also nested inside of blockquotes. You can
+create a node group by giving your node specs a `group` property, and
+then refer to that group by its name in your expressions.
 
 ```
 const groupSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "block+"},
-    paragraph: {type: Paragraph, content: "text*"},
-    blockquote: {type: Blockquote, content: "block+"},
+    paragraph: {type: Paragraph, group: "block", content: "text*"},
+    blockquote: {type: Blockquote, group: "block", content: "block+"},
     text: {type: Text}
-  },
-  groups: {
-    block: ["paragraph", "blockquote"]
   }
 })
 ```
@@ -90,15 +90,17 @@ const groupSchema = new Schema({
 Here `"block+"` is equivalent to `"(paragraph | blockquote)+"`. Groups
 can also refer to other groups to extend them.
 
-The order of node types in a group is significant. ProseMirror will in
-some situations “make up” nodes, in order to make sure the document
-remains valid. For elements that are specified as being part of a
-group, the first element in the group is the one that will be created.
-If I switched the positions of `"paragraph"` and `"blockquote"` in the
-group in the example, you'd get a stack overflow as soon as the editor
-tried to create a block node—it's create a `"blockquote"` node, whose
-content requires at least one block, so it'd create another
-`"blockquote"` as content, and so on.
+Note that the order in which your nodes appear in an or-expression is
+significant. When creating a placeholder for a non-optional node, for
+example to make sure a document is still valid after a
+[replace step](##Transform.replace) the first type in the expression
+will be used. If that is a group, the first type in the group
+(determined by the order in which the group's members appear in your
+`nodes` map) is used. If I switched the positions of `"paragraph"` and
+`"blockquote"` in the the example schema, you'd get a stack overflow
+as soon as the editor tried to create a block node—it'd create a
+`"blockquote"` node, whose content requires at least one block, so
+it'd try to create another `"blockquote"` as content, and so on.
 
 To express “first a heading and then zero or more paragraphs”, you
 write `"heading paragraph*"`. Putting expressions after each other
@@ -111,11 +113,19 @@ expression. An additional constraint is that adjacent groups must not
 overlap (must not contain the same nodes), to make matching efficient
 and unambiguous.
 
+It is possible to restrict child nodes to have certain attributes,
+using square brackets. You can say `"heading[level=1]"` to only allow
+level 1 heading nodes. Or even `"some_node[foo=1, bar=\"baz\"]"`, to
+restrict multiple attributes. The value after the `=` may be a JSON
+atom (string, number, bool, null) or a reference to an attribute in
+the parent node, written with a prefixed dot, for example
+`"table_row[width=.width]"`.
+
 By default, nodes do not support [marks][##Mark]. When desired, you
-have to explicitly allow them using square bracket syntax. So
-`"text*"` means “text without marks”, whereas `"text[em]*"` means
-“text with optional emphasis mark”, `"text[em strong]*"` text with
-optional strong or emphasis mark, and `"text[_]*"` can be used to say
+have to explicitly allow them using angle bracket syntax. So
+`"text*"` means “text without marks”, whereas `"text<em>*"` means
+“text with optional emphasis mark”, `"text<em strong>*"` text with
+optional strong or emphasis mark, and `"text<_>*"` can be used to say
 “text with any of the schema's marks”.
 
 ## Marks
