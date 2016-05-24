@@ -87,7 +87,7 @@ class ServerConnection {
         }
         if (data.comment && data.comment.length)
           this.comments.receive(data.comment, data.commentVersion)
-        this.poll()
+        this.sendOrPoll()
         info.users.textContent = userString(data.users)
       }
     })
