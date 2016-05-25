@@ -141,6 +141,7 @@ class ServerConnection {
       } else {
         this.report.success()
         this.backOff = 0
+        this.collab.receive(sendable.steps, repeat(sendable.clientID, sendable.steps.length))
         this.poll()
       }
     })
@@ -160,6 +161,12 @@ class ServerConnection {
       }, this.backOff)
     }
   }
+}
+
+function repeat(val, n) {
+  let result = []
+  for (let i = 0; i < n; i++) result.push(val)
+  return result
 }
 
 let pm = window.pm = new ProseMirror({
