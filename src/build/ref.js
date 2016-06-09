@@ -16,19 +16,19 @@ var config = {
 var modules = [{
   name: "edit",
   files: "src/edit/*.js",
-  order: "index main options selection range command base_commands schema_commands"
+  order: "index main selection plugin history range transform options update commands keymap"
 }, {
   name: "model",
   files: "src/model/*.js",
-  order: "index node fragment mark pos schema content defaultschema"
+  order: "index node resolvedpos fragment replace mark schema content diff"
 }, {
   name: "transform",
   files: "src/transform/*.js",
   order: "index step mark_step replace_step map transform mark replace structure"
 }, {
-  name: "format",
-  files: "src/format/*.js",
-  order: "index register from_dom to_dom from_text to_text"
+  name: "htmlformat",
+  files: "src/htmlformat/*.js",
+  order: "index parse serialize"
 }, {
   name: "markdown",
   files: "src/markdown/*.js",
@@ -36,7 +36,7 @@ var modules = [{
 }, {
   name: "inputrules",
   files: "src/inputrules/*.js",
-  order: "index inputrules autoinput"
+  order: "index inputrules rules util"
 }, {
   name: "menu/menubar",
   files: "src/menu/menubar.js"
@@ -60,11 +60,23 @@ var modules = [{
   files: "src/collab/*.js",
   order: "index rebase"
 }, {
+  name: "schema",
+  files: "src/schema/index.js"
+}, {
+  name: "schema/keymap",
+  files: "src/schema/keymap.js"
+}, {
+  name: "schema/menu",
+  files: "src/schema/menu.js"
+}, {
+  name: "schema/inputrules",
+  files: "src/schema/inputrules.js"
+}, {
   name: "util/orderedmap",
   files: "src/util/orderedmap.js"
 }, {
-  name: "util/event",
-  files: "src/util/event.js"
+  name: "util/subscription",
+  files: "src/util/subscription.js"
 }, {
   name: "util/error",
   files: "src/util/error.js"
@@ -78,6 +90,7 @@ var externalTypes = {
   Array: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
   Object: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
   RegExp: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+  MarkdownIt: "https://markdown-it.github.io/markdown-it/#MarkdownIt",
   MarkdownToken: "https://markdown-it.github.io/markdown-it/#Token",
   DOMNode: "https://developer.mozilla.org/en-US/docs/Web/API/Node",
   DOMFragment: "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
@@ -121,13 +134,16 @@ function exists(path) {
 
 function filesFor(module) {
   var files = module.files.split(" ").reduce(function(set, pat) { return set.concat(glob.sync(pat, {cwd: sourceDir})) }, [])
-  if (module.order) for (var order = module.order.split(" "), i = order.length - 1; i >= 0; i--)  {
-    for (var j = 0; j < files.length; j++) if (files[j].match(new RegExp("\\/" + order[i] + "\\.js$"))) {
-      files.unshift(files.splice(j, 1)[0])
-      break
-    }
-  }
-  return files
+  if (!module.order) return files
+
+  
+  let ordered = module.order.split(" ").map(pat => {
+    let re = new RegExp("\\/" + pat + "\\.js$")
+    for (let i = 0; i < files.length; i++)
+      if (files[i].match(re)) return files.splice(i, 1)[0]
+    throw new Error("Order pattern " + pat + " in module " + module.name + " does not match a file")
+  })
+  return ordered.concat(files)
 }
 
 function getExtra(text) {
@@ -142,18 +158,15 @@ function notEmpty(obj) {
 function organize(items) {
   var classes = Object.create(null), functions = Object.create(null),
       vars = Object.create(null), options = Object.create(null)
-      commands = Object.create(null)
   for (var prop in items) {
     var item = items[prop]
     if (item.kind == "class" || item.kind == "interface") classes[prop] = organizeClass(item)
     else if (item.kind == "option") options[prop] = item
-    else if (item.kind == "command") commands[prop] = item
     else if (item.type == "Function") functions[prop] = item
     else vars[prop] = item
   }
   return {classes: notEmpty(classes),
           options: notEmpty(options),
-          commands: notEmpty(commands),
           functions: notEmpty(functions),
           vars: notEmpty(vars),
           items: items}

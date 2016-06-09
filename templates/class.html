@@ -36,15 +36,6 @@
   </dl>
 <</if>>
 
-<<if item.events>>
-  <h4 id="<<t name>>_events">Events</h4>
-  <dl>
-    <<for pname, prop in item.events>>
-      <<define {name: pname, item: prop, id: name + ".event_" + pname}>>
-    <</for>>
-  </dl>
-<</if>>    
-
 <<if item.properties>>
   <h4 id="<<t name>>_static">Static properties</h4>
   <dl>
