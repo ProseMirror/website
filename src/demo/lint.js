@@ -1,17 +1,18 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
-const {elt} = require("prosemirror/dist/dom")
-require("prosemirror/dist/menu/menubar")
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {fromDOM} = require("prosemirror/dist/htmlformat")
+const {elt} = require("prosemirror/dist/util/dom")
+const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
 
-let pm = window.lintPM = new ProseMirror({
+let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  doc: document.querySelector("#content").innerHTML,
-  docFormat: "html",
-  menuBar: true
+  doc: fromDOM(schema, document.querySelector("#content")),
+  plugins: [defaultSetup]
 })
 
 let delay = null
 
-pm.on("change", () => {
+pm.on.change.add(() => {
   clearTimeout(delay)
   delay = setTimeout(runLint, 500)
 })

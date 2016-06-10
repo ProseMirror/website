@@ -60,7 +60,6 @@ menu.insertMenu.content.push(dinoMenuItem)
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   doc: fromDOM(dinoSchema, document.querySelector("#content")),
-  schema: dinoSchema,
   plugins: [
     defaultSetup.config({menu: menu.fullMenu})
   ]
