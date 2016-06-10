@@ -21,7 +21,8 @@ Build the documentation and all the demos' JavaScript source
 make
 ```
 
-Open `public/index.html`.
+That will populate the `public/` directory with an instance of the
+website. You could point a webserver at it to try it out.
 
 To work on the demos, or to experiment with the collaborative demo, it
 is a good idea to use the dev server:
