@@ -1,67 +1,75 @@
 const {ProseMirror, defineOption, Keymap} = require("prosemirror/dist/edit")
-const {Inline, Attribute, Schema, defaultSchema} = require("prosemirror/dist/model")
-const {elt} = require("prosemirror/dist/dom")
-const {InputRule} = require("prosemirror/dist/inputrules")
+const {fromDOM} = require("prosemirror/dist/htmlformat")
+const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
+const {defaultSchema} = require("prosemirror/dist/schema")
+const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {elt} = require("prosemirror/dist/util/dom")
+const {InputRule, inputRules} = require("prosemirror/dist/inputrules")
 const {Tooltip} = require("prosemirror/dist/ui/tooltip")
-require("prosemirror/dist/menu/menubar")
-require("prosemirror/dist/inputrules/autoinput")
+const {insertItem} = require("prosemirror/dist/menu/menu")
+const {FieldPrompt, SelectField} = require("prosemirror/dist/ui/prompt")
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 
 class Dino extends Inline {
-  get attrs() { return {type: new Attribute("brontosaurus")} }
+  get attrs() {
+    return {type: new Attribute("brontosaurus")}
+  }
+  get matchDOMTag() {
+    return {"img[dino-type]": dom => {
+      let type = dom.getAttribute("dino-type")
+      if (dinos.indexOf(type) > -1) return {type}
+    }}
+  }
+  toDOM(node) {
+    return ["img", {"dino-type": node.attrs.type,
+                    src: "/img/dino/" + node.attrs.type + ".png",
+                    title: node.attrs.type,
+                    class: "dinosaur"}]
+  }
 }
 
-Dino.register("parseDOM", "img", {
-  rank: 25,
-  parse: function(dom, state) {
-    let type = dom.getAttribute("dino-type")
-    if (!type) return false
-    state.insert(this, {type})
-  }
-})
-Dino.prototype.serializeDOM = node => elt("img", {
-  "dino-type": node.attrs.type,
-  class: "dinosaur",
-  src: "/img/dino/" + node.attrs.type + ".png",
-  title: node.attrs.type
-})
-
-// FIXME restore icon-based selection
-const dinoOptions = dinos.map(name => ({value: name, label: name}))
-
-Dino.register("command", "insert", {
-  derive: {params: [{label: "Type", attr: "type", type: "select", options: dinoOptions, default: dinoOptions[0]}]},
-  label: "Insert dino",
-  menu: {
-    group: "insert", rank: 1,
-    display: {type: "label", label: "Dino"}
-  }
-})
-
-Dino.register("autoInput", "autoDino", new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", function(pm, match, pos) {
-  let start = pos - match[0].length
-  pm.tr.delete(start, pos).insertInline(start, this.create({type: match[1]})).apply()
-}))
-
 const dinoSchema = new Schema({
-  nodes: defaultSchema.nodeSpec.addToEnd("dino", {type: Dino, group: "inline"}),
+  nodes: defaultSchema.nodeSpec.addBefore("image", "dino", {type: Dino, group: "inline"}),
   marks: defaultSchema.markSpec
 })
 
-let pm = window.dinoPM = new ProseMirror({
-  place: document.querySelector("#editor"),
-  menuBar: true,
-  doc: document.querySelector("#content").innerHTML,
-  docFormat: "html",
-  schema: dinoSchema,
-  autoInput: true
+const dinoField = new SelectField({
+  label: "Type",
+  required: true,
+  options: dinos.map(name => ({value: name, label: name}))
 })
 
-let tooltip = new Tooltip(pm.wrapper, "below"), open
-pm.content.addEventListener("keydown", () => { tooltip.close(); open = null })
-pm.content.addEventListener("mousedown", () => { tooltip.close(); open = null })
-pm.on("textInput", text => {
+const dinoMenuItem = insertItem(dinoSchema.nodes.dino, {
+  title: "Insert a dino",
+  label: "Dino",
+  attrs(pm, callback) {
+    new FieldPrompt(pm, "Insert a dino", {type: dinoField}).open(callback)
+  }
+})
+
+const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", (pm, match, pos) => {
+  let start = pos - match[0].length
+  pm.tr.delete(start, pos).insertInline(start, dinoSchema.nodes.dino.create({type: match[1]})).apply()
+})
+
+let pm = window.pm = new ProseMirror({
+  place: document.querySelector("#editor"),
+  doc: fromDOM(dinoSchema, document.querySelector("#content")),
+  schema: dinoSchema,
+  plugins: [
+    defaultSetup.config({updateMenu(m) { m[1][0].content.push(dinoMenuItem); return m }})
+  ]
+})
+
+inputRules.get(pm).addRule(dinoInputRule)
+
+let tooltip = new Tooltip(pm.wrapper, "below"), open, closingTooltip
+pm.on.interaction.add(() => {
+  clearTimeout(closingTooltip)
+  closingTooltip = setTimeout(() => {tooltip.close(); open = null}, 100)
+})
+pm.on.textInput.add(text => {
   if (!/[\[\w]/.test(text)) return
   let head = pm.selection.head
   if (head == null) return
@@ -78,10 +86,10 @@ pm.on("textInput", text => {
   let completions = dinos.filter(name => name.indexOf(word) == 0)
   if (completions.length) {
     let flush = () => {
-      pm.off("flush", flush)
+      pm.on.flush.remove(flush)
       showCompletions(completions, head - word.length - 1, head)
     }
-    pm.on("flush", flush)
+    pm.on.flush.add(flush)
   }
 })
 
@@ -102,6 +110,7 @@ function showCompletions(dinos, from, to) {
   let coords = pm.coordsAtPos(from)
   tooltip.open(elt("div", null, items), {left: coords.left, top: coords.bottom})
   open = () => applyCompletion(dinos[0])
+  clearTimeout(closingTooltip)
 }
 
 pm.addKeymap(new Keymap({

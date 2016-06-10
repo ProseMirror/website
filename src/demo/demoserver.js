@@ -29,6 +29,7 @@ let cachedDemoPages = Object.create(null)
 let demos = {
   "/index.html": "../src/demo/basic",
   "/demo/basic.html": "../src/demo/basic",
+  "/demo/dino.html": "../src/demo/dino",
   "/demo/collab.html": "../src/demo/collab/client/collab",
 }
 

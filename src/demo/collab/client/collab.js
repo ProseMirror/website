@@ -179,7 +179,7 @@ let pm = window.pm = new ProseMirror({
   schema: schema,
   plugins: [
     connectionPlugin,
-    defaultSetup.config({updateMenu: m => { m[0].push(annotationMenuItem); return m }}),
+    defaultSetup.config({updateMenu(m) { m[0].push(annotationMenuItem); return m }}),
     connectionPlugin
   ]
 })
