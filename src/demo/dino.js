@@ -1,4 +1,4 @@
-const {ProseMirror, defineOption, Keymap} = require("prosemirror/dist/edit")
+const {ProseMirror, Keymap} = require("prosemirror/dist/edit")
 const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
 const {defaultSchema} = require("prosemirror/dist/schema")
@@ -117,7 +117,7 @@ function showCompletions(dinos, from, to) {
 }
 
 pm.addKeymap(new Keymap({
-  Tab: pm => {
+  Tab: () => {
     if (open) open()
     else return false
   }

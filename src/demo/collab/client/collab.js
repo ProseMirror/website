@@ -1,7 +1,6 @@
 const {defaultSchema: schema} = require("prosemirror/dist/schema")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
 const {Step} = require("prosemirror/dist/transform")
-const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {elt} = require("prosemirror/dist/util/dom")
 const {ProseMirror, Plugin} = require("prosemirror/dist/edit")
 const {collabEditing} = require("prosemirror/dist/collab")
@@ -22,7 +21,7 @@ function badVersion(err) {
 // A class to manage the connection to the collaborative editing server,
 // sending and retrieving the document state.
 const connectionPlugin = new Plugin(class ServerConnection {
-  constructor(pm, options) {
+  constructor(pm) {
     this.pm = pm
     commentUIPlugin.attach(pm)
     this.url = null
@@ -117,7 +116,6 @@ const connectionPlugin = new Plugin(class ServerConnection {
   send() {
     this.state = "send"
     let sendable = this.collab.sendableSteps()
-    let nComments = this.comments.hasUnsentEvents()
     let comments = this.comments.unsentEvents()
     let json = JSON.stringify({version: sendable.version,
                                steps: sendable.steps.map(s => s.toJSON()),
@@ -190,7 +188,7 @@ let pm = window.pm = new ProseMirror({
 
 let info = {
   name: document.querySelector("#docname"),
-  users: document.querySelector("#users"),
+  users: document.querySelector("#users")
 }
 document.querySelector("#changedoc").addEventListener("click", e => {
   GET("/docs/", (err, data) => {

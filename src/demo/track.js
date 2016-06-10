@@ -1,5 +1,5 @@
-const {ProseMirror, Range} = require("prosemirror/dist/edit")
-const {Remapping, Transform, ReplaceStep} = require("prosemirror/dist/transform")
+const {ProseMirror} = require("prosemirror/dist/edit")
+const {Remapping, ReplaceStep} = require("prosemirror/dist/transform")
 const {elt} = require("prosemirror/dist/util/dom")
 const {defaultSchema: schema} = require("prosemirror/dist/schema")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
@@ -155,7 +155,7 @@ function revertCommit(commit) {
     renderCommits()
   }
 }
-  
+
 document.querySelector("#commit").addEventListener("submit", e => {
   e.preventDefault()
   doCommit(e.target.elements.message.value || "Unnamed")

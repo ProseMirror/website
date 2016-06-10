@@ -33,7 +33,7 @@ let demos = {
   "/demo/dino.html": "../src/demo/dino",
   "/demo/lint.html": "../src/demo/lint",
   "/demo/track.html": "../src/demo/track",
-  "/demo/collab.html": "../src/demo/collab/client/collab",
+  "/demo/collab.html": "../src/demo/collab/client/collab"
 }
 
 function transformDemoPage(req, resp) {

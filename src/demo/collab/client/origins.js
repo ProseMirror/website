@@ -24,7 +24,7 @@ function getClass(origin) {
   for (let i = 0, e = origin.length; i < e; ++i)
     h = (h * 761) ^ origin.charCodeAt(i)
   h = Math.abs(h)
-  
+
   let hue = (h % 100) / 100
   let sat = .5 + ((h >> 3) % 100) / 200
   let light = .8 + (h % 15 - 5) / 10
