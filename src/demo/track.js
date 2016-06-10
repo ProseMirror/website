@@ -1,11 +1,13 @@
 const {ProseMirror, Range} = require("prosemirror/dist/edit")
 const {Remapping, Transform, ReplaceStep} = require("prosemirror/dist/transform")
-const {elt} = require("prosemirror/dist/dom")
-require("prosemirror/dist/menu/menubar")
+const {elt} = require("prosemirror/dist/util/dom")
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  menuBar: {float: true}
+  schema: schema,
+  plugins: [defaultSetup]
 })
 
 class Commit {
@@ -26,7 +28,7 @@ let commits = window.commits = []
 let uncommitted = new Commit
 let blameMap = [{from: 0, to: 2, commit: null}]
 
-pm.on("transform", transform => {
+pm.on.transform.add(transform => {
   let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i], transform.maps[i]))
   uncommitted.steps = uncommitted.steps.concat(inverted)
   uncommitted.maps = uncommitted.maps.concat(transform.maps)
