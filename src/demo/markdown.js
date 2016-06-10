@@ -1,9 +1,13 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
-const {elt} = require("prosemirror/dist/dom")
-require("prosemirror/dist/markdown")
-require("prosemirror/dist/menu/tooltipmenu")
+const {elt} = require("prosemirror/dist/util/dom")
+const {defaultMarkdownParser, defaultMarkdownSerializer} = require("prosemirror/dist/markdown")
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
+const {tooltipMenu} = require("prosemirror/dist/menu/tooltipmenu")
 
 let place = document.querySelector("#editor")
+let menu = defaultMenuItems(schema)
 
 let getContent
 function toTextArea(content, focus) {
@@ -13,14 +17,18 @@ function toTextArea(content, focus) {
   getContent = () => te.value
 }
 function toProseMirror(content) {
-  let pm = new ProseMirror({
+  let pm = window.pm = new ProseMirror({
     place: place,
-    doc: content,
-    docFormat: "markdown",
-    tooltipMenu: true
+    doc: defaultMarkdownParser.parse(content),
+    plugins: [
+      defaultSetup.config({menu: false}),
+      tooltipMenu.config({selectedBlockMenu: true,
+                          inlineContent: menu.inlineMenu,
+                          blockContent: menu.blockMenu})
+    ]
   })
   pm.focus()
-  getContent = () => pm.getContent("markdown")
+  getContent = () => defaultMarkdownSerializer.serialize(pm.doc)
 }
 toTextArea(document.querySelector("#markdown_content").textContent, false)
 
