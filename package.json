@@ -10,7 +10,6 @@
     }
   ],
   "dependencies": {
-    "babel-register": "^6.4.3",
     "prosemirror": "~0.7.0"
   },
   "devDependencies": {
@@ -23,10 +22,12 @@
     "markdown-it": "^5.0.2",
     "markdown-it-deflist": "^2.0.0",
     "mold-template": "^2.0.0",
-    "watchify": "^3.2.0"
+    "watchify": "^3.2.0",
+    "moduleserve": "^0.8.0",
+    "ecstatic": "^1.4.0"
   },
   "scripts": {
-    "start": "node src/demo/collab/server/start.js"
+    "start": "node src/demo/collab/server/server.js"
   },
   "license": "MIT",
   "repository": {

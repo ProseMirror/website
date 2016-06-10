@@ -1,7 +1,6 @@
-import {elt} from "prosemirror/dist/dom"
-import {insertCSS} from "prosemirror/dist/dom"
+const {elt, insertCSS} = require("prosemirror/dist/util/dom")
 
-export class Reporter {
+class Reporter {
   constructor() {
     this.state = this.node = null
     this.setAt = 0
@@ -37,6 +36,7 @@ export class Reporter {
     this.clearState()
   }
 }
+exports.Reporter = Reporter
 
 insertCSS(`
 

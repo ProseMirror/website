@@ -1,5 +1,5 @@
 // A simple wrapper for XHR.
-export function req(conf, callback) {
+function req(conf, callback) {
   let req = new XMLHttpRequest()
   req.open(conf.method, conf.url, true)
   req.addEventListener("load", () => {
@@ -18,6 +18,7 @@ export function req(conf, callback) {
   req.send(conf.body || null)
   return req
 }
+exports.req = req
 
 function makePlain(html) {
   var elt = document.createElement("div")
@@ -25,10 +26,12 @@ function makePlain(html) {
   return elt.textContent.trimLeft().replace(/\n[^]*/, "")
 }
 
-export function GET(url, callback) {
+function GET(url, callback) {
   return req({url: url, method: "GET"}, callback)
 }
+exports.GET = GET
 
-export function POST(url, body, type, callback) {
+function POST(url, body, type, callback) {
   return req({url: url, method: "POST", body: body, headers: {"Content-Type": type}}, callback)
 }
+exports.POST = POST

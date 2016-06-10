@@ -1,4 +1,6 @@
-export class Comment {
+const {mapThrough} = require("prosemirror/dist/transform")
+
+class Comment {
   constructor(from, to, text, id) {
     this.from = from
     this.to = to
@@ -10,8 +12,9 @@ export class Comment {
     return new Comment(json.from, json.to, json.text, json.id)
   }
 }
+exports.Comment = Comment
 
-export class Comments {
+class Comments {
   constructor(comments) {
     this.comments = comments || []
     this.events = []
@@ -21,11 +24,7 @@ export class Comments {
   mapThrough(maps) {
     for (let i = this.comments.length - 1; i >= 0; i--) {
       let comment = this.comments[i]
-      let from = comment.from, to = comment.to
-      for (let j = 0; j < maps.length; j++) {
-        from = maps[j].map(from, 1)
-        to = maps[j].map(to, -1)
-      }
+      let from = mapThrough(maps, comment.from, 1), to = mapThrough(maps, comment.to, -1)
       if (from >= to) {
         this.comments.splice(i, 1)
       } else {
@@ -77,3 +76,4 @@ export class Comments {
     return result
   }
 }
+exports.Comments = Comments

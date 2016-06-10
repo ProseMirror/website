@@ -1,8 +1,8 @@
-import {elt} from "prosemirror/dist/dom"
-import {eventMixin} from "prosemirror/dist/util/event"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
-
-import {Tooltip} from "prosemirror/dist/ui/tooltip"
+const {elt} = require("prosemirror/dist/util/dom")
+const {Plugin} = require("prosemirror/dist/edit")
+const {Subscription} = require("prosemirror/dist/util/subscription")
+const {Tooltip} = require("prosemirror/dist/ui/tooltip")
+const {FieldPrompt, TextField} = require("prosemirror/dist/ui/prompt")
 
 class Comment {
   constructor(text, id, range) {
@@ -14,14 +14,14 @@ class Comment {
 
 function notEmpty(obj) { for (let _ in obj) return true }
 
-export class CommentStore {
-  constructor(pm, version) {
-    pm.mod.comments = this
+class CommentStore {
+  constructor(pm, options) {
     this.pm = pm
     this.comments = Object.create(null)
-    this.version = version
+    this.version = options.version
     this.created = Object.create(null)
     this.deleted = Object.create(null)
+    this.mustSend = new Subscription
   }
 
   createComment(text) {
@@ -29,13 +29,16 @@ export class CommentStore {
     let sel = this.pm.selection
     this.addComment(sel.from, sel.to, text, id)
     this.created[id] = true
-    this.signal("mustSend")
+    this.mustSend.dispatch()
   }
 
   addComment(from, to, text, id) {
     if (!this.comments[id]) {
-      let range = this.pm.markRange(from, to, {className: "comment", id: id})
-      range.on("removed", () => this.removeComment(id))
+      let range = this.pm.markRange(from, to, {
+        className: "comment",
+        id: id,
+        onRemove: () => this.removeComment(id)
+      })
       this.comments[id] = new Comment(text, id, range)
     }
   }
@@ -56,7 +59,7 @@ export class CommentStore {
   deleteComment(id) {
     if (this.removeComment(id)) {
       this.deleted[id] = true
-      this.signal("mustSend")
+      this.mustSend.dispatch()
     }
   }
 
@@ -107,60 +110,64 @@ export class CommentStore {
   }
 }
 
-eventMixin(CommentStore)
+const commentPlugin = exports.commentPlugin = new Plugin(CommentStore, {
+  version: 0
+})
 
 function randomID() {
   return Math.floor(Math.random() * 0xffffffff)
 }
 
-// Inline menu item
+// Command for adding an annotation
 
-export const commands = {annotate: {
-  label: "Add annotation",
-  select(pm) { return pm.mod.comments && !pm.selection.empty },
-  run(pm, text) {
-    pm.mod.comments.createComment(text)
-  },
-  params: [
-    {name: "Annotation text", type: "text"}
-  ],
-  menu: {
-    group: "inline", rank: 99,
-    display: {
-      type: "icon",
-      width: 1024, height: 1024,
-      path: "M512 219q-116 0-218 39t-161 107-59 145q0 64 40 122t115 100l49 28-15 54q-13 52-40 98 86-36 157-97l24-21 32 3q39 4 74 4 116 0 218-39t161-107 59-145-59-145-161-107-218-39zM1024 512q0 99-68 183t-186 133-257 48q-40 0-82-4-113 100-262 138-28 8-65 12h-2q-8 0-15-6t-9-15v-0q-1-2-0-6t1-5 2-5l3-5t4-4 4-5q4-4 17-19t19-21 17-22 18-29 15-33 14-43q-89-50-141-125t-51-160q0-99 68-183t186-133 257-48 257 48 186 133 68 183z"
-    }
-  }
-}}
+exports.addAnnotation = function(pm, apply) {
+  let comments = commentPlugin.get(pm)
+  if (!comments || pm.selection.empty) return false
+  if (apply !== false) new FieldPrompt(pm, "Add an annotation", {
+    text: new TextField({
+      label: "Annotation text",
+      required: true
+    })
+  }).open(({text}) => comments.createComment(text))
+  return true
+}
+
+exports.annotationIcon = {
+  width: 1024, height: 1024,
+  path: "M512 219q-116 0-218 39t-161 107-59 145q0 64 40 122t115 100l49 28-15 54q-13 52-40 98 86-36 157-97l24-21 32 3q39 4 74 4 116 0 218-39t161-107 59-145-59-145-161-107-218-39zM1024 512q0 99-68 183t-186 133-257 48q-40 0-82-4-113 100-262 138-28 8-65 12h-2q-8 0-15-6t-9-15v-0q-1-2-0-6t1-5 2-5l3-5t4-4 4-5q4-4 17-19t19-21 17-22 18-29 15-33 14-43q-89-50-141-125t-51-160q0-99 68-183t186-133 257-48 257 48 186 133 68 183z"
+}
 
 // Comment UI
 
-export class CommentUI {
+class CommentUI {
   constructor(pm) {
     this.pm = pm
-    pm.mod.commentUI = this
-    this.update = new UpdateScheduler(pm, "selectionChange change blur focus", () => this.prepareUpdate())
+    this.update = pm.updateScheduler([
+      pm.on.selectionChange,
+      pm.on.change,
+      pm.on.blur,
+      pm.on.focus
+    ], () => this.prepareUpdate())
     this.tooltip = new Tooltip(pm.wrapper, "below")
     this.highlighting = null
     this.displaying = null
   }
 
   prepareUpdate() {
-    let sel = this.pm.selection, comments
-    if (!this.pm.mod.comments || !sel.empty || !this.pm.hasFocus() ||
-        (comments = this.pm.mod.comments.findCommentsAt(sel.head)).length == 0) {
+    let sel = this.pm.selection, comments = commentPlugin.get(this.pm), found
+    if (!comments || !sel.empty || !this.pm.hasFocus() ||
+        (found = comments.findCommentsAt(sel.head)).length == 0) {
       return () => {
         this.tooltip.close()
         this.clearHighlight()
         this.displaying = null
       }
     } else {
-      let id = comments.map(c => c.id).join(" ")
+      let id = found.map(c => c.id).join(" ")
       if (id != this.displaying) {
         this.displaying = id
         let coords = bottomCenterOfSelection()
-        return () => this.tooltip.open(this.renderComments(comments), coords)
+        return () => this.tooltip.open(this.renderComments(found), coords)
       }
     }
   }
@@ -182,7 +189,7 @@ export class CommentUI {
     let btn = elt("button", {class: "commentDelete", title: "Delete annotation"}, "×")
     btn.addEventListener("click", () => {
       this.clearHighlight()
-      this.pm.mod.comments.deleteComment(comment.id)
+      commentPlugin.get(this.pm).deleteComment(comment.id)
       this.prepareUpdate()
     })
     let li = elt("li", {class: "commentText"}, comment.text, btn)
@@ -206,3 +213,5 @@ function bottomCenterOfSelection() {
   let {left, right, bottom} = rects[rects.length - 1] || range.getBoundingClientRect()
   return {top: bottom, left: (left + right) / 2}
 }
+
+exports.commentUIPlugin = new Plugin(CommentUI)

@@ -1,6 +1,6 @@
-import {ProseMirror} from "prosemirror/dist/edit"
-import {elt} from "prosemirror/dist/dom"
-import "prosemirror/dist/menu/menubar"
+const {ProseMirror} = require("prosemirror/dist/edit")
+const {elt} = require("prosemirror/dist/dom")
+require("prosemirror/dist/menu/menubar")
 
 let pm = window.lintPM = new ProseMirror({
   place: document.querySelector("#editor"),

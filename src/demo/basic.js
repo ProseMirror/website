@@ -1,7 +1,7 @@
-import {ProseMirror} from "prosemirror/dist/edit"
-import "prosemirror/dist/inputrules/autoinput"
-import "prosemirror/dist/menu/tooltipmenu"
-import "prosemirror/dist/menu/menubar"
+const {ProseMirror} = require("prosemirror/dist/edit")
+require("prosemirror/dist/inputrules/autoinput")
+require("prosemirror/dist/menu/tooltipmenu")
+require("prosemirror/dist/menu/menubar")
 
 let place = document.querySelector("#editor");
 let content = document.querySelector("#content")

@@ -1,23 +1,15 @@
-import {createServer} from "http"
-import {Router} from "./route"
+const {Router} = require("./route")
 
-import {Step} from "prosemirror/dist/transform"
-import {defaultSchema as schema} from "prosemirror/dist/model"
+const {Step} = require("prosemirror/dist/transform")
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
 
-import {getInstance, instanceInfo} from "./instance"
-
-const port = 8000
+const {getInstance, instanceInfo} = require("./instance")
 
 const router = new Router
 
-// The collaborative editing document server.
-const server = createServer((req, resp) => {
-  if (!router.resolve(req, resp))
-    new Output(404, "Not found").resp(resp)
-})
-
-server.listen(port)
-console.log("Collab demo server listening on " + port)
+exports.handleCollabRequest = function(req, resp) {
+  return router.resolve(req, resp)
+}
 
 // An object for outputting an HTTP request.
 class Output {
@@ -79,12 +71,12 @@ function handle(method, url, f) {
 
 // The root endpoint outputs a list of the collaborative
 // editing document instances.
-handle("GET", [], () => {
+handle("GET", ["docs"], () => {
   return Output.json(instanceInfo())
 })
 
 // Output the current state of a document instance.
-handle("GET", [null], (id, req) => {
+handle("GET", ["docs", null], (id, req) => {
   let inst = getInstance(id, reqIP(req))
   return Output.json({doc: inst.doc.toJSON(),
                       users: inst.userCount,
@@ -146,7 +138,7 @@ function outputEvents(inst, data) {
 // An endpoint for a collaborative document instance which
 // returns all events between a given version and the server's
 // current version of the document.
-handle("GET", [null, "events"], (id, req, resp) => {
+handle("GET", ["docs", null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
   let commentVersion = nonNegInteger(req.query.commentVersion)
 
@@ -172,7 +164,7 @@ function reqIP(request) {
 }
 
 // The event submission endpoint, which a client sends an event to.
-handle("POST", [null, "events"], (data, id, req) => {
+handle("POST", ["docs", null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(schema, s))
   let ip = reqIP(req)

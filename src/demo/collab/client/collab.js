@@ -1,16 +1,16 @@
-import {defaultSchema as schema} from "prosemirror/dist/model"
-import {Step} from "prosemirror/dist/transform"
-import {fromDOM} from "prosemirror/dist/format"
-import {elt} from "prosemirror/dist/dom"
-import {ProseMirror, CommandSet} from "prosemirror/dist/edit"
-import "prosemirror/dist/collab"
-import "prosemirror/dist/inputrules/autoinput"
-import "prosemirror/dist/menu/menubar"
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {Step} = require("prosemirror/dist/transform")
+const {fromDOM} = require("prosemirror/dist/htmlformat")
+const {elt} = require("prosemirror/dist/util/dom")
+const {ProseMirror, Plugin} = require("prosemirror/dist/edit")
+const {collabEditing} = require("prosemirror/dist/collab")
+const {MenuItem} = require("prosemirror/dist/menu/menu")
 
-import {GET, POST} from "./http"
-import {Reporter} from "./reporter"
-import {CommentStore, CommentUI, commands} from "./comment"
-import {showOrigins} from "./origins"
+const {GET, POST} = require("./http")
+const {Reporter} = require("./reporter")
+const {commentPlugin, commentUIPlugin, addAnnotation, annotationIcon} = require("./comment")
+const {showOrigins} = require("./origins")
 
 const report = new Reporter()
 
@@ -20,12 +20,10 @@ function badVersion(err) {
 
 // A class to manage the connection to the collaborative editing server,
 // sending and retrieving the document state.
-class ServerConnection {
-  constructor(pm, report) {
+const connectionPlugin = new Plugin(class ServerConnection {
+  constructor(pm, options) {
     this.pm = pm
-    this.report = report
-    new CommentUI(pm)
-    pm.mod.connection = this
+    commentUIPlugin.attach(pm)
     this.url = null
 
     this.state = this.request = this.collab = this.comments = null
@@ -41,17 +39,17 @@ class ServerConnection {
     if (this.request) this.request.abort()
     this.request = GET(this.url, (err, data) => {
       if (err) {
-        this.report.failure(err)
+        report.failure(err)
       } else {
-        this.report.success()
+        report.success()
         data = JSON.parse(data)
-        this.pm.setOption("collab", null)
+        collabEditing.detach(this.pm)
         this.pm.setDoc(this.pm.schema.nodeFromJSON(data.doc))
-        this.pm.setOption("collab", {version: data.version})
-        this.collab = this.pm.mod.collab
-        this.collab.on("mustSend", () => this.mustSend())
-        this.comments = new CommentStore(this.pm, data.commentVersion)
-        this.comments.on("mustSend", () => this.mustSend())
+        collabEditing.config({version: data.version}).attach(this.pm)
+        this.collab = collabEditing.get(this.pm)
+        this.collab.mustSend.add(() => this.mustSend())
+        this.comments = commentPlugin.config({version: data.commentVersion}).attach(this.pm)
+        this.comments.mustSend.add(() => this.mustSend())
         data.comments.forEach(comment => this.comments.addJSONComment(comment))
         info.users.textContent = userString(data.users)
         this.backOff = 0
@@ -73,12 +71,12 @@ class ServerConnection {
 
       if (err && (err.status == 410 || badVersion(err))) {
         // Too far behind. Revert to server state
-        this.report.failure(err)
+        report.failure(err)
         this.start(this.url)
       } else if (err) {
         this.recover(err)
       } else {
-        this.report.success()
+        report.success()
         data = JSON.parse(data)
         this.backOff = 0
         if (data.steps && data.steps.length) {
@@ -99,8 +97,8 @@ class ServerConnection {
     if (this.state == "poll") {
       this.request.abort()
       if (this.pm.doc.content.size > 40000) {
-        this.pm.setOption("collab", null)
-        this.report.failure("Document too big. Detached.")
+        collabEditing.detach(this.pm)
+        report.failure("Document too big. Detached.")
         return
       }
       this.send()
@@ -134,12 +132,12 @@ class ServerConnection {
         this.backOff = 0
         this.poll()
       } else if (err && badVersion(err)) {
-        this.report.failure(err)
+        report.failure(err)
         this.start(this.url)
       } else if (err) {
         this.recover(err)
       } else {
-        this.report.success()
+        report.success()
         this.backOff = 0
         this.collab.receive(sendable.steps, repeat(sendable.clientID, sendable.steps.length))
         this.poll()
@@ -149,11 +147,11 @@ class ServerConnection {
 
   recover(err) {
     if (err.status && err.status < 500) {
-      this.report.failure(err)
+      report.failure(err)
     } else {
       this.state = "recover"
       let newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200
-      if (newBackOff > 1000 && this.backOff < 1000) this.report.delay(err)
+      if (newBackOff > 1000 && this.backOff < 1000) report.delay(err)
       this.backOff = newBackOff
       setTimeout(() => {
         if (this.state != "recover") return
@@ -161,7 +159,7 @@ class ServerConnection {
       }, this.backOff)
     }
   }
-}
+})
 
 function repeat(val, n) {
   let result = []
@@ -169,13 +167,22 @@ function repeat(val, n) {
   return result
 }
 
+const annotationMenuItem = new MenuItem({
+  title: "Add an annotation",
+  run: addAnnotation,
+  select: pm => addAnnotation(pm, false),
+  icon: annotationIcon
+})
+
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  autoInput: true,
-  menuBar: {float: true},
-  commands: CommandSet.default.add(commands)
+  schema: schema,
+  plugins: [
+    connectionPlugin,
+    defaultSetup.config({updateMenu: m => { m[0].push(annotationMenuItem); return m }}),
+    connectionPlugin
+  ]
 })
-new ServerConnection(pm, report)
 
 let info = {
   name: document.querySelector("#docname"),
@@ -236,7 +243,7 @@ function newDocument() {
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
   if (isID) {
-    pm.mod.connection.start("/docs/" + isID[1], () => pm.focus())
+    connectionPlugin.get(pm).start("/docs/" + isID[1], () => pm.focus())
     info.name.textContent = decodeURIComponent(isID[1])
     return true
   }

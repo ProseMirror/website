@@ -1,10 +1,10 @@
-import {defaultSchema as schema} from "prosemirror/dist/model"
-import {newInstance} from "./instance"
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {newInstance} = require("./instance")
 
 const $node = schema.node, $text = schema.text
 const em = schema.marks.em.create(), strong = schema.marks.strong.create()
 
-export function populateDefaultInstances() {
+function populateDefaultInstances() {
 
 newInstance("Example", $node("doc", null, [
   $node("heading", {level: 2}, [$text("Example Document")]),
@@ -63,3 +63,4 @@ newInstance("Comment Section", $node("doc", null, [
 ]))
 
 }
+exports.populateDefaultInstances = populateDefaultInstances

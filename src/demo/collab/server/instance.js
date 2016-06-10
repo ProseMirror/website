@@ -1,10 +1,10 @@
-import {defaultSchema as schema} from "prosemirror/dist/model"
+const {defaultSchema: schema} = require("prosemirror/dist/schema")
 
-import {Comments, Comment} from "./comments"
-import {populateDefaultInstances} from "./defaultinstances"
+const {Comments, Comment} = require("./comments")
+const {populateDefaultInstances} = require("./defaultinstances")
 
-import {readFileSync, writeFile} from "fs"
-import {createHash} from "crypto"
+const {readFileSync, writeFile} = require("fs")
+const {createHash} = require("crypto")
 
 const MAX_STEP_HISTORY = 10000
 
@@ -146,14 +146,15 @@ function doSave() {
   writeFile(saveFile, JSON.stringify(out))
 }
 
-export function getInstance(id, ip) {
+function getInstance(id, ip) {
   let inst = instances[id] || newInstance(id)
   if (ip) inst.registerUser(ip)
   inst.lastActive = Date.now()
   return inst
 }
+exports.getInstance = getInstance
 
-export function newInstance(id, doc, comments) {
+function newInstance(id, doc, comments) {
   if (++instanceCount > maxCount) {
     let oldest = null
     for (let id in instances) {
@@ -166,10 +167,12 @@ export function newInstance(id, doc, comments) {
   }
   return instances[id] = new Instance(id, doc, comments)
 }
+exports.newInstance = newInstance
 
-export function instanceInfo() {
+function instanceInfo() {
   let found = []
   for (let id in instances)
     found.push({id: id, users: instances[id].userCount})
   return found
 }
+exports.instanceInfo = instanceInfo

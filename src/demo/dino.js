@@ -1,10 +1,10 @@
-import {ProseMirror, defineOption, Keymap} from "prosemirror/dist/edit"
-import {Inline, Attribute, Schema, defaultSchema} from "prosemirror/dist/model"
-import {elt} from "prosemirror/dist/dom"
-import {InputRule} from "prosemirror/dist/inputrules"
-import {Tooltip} from "prosemirror/dist/ui/tooltip"
-import "prosemirror/dist/menu/menubar"
-import "prosemirror/dist/inputrules/autoinput"
+const {ProseMirror, defineOption, Keymap} = require("prosemirror/dist/edit")
+const {Inline, Attribute, Schema, defaultSchema} = require("prosemirror/dist/model")
+const {elt} = require("prosemirror/dist/dom")
+const {InputRule} = require("prosemirror/dist/inputrules")
+const {Tooltip} = require("prosemirror/dist/ui/tooltip")
+require("prosemirror/dist/menu/menubar")
+require("prosemirror/dist/inputrules/autoinput")
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 

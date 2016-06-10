@@ -1,7 +1,7 @@
-import {ProseMirror} from "prosemirror/dist/edit"
-import {elt} from "prosemirror/dist/dom"
-import "prosemirror/dist/markdown"
-import "prosemirror/dist/menu/tooltipmenu"
+const {ProseMirror} = require("prosemirror/dist/edit")
+const {elt} = require("prosemirror/dist/dom")
+require("prosemirror/dist/markdown")
+require("prosemirror/dist/menu/tooltipmenu")
 
 let place = document.querySelector("#editor")
 

@@ -1,5 +1,6 @@
-import {Remapping} from "prosemirror/dist/transform"
-import {insertCSS} from "prosemirror/dist/dom"
+const {Remapping} = require("prosemirror/dist/transform")
+const {insertCSS} = require("prosemirror/dist/util/dom")
+const {collabEditing} = require("prosemirror/dist/collab")
 
 function buildColor(hue, sat, light) {
   function hex(off) {
@@ -31,8 +32,8 @@ function getClass(origin) {
   return known[origin] = "user-" + origin
 }
 
-export function showOrigins(pm, steps, maps) {
-  let collab = pm.mod.collab
+function showOrigins(pm, steps, maps) {
+  let collab = collabEditing.get(pm)
   steps.forEach((step, i) => {
     if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
       let remap = new Remapping([], maps.slice(i).concat(collab.unconfirmedMaps))
@@ -45,3 +46,4 @@ export function showOrigins(pm, steps, maps) {
     }
   })
 }
+exports.showOrigins = showOrigins

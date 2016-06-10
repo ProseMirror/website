@@ -1,7 +1,7 @@
-import {ProseMirror, Range} from "prosemirror/dist/edit"
-import {Remapping, Transform, ReplaceStep} from "prosemirror/dist/transform"
-import {elt} from "prosemirror/dist/dom"
-import "prosemirror/dist/menu/menubar"
+const {ProseMirror, Range} = require("prosemirror/dist/edit")
+const {Remapping, Transform, ReplaceStep} = require("prosemirror/dist/transform")
+const {elt} = require("prosemirror/dist/dom")
+require("prosemirror/dist/menu/menubar")
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),

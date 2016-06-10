@@ -105,9 +105,9 @@ var externalTypes = {
   constructor: false
 }
 
-function propID(clss, prop, static) {
+function propID(clss, prop, isStatic) {
   var id = clss + "." + prop, item = config.items[clss]
-  if (static && item.instanceProperties && prop in item.instanceProperties) id += "_static"
+  if (isStatic && item.instanceProperties && prop in item.instanceProperties) id += "_static"
   return id
 }
 
