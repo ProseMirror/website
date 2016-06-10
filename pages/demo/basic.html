@@ -11,11 +11,12 @@
 }
 </style>
 
-<p>It takes all of two lines code to set up a ProseMirror editor:</p>
+<p>You can set up a basic ProseMirror editor in a few lines of code:</p>
 
 <pre>
 import {ProseMirror} from "prosemirror/dist/edit"
-let pm = new ProseMirror({place: someElement})</pre>
+import {defaultSchema} from "prosemirror/dist/schema"
+let pm = new ProseMirror({place: someElement, schema: defaultSchema})</pre>
 
 <p>You might want to include some more modules, for example to add a
 menu. Menu styles are just extension modules in ProseMirror. This page

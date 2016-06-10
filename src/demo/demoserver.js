@@ -27,19 +27,23 @@ let fileServer = ecstatic({root: root})
 
 let cachedDemoPages = Object.create(null)
 let demos = {
-  collab: "../src/demo/collab/client/collab",
+  "/index.html": "../src/demo/basic",
+  "/demo/basic.html": "../src/demo/basic",
+  "/demo/collab.html": "../src/demo/collab/client/collab",
 }
 
 function transformDemoPage(req, resp) {
-  let url = parseURL(req.url)
-  let match = /^\/demo\/([^\/\.]+)\.html$/.exec(url.pathname)
-  if (!match || !demos.hasOwnProperty(match[1])) return false
-  let cached = cachedDemoPages[match[1]]
+  let path = parseURL(req.url).pathname
+  if (path == "/") path = "/index.html"
+  let match = demos.hasOwnProperty(path) && demos[path]
+  if (!match) return false
+
+  let cached = cachedDemoPages[path]
   if (!cached) {
-    let file = fs.readFileSync(root + url.pathname, "utf8")
-    file = file.replace(/<script src="bundle_[^"]+"><\/script>/,
-                        '<script src="/moduleserve/load.js" data-module="' + demos[match[1]] + '" data-require></script>')
-    cached = cachedDemoPages[match[1]] = file
+    let file = fs.readFileSync(root + path, "utf8")
+    file = file.replace(/<script src="(demo\/)?bundle_[^"]+"><\/script>/,
+                        '<script src="/moduleserve/load.js" data-module="' + demos[path] + '" data-require></script>')
+    cached = cachedDemoPages[path] = file
   }
   resp.writeHead(200, {"Content-Type": "text/html"})
   resp.end(cached)
