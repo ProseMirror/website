@@ -3,6 +3,7 @@ const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
 const {defaultSchema} = require("prosemirror/dist/schema")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
 const {elt} = require("prosemirror/dist/util/dom")
 const {InputRule, inputRules} = require("prosemirror/dist/inputrules")
 const {Tooltip} = require("prosemirror/dist/ui/tooltip")
@@ -53,12 +54,15 @@ const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$
   pm.tr.delete(start, pos).insertInline(start, dinoSchema.nodes.dino.create({type: match[1]})).apply()
 })
 
+let menu = defaultMenuItems(dinoSchema)
+menu.insertMenu.content.push(dinoMenuItem)
+
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   doc: fromDOM(dinoSchema, document.querySelector("#content")),
   schema: dinoSchema,
   plugins: [
-    defaultSetup.config({updateMenu(m) { m[1][0].content.push(dinoMenuItem); return m }})
+    defaultSetup.config({menu: menu.fullMenu})
   ]
 })
 

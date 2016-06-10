@@ -13,17 +13,15 @@ let pm = window.pm = new ProseMirror({
   place: place,
   doc: fromDOM(schema, content),
   schema: schema,
-  plugins: [defaultSetup]
+  plugins: [defaultSetup.config({menu: false})]
 })
 content.style.display = "none"
 
-let currentMenuStyle = "bar"
 let menu = defaultMenuItems(schema)
 
 setMenuStyle(place.getAttribute("menustyle") || "bar")
 
 function setMenuStyle(type) {
-  if (type == currentMenuStyle) return
   if (type == "bar") {
     tooltipMenu.detach(pm)
     menuBar.config({float: true, content: menu.fullMenu}).attach(pm)
@@ -33,7 +31,6 @@ function setMenuStyle(type) {
                         inlineContent: menu.inlineMenu,
                         blockContent: menu.blockMenu}).attach(pm)
   }
-  currentMenuStyle = type
 }
 
 let menuStyle = document.querySelector("#menustyle")

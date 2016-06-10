@@ -6,6 +6,7 @@ const {elt} = require("prosemirror/dist/util/dom")
 const {ProseMirror, Plugin} = require("prosemirror/dist/edit")
 const {collabEditing} = require("prosemirror/dist/collab")
 const {MenuItem} = require("prosemirror/dist/menu/menu")
+const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
 
 const {GET, POST} = require("./http")
 const {Reporter} = require("./reporter")
@@ -174,12 +175,15 @@ const annotationMenuItem = new MenuItem({
   icon: annotationIcon
 })
 
+let menu = defaultMenuItems(schema)
+menu.fullMenu[0].push(annotationMenuItem)
+
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   schema: schema,
   plugins: [
     connectionPlugin,
-    defaultSetup.config({updateMenu(m) { m[0].push(annotationMenuItem); return m }}),
+    defaultSetup.config({menu: menu.fullMenu}),
     connectionPlugin
   ]
 })
