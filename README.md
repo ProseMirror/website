@@ -9,8 +9,6 @@ and the server-side code to support the collaborative demo.
 
 Install [Node.js](http://nodejs.org).
 
-Install [Pandoc](http://pandoc.org/installing.html).
-
 Install node submodules
 
 ```bash
@@ -24,3 +22,24 @@ make
 ```
 
 Open `public/index.html`.
+
+To work on the demos, or to experiment with the collaborative demo, it
+is a good idea to use the dev server:
+
+```
+npm run devserver -- --port 8888
+```
+
+That will get you a server at [localhost:8888](http://localhost:8888/)
+that serves the files in `public/`, along with, the collaborative
+editing backend, and updates the demo pages to use
+[moduleserve](https://github.com/marijnh/moduleserve) to run the demos
+directly from the source files, rather than using the bundle. You can
+now edit them and see the changes with a single refresh. (Though the
+server-side collaborative code still needs a server refresh to
+update.)
+
+Note that this is not secure (it provides filesystem access of HTTP)
+and not fast (the browser will fetch each module individually), and
+should only be used for development, on your local machine, bound to
+`localhost`.
