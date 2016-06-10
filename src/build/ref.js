@@ -72,11 +72,11 @@ var modules = [{
   name: "schema/inputrules",
   files: "src/schema/inputrules.js"
 }, {
+  name: "schema/defaultsetup",
+  files: "src/schema/defaultsetup.js"
+}, {
   name: "util/orderedmap",
   files: "src/util/orderedmap.js"
-}, {
-  name: "util/subscription",
-  files: "src/util/subscription.js"
 }, {
   name: "util/error",
   files: "src/util/error.js"
@@ -99,6 +99,10 @@ var externalTypes = {
   KeyboardEvent: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent",
   MouseEvent: "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
   Keymap: "https://github.com/marijnh/browserkeymap#an-object-type-for-keymaps",
+  Subscription: "https://github.com/marijnh/subscription#class-subscription",
+  PipelineSubscription: "https://github.com/marijnh/subscription#class-pipelinesubscription-extends-subscription",
+  StoppableSubscription: "https://github.com/marijnh/subscription#class-stoppablesubscription-extends-subscription",
+  DOMSubscription: "https://github.com/marijnh/subscription#class-domsubscription-extends-subscription",
   Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
   any: false,
   union: false,
