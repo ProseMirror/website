@@ -1,12 +1,11 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
 const {defaultSchema: schema} = require("prosemirror/dist/schema")
-const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {elt} = require("prosemirror/dist/util/dom")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  doc: fromDOM(schema, document.querySelector("#content")),
+  doc: schema.parseDOM(document.querySelector("#content")),
   plugins: [defaultSetup]
 })
 

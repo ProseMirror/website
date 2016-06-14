@@ -26,10 +26,6 @@ var modules = [{
   files: "src/transform/*.js",
   order: "index step mark_step replace_step map transform mark replace structure"
 }, {
-  name: "htmlformat",
-  files: "src/htmlformat/*.js",
-  order: "index parse serialize"
-}, {
   name: "markdown",
   files: "src/markdown/*.js",
   order: "index from_markdown to_markdown"

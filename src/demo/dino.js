@@ -1,5 +1,4 @@
 const {ProseMirror, Keymap} = require("prosemirror/dist/edit")
-const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
 const {defaultSchema} = require("prosemirror/dist/schema")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
@@ -59,7 +58,7 @@ menu.insertMenu.content.push(dinoMenuItem)
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
-  doc: fromDOM(dinoSchema, document.querySelector("#content")),
+  doc: dinoSchema.parseDOM(document.querySelector("#content")),
   plugins: [
     defaultSetup.config({menu: menu.fullMenu})
   ]

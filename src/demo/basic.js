@@ -1,5 +1,4 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
-const {fromDOM} = require("prosemirror/dist/htmlformat")
 const {defaultSchema: schema} = require("prosemirror/dist/schema")
 const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
 const {tooltipMenu} = require("prosemirror/dist/menu/tooltipmenu")
@@ -11,7 +10,7 @@ let content = document.querySelector("#content")
 
 let pm = window.pm = new ProseMirror({
   place: place,
-  doc: fromDOM(schema, content),
+  doc: schema.parseDOM(content),
   schema: schema,
   plugins: [defaultSetup.config({menu: false})]
 })
