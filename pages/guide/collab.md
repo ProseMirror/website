@@ -44,9 +44,8 @@ function Authority(doc) {
   this.doc = doc
   this.steps = []
   this.stepClientIDs = []
+  this.onNewSteps = []
 }
-
-require("prosemirror/dist/util/event").eventMixin(Authority)
 
 Authority.prototype.receiveSteps = function(version, steps, clientID) {
   if (version != this.steps.length) return
@@ -59,7 +58,7 @@ Authority.prototype.receiveSteps = function(version, steps, clientID) {
     self.stepClientIDs.push(clientID)
   })
   // Signal listeners
-  self.signal("newSteps")
+  this.onNewSteps.forEach(function(f) { f() })
 }
 
 Authority.prototype.stepsSince = function(version) {
@@ -79,39 +78,35 @@ them).
 This implementation of an authority keeps an endlessly growing array
 of steps, the length of which denotes its current version.
 
-The `eventMixin` call adds event-related methods to this type, such as
-[`on`](##EventMixin.on) and [`signal`](##EventMixin.signal). The
-`stepsSince` function can be used by an editor to know which new
-changes, if any, happened since a given version.
-
 ## The `collab` Module
 
 The [`collab`](##collab) module will take care of the tracking of
 local changes, receiving of remote changes, and signalling when
-something has to be sent to the central authority. If you load it, you
-get a `collab` option which, when enabled, will attach a `.mod.collab`
-object to your editor.
+something has to be sent to the central authority. It exports a
+[`collabEditing`](##collabEditing) plugin which, when enabled, will
+attach itself to your editor and act as a communication channel
+between the editor and the authority.
 
 ```javascript
 var prosemirror = require("prosemirror")
-require("prosemirror/dist/collab")
+var collabEditing = require("prosemirror/dist/collab").collabEditing
 
 function collabEditor(authority, place) {
   var editor = new prosemirror.ProseMirror({
     doc: authority.doc,
-    collab: {version: authority.steps.length},
-    place: place
+    place: place,
+    plugins: [collabEditing.config({version: authority.steps.length})]
   })
-  var collab = editor.mod.collab
+  var collab = collabEditing.get(editor)
 
   function send() {
     var data = collab.sendableSteps()
     authority.receiveSteps(data.version, data.steps, data.clientID)
   }
 
-  collab.on("mustSend", send)
+  collab.mustSend.add(send)
 
-  authority.on("newSteps", function() {
+  authority.onNewSteps.push(function() {
     var newData = authority.stepsSince(collab.version)
     collab.receive(newData.steps, newData.clientIDs)
     if (collab.hasSendableSteps()) send()
@@ -129,9 +124,9 @@ To do so, it wires up the `send` function to the collab module's
 the unconfirmed steps that the editor has and passes them to
 `receiveSteps`.
 
-It also listens for the authority's `"newSteps"` event, and when that
-fires, fetches the steps it did not have yet, and pushes them into the
-editor with the [`receive`](##Collab.receive) method.
+It also adds a listener to the authority's `onNewSteps` array, and
+when that is called, fetches the steps it did not have yet, and pushes
+them into the editor with the [`receive`](##Collab.receive) method.
 
 When a set of steps gets rejected by the authority, they will remain
 unconfirmed until, supposedly soon after, we receive new steps from

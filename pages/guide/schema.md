@@ -10,7 +10,7 @@ are nested. For example, it might say that the top-level node can
 contain one or more blocks, and that paragraph nodes can contain any
 number of inline nodes, with any [marks](##Mark) applied to them.
 
-The library comes with a [default schema](##defaultSchema), but the
+There is a package with a [basic schema](##schema) available, but the
 nice thing about ProseMirror is that it allows you to define your own
 schemas.
 
@@ -22,9 +22,6 @@ rendered in the editor. Individual node types are classes that inherit
 from one of these subclasses of [`NodeType`](##NodeType):
 
  * [`Block`](##Block) for block-level nodes.
-
- * [`Textblock`](##Textblock) (extends [`Block`](##Block)) for nodes
-   that are themselves blocks but contain inline content.
 
  * [`Inline`](##Inline) for inline (paragraph-level) nodes.
 
