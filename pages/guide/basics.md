@@ -3,8 +3,8 @@
 
 # Basic Editing Guide
 
-This guide describes the steps you take to put a ProseMirror editor in
-your page.
+This guide describes the steps you must take to put a simple
+ProseMirror editor in your page.
 
 ## Bundling
 
@@ -62,16 +62,22 @@ To use the library, you must at least import and instantiate it.
 
 ```javascript
 var prosemirror = require("prosemirror")
+var schema = require("prosemirror/dist/schema-basic").schema
 var editor = new prosemirror.ProseMirror({
-  place: document.body
+  place: document.body,
+  schema: schema
 })
 ```
 
 That will create an instance of the [`ProseMirror`](##ProseMirror)
-class, which is the editor, and append it to the document body. The
-editor will, by default, be as high as its content. You can add a CSS
-rule to set a fixed height (but note that scolling editable content
-doesn't work well on some mobile platforms):
+class, which is the editor, and append it to the document body. Every
+editor needs a _schema_, which describes the structure of the content
+that may appear in it. In the example, we use a the schema from the
+`schema-basic` module.
+
+The editor will, by default, be as high as its content. You can add a
+CSS rule to set a fixed height (but note that scolling editable
+content doesn't work well on some mobile platforms):
 
 ```css
 .ProseMirror-content {
@@ -84,73 +90,80 @@ Most aspects of the editor's appearance can be styled using CSS. The
 wrapper around the whole editor has the class `ProseMirror`, and its
 editable content has the class `ProseMirror-content`.
 
-## Options
+To destroy an editor, simply remove its
+[wrapper](##ProseMirror.wrapper) node from the document.
 
 The object passed to the `ProseMirror` constructor lists the options
 for the instance. To add some content to your editor, you can use the
 [`doc`](##doc) option to set the initial content of the editor. This
-option normally expects a [document node](##Node) as its value, but
-you can use the [`docFormat`](##docFormat) to select another
-[format](##format). For example `"html"`:
+option expects a [document node](##Node) as its value. We could build
+one up manually, using [methods](##Schema.node) on the schema, or
+parse a part of our webpage.
+
+```html
+<div id=content style="display: none">
+  <h2>Hello</h2>
+  <p>This is a structured document.</p>
+</div>
+```
+
+And then:
 
 ```javascript
 var prosemirror = require("prosemirror")
+var schema = require("prosemirror/dist/schema-basic").schema
 var editor = new prosemirror.ProseMirror({
   place: document.body,
-  doc: "<h1>Hello world</h1><p>Edit me!</p>",
-  docFormat: "html"
+  schema: schema,
+  doc: schema.parseDOM(document.querySelector("#content"))
 })
 ```
-
-Options can be inspected and updated in an existing editor with the
-[`getOption`](##ProseMirror.getOption) and
-[`setOption`](##ProseMirror.setOption) methods.
 
 ## Content
 
 To get your content out of an editor, you can use its
 [`doc`](##ProseMirror.doc) property, which again contains a
-[node](##Node) object, or its [`getContent`](##ProseMirror.getContent)
-method, which allows you to specify an output [format](##format).
+[node](##Node) object.
 
 ```javascript
-editor.getContent("html")
+console.log(editor.doc.toJSON())
 ```
 
-There is an analogous [`setContent`](##ProseMirror.setContent) method
-to replace the editor's content with a new document. But note that,
-for incremental changes, you should use [transforms](./transform.html)
-instead.
+To replace the document, you can call the
+[`setDoc`](##ProseMirror.setDoc) method. To update it, use a
+transformation, as described in the [transform guide](transform.html).
 
-To destroy an editor, simply remove its
-[wrapper](##ProseMirror.wrapper) node from the document.
-
-## Commands
+## Commands and Key Bindings
 
 ProseMirror represents most editing actions the user can take as
-[commands](##Command), which are objects that implement the
-action and provide some information about it. Keys can be bound to
-commands. The items in the menus are also derived from commands.
+command functions, which take an editor instance as argument and
+return a boolean that indicates whether they could perform their
+action. Many of them are available in the `commands` object exported
+by the `edit` module. Examples are `commands.deleteSelection`, which
+deletes the selection if there is one, and
+`commands.deleteCharBefore`, which deletes the character in front of
+the cursor if there is such a character and the selection is empty.
 
-The set of commands available in a given editor is determined with the
-[`commands`](##commands) option. By default, it'll pull in a set of
-[default commands](##baseCommands) and look for commands associated
-with the editor's [schema](##schema).
+Key bindings in ProseMirror are defined using the `Keymap` abstraction
+from the [browserkeymap](https://github.com/marijnh/browserkeymap#readme)
+module, which maps key names to such command functions. The editor has
+a stack of keymaps. The initial one is set with the
+[`keymap`](##option_keymap) option, and you can add more with the
+[`addKeymap`](##ProseMirror.addKeymap) method.
 
-Many of the built-in commands declare
-[key bindings](##CommandSpec.keys) to which they are automatically
-bound. You can use the `commands` option to change these if you wish,
-or add your own keybindings by [defining](##CommandSpec) new commands
-or by [registering](##ProseMirror.addKeymap) a keymap in an editor.
+When a key is pressed, the editor will look for bindings in each of
+its keymaps, in order of priority, and continue until a command
+function that returneds true when called is found.
 
 ## Events
 
-Editor instances fire a [range of events](##ProseMirror_events) that
-your code can [subscribe](##EventMixin.on) to. For example, this
-function will be called every time the content of the editor changes:
+Editor instances fire a [range of events](##ProseMirror.on) that your
+code can [subscribe](https://github.com/marijnh/subscription#readme)
+to. For example, this function will be called every time the content
+of the editor changes:
 
 ```javascript
-editor.on("change", function() {
+editor.on.change.add(function() {
   scheduleDocumentSave(editor)
 })
 ```
@@ -158,33 +171,40 @@ editor.on("change", function() {
 Some events pass arguments to their handler function:
 
 ```javascript
-editor.on("optionChanged", function(name, value) {
-  console.log("option " + name + " was set to", value)
+editor.on.textInput.add(function(text) {
+  console.log("you typed '" + text + "' into your editor")
 })
 ```
 
-You can use the [`signal`](##EventMixin.signal) method to fire your
-own types of events.
-
-## Modules
+## Modules and Plugins
 
 ProseMirror is built to be extendable. The distribution comes with a
 few addon modules that add behavior, such as a
-[menu bar](##menu/menubar), a [tooltip menu](##menu/tooltipmenu),
+[menu bar](##menuBar), a [tooltip menu](##tooltipMenu),
 [text macros](##inputrules), and a system for
 [collaborative editing](##collab).
 
+Most such modules expose their functionality as a _plugin_, which you
+can attach to an editor to enable the functionality. The easiest way
+to do this is to include the plugin in the
+[`plugins`](##option_plugins) option.
+
 ```javascript
 var prosemirror = require("prosemirror")
-require("prosemirror/dist/menu/menubar")
+var schema = require("prosemirror/dist/schema-basic").schema
+var inputRules = require("prosemirror/dist/inputrules")
 
 var editor = new prosemirror.ProseMirror({
-  menuBar: true
+  place: document.body,
+  schema: schema,
+  plugins: [
+    inputRules.inputRules.config({rules: [inputRules.emDash]})
+  ]
 })
 ```
 
-Most addon modules work by [defining](##defineOption) a new option,
-which must be set to enable their behavior. That way, simply loading a
-module doesn't force you to use the new behavior in all editors on the
-page—you can turn the behavior on and off by setting the value of the
-option.
+Plugins have a `config` method which takes an options object to
+configure the plugin, and which you can optionally call before
+enabling the plugin. In the example above, we are telling the
+`inputRules` plugin to enable the `emDash` rule, which converts two
+dashes into an emdash.
