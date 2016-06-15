@@ -34,48 +34,27 @@ var modules = [{
   files: "src/inputrules/*.js",
   order: "index inputrules rules util"
 }, {
-  name: "menu/menubar",
-  files: "src/menu/menubar.js"
+  name: "menu",
+  files: "src/menu/*.js",
+  order: "index menu menubar tooltipmenu"
 }, {
-  name: "menu/tooltipmenu",
-  files: "src/menu/tooltipmenu.js"
-}, {
-  name: "menu/menu",
-  files: "src/menu/menu.js"
-}, {
-  name: "ui/prompt",
-  files: "src/ui/prompt.js"
-}, {
-  name: "ui/tooltip",
-  files: "src/ui/tooltip.js"
-}, {
-  name: "ui/update",
-  files: "src/ui/update.js"
+  name: "ui",
+  files: "src/ui/*.js",
+  order: "index tooltip prompt"
 }, {
   name: "collab",
   files: "src/collab/*.js",
   order: "index rebase"
 }, {
-  name: "schema",
-  files: "src/schema/index.js"
+  name: "schema-basic",
+  files: "src/schema-basic/index.js"
 }, {
-  name: "schema/keymap",
-  files: "src/schema/keymap.js"
-}, {
-  name: "schema/menu",
-  files: "src/schema/menu.js"
-}, {
-  name: "schema/inputrules",
-  files: "src/schema/inputrules.js"
-}, {
-  name: "schema/defaultsetup",
-  files: "src/schema/defaultsetup.js"
+  name: "example-setup",
+  files: "src/example-setup/*.js",
+  order: "index"
 }, {
   name: "util/orderedmap",
   files: "src/util/orderedmap.js"
-}, {
-  name: "util/error",
-  files: "src/util/error.js"
 }]
 
 var externalTypes = {
@@ -207,7 +186,7 @@ modules.forEach(function(module) {
   })
   for (var prop in items) {
     var item = items[prop]
-    if (item.$noAnchor) continue
+    if (item.$noAnchor || item.kind == "option") continue
     if (config.items[prop]) throw new Error("Duplicate definition of " + prop)
     config.items[prop] = item
   }

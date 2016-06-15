@@ -8,7 +8,7 @@
   <h3 id="<<t name>>_options">Options</h3>
   <dl>
     <<for name, item in mod.options>>
-      <<define {name: name, item: item}>>
+      <<define {name: name, item: item, id: "option_" + name}>>
     <</for>>
   </dl>
 <</if>>
