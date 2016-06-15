@@ -1,4 +1,4 @@
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {schema} = require("prosemirror/dist/schema-basic")
 
 const {Comments, Comment} = require("./comments")
 const {populateDefaultInstances} = require("./defaultinstances")

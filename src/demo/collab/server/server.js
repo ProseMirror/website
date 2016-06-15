@@ -1,7 +1,7 @@
 const {Router} = require("./route")
 
 const {Step} = require("prosemirror/dist/transform")
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {schema} = require("prosemirror/dist/schema-basic")
 
 const {getInstance, instanceInfo} = require("./instance")
 

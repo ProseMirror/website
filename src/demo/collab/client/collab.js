@@ -179,7 +179,6 @@ let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   schema: schema,
   plugins: [
-    connectionPlugin,
     exampleSetup.config({menuBar: {content: menu.fullMenu, float: true}}),
     connectionPlugin
   ]

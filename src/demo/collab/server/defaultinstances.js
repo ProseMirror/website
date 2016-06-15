@@ -1,4 +1,4 @@
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
+const {schema} = require("prosemirror/dist/schema-basic")
 const {newInstance} = require("./instance")
 
 const $node = schema.node, $text = schema.text
