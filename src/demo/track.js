@@ -144,7 +144,7 @@ function revertCommit(commit) {
     let remapped = commit.steps[i].map(remap)
     let result = remapped && tr.maybeStep(remapped)
     let id = remap.addToFront(commit.maps[i])
-    if (result.doc) remap.addToBack(remapped.posMap(), id)
+    if (result && result.doc) remap.addToBack(remapped.posMap(), id)
   }
   commit.hidden = true
   if (tr.steps.length) {
