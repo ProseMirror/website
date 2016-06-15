@@ -26,6 +26,9 @@ var modules = [{
   files: "src/transform/*.js",
   order: "index step mark_step replace_step map transform mark replace structure"
 }, {
+  name: "schema-basic",
+  files: "src/schema-basic/index.js"
+}, {
   name: "markdown",
   files: "src/markdown/*.js",
   order: "index from_markdown to_markdown"
@@ -45,9 +48,6 @@ var modules = [{
   name: "collab",
   files: "src/collab/*.js",
   order: "index rebase"
-}, {
-  name: "schema-basic",
-  files: "src/schema-basic/index.js"
 }, {
   name: "example-setup",
   files: "src/example-setup/*.js",
@@ -79,6 +79,7 @@ var externalTypes = {
   StoppableSubscription: "https://github.com/marijnh/subscription#class-stoppablesubscription-extends-subscription",
   DOMSubscription: "https://github.com/marijnh/subscription#class-domsubscription-extends-subscription",
   Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+  ProseMirrorError: false,
   any: false,
   union: false,
   constructor: false
