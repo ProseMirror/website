@@ -10,7 +10,7 @@
     }
   ],
   "dependencies": {
-    "prosemirror": "~0.7.0",
+    "prosemirror": "~0.8.0",
     "subscription": "^3.0.0"
   },
   "devDependencies": {
