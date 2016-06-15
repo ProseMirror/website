@@ -1,11 +1,10 @@
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
-const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {schema} = require("prosemirror/dist/schema-basic")
+const {exampleSetup, buildMenuItems} = require("prosemirror/dist/example-setup")
 const {Step} = require("prosemirror/dist/transform")
 const {elt} = require("prosemirror/dist/util/dom")
 const {ProseMirror, Plugin} = require("prosemirror/dist/edit")
 const {collabEditing} = require("prosemirror/dist/collab")
-const {MenuItem} = require("prosemirror/dist/menu/menu")
-const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
+const {MenuItem} = require("prosemirror/dist/menu")
 
 const {GET, POST} = require("./http")
 const {Reporter} = require("./reporter")
@@ -173,7 +172,7 @@ const annotationMenuItem = new MenuItem({
   icon: annotationIcon
 })
 
-let menu = defaultMenuItems(schema)
+let menu = buildMenuItems(schema)
 menu.fullMenu[0].push(annotationMenuItem)
 
 let pm = window.pm = new ProseMirror({
@@ -181,7 +180,7 @@ let pm = window.pm = new ProseMirror({
   schema: schema,
   plugins: [
     connectionPlugin,
-    defaultSetup.config({menu: menu.fullMenu}),
+    exampleSetup.config({menuBar: {content: menu.fullMenu, float: true}}),
     connectionPlugin
   ]
 })

@@ -1,13 +1,10 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
 const {elt} = require("prosemirror/dist/util/dom")
 const {defaultMarkdownParser, defaultMarkdownSerializer} = require("prosemirror/dist/markdown")
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
-const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
-const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
-const {tooltipMenu} = require("prosemirror/dist/menu/tooltipmenu")
+const {schema} = require("prosemirror/dist/schema-basic")
+const {exampleSetup} = require("prosemirror/dist/example-setup")
 
 let place = document.querySelector("#editor")
-let menu = defaultMenuItems(schema)
 
 let getContent
 function toTextArea(content, focus) {
@@ -21,10 +18,10 @@ function toProseMirror(content) {
     place: place,
     doc: defaultMarkdownParser.parse(content),
     plugins: [
-      defaultSetup.config({menu: false}),
-      tooltipMenu.config({selectedBlockMenu: true,
-                          inlineContent: menu.inlineMenu,
-                          blockContent: menu.blockMenu})
+      exampleSetup.config({
+        menuBar: false,
+        tooltipMenu: true
+      })
     ]
   })
   pm.focus()

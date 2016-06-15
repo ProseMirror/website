@@ -1,8 +1,7 @@
 const {elt} = require("prosemirror/dist/util/dom")
 const {Plugin} = require("prosemirror/dist/edit")
-const {Subscription} = require("prosemirror/dist/util/subscription")
-const {Tooltip} = require("prosemirror/dist/ui/tooltip")
-const {FieldPrompt, TextField} = require("prosemirror/dist/ui/prompt")
+const {Subscription} = require("subscription")
+const {Tooltip, FieldPrompt, TextField} = require("prosemirror/dist/ui")
 
 class Comment {
   constructor(text, id, range) {

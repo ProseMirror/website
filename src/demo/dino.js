@@ -1,13 +1,11 @@
 const {ProseMirror, Keymap} = require("prosemirror/dist/edit")
 const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
-const {defaultSchema} = require("prosemirror/dist/schema")
-const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
-const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
+const {schema} = require("prosemirror/dist/schema-basic")
+const {exampleSetup, buildMenuItems} = require("prosemirror/dist/example-setup")
 const {elt} = require("prosemirror/dist/util/dom")
 const {InputRule, inputRules} = require("prosemirror/dist/inputrules")
-const {Tooltip} = require("prosemirror/dist/ui/tooltip")
-const {insertItem} = require("prosemirror/dist/menu/menu")
-const {FieldPrompt, SelectField} = require("prosemirror/dist/ui/prompt")
+const {Tooltip, FieldPrompt, SelectField} = require("prosemirror/dist/ui")
+const {insertItem} = require("prosemirror/dist/menu")
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 
@@ -30,8 +28,8 @@ class Dino extends Inline {
 }
 
 const dinoSchema = new Schema({
-  nodes: defaultSchema.nodeSpec.addBefore("image", "dino", {type: Dino, group: "inline"}),
-  marks: defaultSchema.markSpec
+  nodes: schema.nodeSpec.addBefore("image", "dino", {type: Dino, group: "inline"}),
+  marks: schema.markSpec
 })
 
 const dinoField = new SelectField({
@@ -53,14 +51,14 @@ const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$
   pm.tr.delete(start, pos).insertInline(start, dinoSchema.nodes.dino.create({type: match[1]})).apply()
 })
 
-let menu = defaultMenuItems(dinoSchema)
+let menu = buildMenuItems(dinoSchema)
 menu.insertMenu.content.push(dinoMenuItem)
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   doc: dinoSchema.parseDOM(document.querySelector("#content")),
   plugins: [
-    defaultSetup.config({menu: menu.fullMenu})
+    exampleSetup.config({menuBar: {float: true, content: menu.fullMenu}})
   ]
 })
 

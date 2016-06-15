@@ -10,7 +10,8 @@
     }
   ],
   "dependencies": {
-    "prosemirror": "~0.7.0"
+    "prosemirror": "~0.7.0",
+    "subscription": "^3.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",

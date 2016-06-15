@@ -1,9 +1,7 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
-const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
-const {tooltipMenu} = require("prosemirror/dist/menu/tooltipmenu")
-const {menuBar} = require("prosemirror/dist/menu/menubar")
-const {defaultMenuItems} = require("prosemirror/dist/schema/menu")
+const {schema} = require("prosemirror/dist/schema-basic")
+const {exampleSetup, buildMenuItems} = require("prosemirror/dist/example-setup")
+const {tooltipMenu, menuBar} = require("prosemirror/dist/menu")
 
 let place = document.querySelector("#editor")
 let content = document.querySelector("#content")
@@ -11,12 +9,11 @@ let content = document.querySelector("#content")
 let pm = window.pm = new ProseMirror({
   place: place,
   doc: schema.parseDOM(content),
-  schema: schema,
-  plugins: [defaultSetup.config({menu: false})]
+  plugins: [exampleSetup.config({menuBar: false, tooltipMenu: false})]
 })
 content.style.display = "none"
 
-let menu = defaultMenuItems(schema)
+let menu = buildMenuItems(schema)
 
 setMenuStyle(place.getAttribute("menustyle") || "bar")
 

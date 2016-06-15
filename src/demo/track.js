@@ -1,13 +1,13 @@
 const {ProseMirror} = require("prosemirror/dist/edit")
 const {Remapping, ReplaceStep} = require("prosemirror/dist/transform")
 const {elt} = require("prosemirror/dist/util/dom")
-const {defaultSchema: schema} = require("prosemirror/dist/schema")
-const {defaultSetup} = require("prosemirror/dist/schema/defaultsetup")
+const {schema} = require("prosemirror/dist/schema-basic")
+const {exampleSetup} = require("prosemirror/dist/example-setup")
 
 let pm = window.pm = new ProseMirror({
   place: document.querySelector("#editor"),
   schema: schema,
-  plugins: [defaultSetup]
+  plugins: [exampleSetup]
 })
 
 class Commit {
