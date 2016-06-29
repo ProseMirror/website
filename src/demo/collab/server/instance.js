@@ -1,9 +1,8 @@
 const {schema} = require("prosemirror/dist/schema-basic")
 
-const {Comments, Comment} = require("./comments")
-const {populateDefaultInstances} = require("./defaultinstances")
+const {Comments} = require("./comments")
 
-const {readFileSync, writeFile} = require("fs")
+const {writeFile} = require("fs")
 const {createHash} = require("crypto")
 
 const MAX_STEP_HISTORY = 10000
@@ -117,21 +116,7 @@ const instances = Object.create(null)
 let instanceCount = 0
 let maxCount = 20
 
-let saveFile = __dirname + "/../demo-instances.json", json
-if (process.argv.indexOf("--fresh") == -1) {
-  try {
-    json = JSON.parse(readFileSync(saveFile, "utf8"))
-  } catch (e) {}
-}
-
-if (json) {
-  for (let prop in json)
-    newInstance(prop, schema.nodeFromJSON(json[prop].doc),
-                new Comments(json[prop].comments.map(c => Comment.fromJSON(c))))
-} else {
-  populateDefaultInstances()
-}
-
+let saveFile = __dirname + "/../demo-instances.json"
 let saveTimeout = null, saveEvery = 1e4
 function scheduleSave() {
   if (saveTimeout != null) return
