@@ -3,7 +3,25 @@ const {Router} = require("./route")
 const {Step} = require("prosemirror/dist/transform")
 const {schema} = require("prosemirror/dist/schema-basic")
 
-const {getInstance, instanceInfo} = require("./instance")
+const {getInstance, instanceInfo, newInstance} = require("./instance")
+const {populateDefaultInstances} = require("./defaultinstances")
+const {readFileSync} = require("fs")
+const {Comments, Comment} = require("./comments")
+
+let saveFile = __dirname + "/../demo-instances.json", json
+if (process.argv.indexOf("--fresh") == -1) {
+  try {
+    json = JSON.parse(readFileSync(saveFile, "utf8"))
+  } catch (e) {}
+}
+
+if (json) {
+  for (let prop in json)
+    newInstance(prop, schema.nodeFromJSON(json[prop].doc),
+      new Comments(json[prop].comments.map(c => Comment.fromJSON(c))))
+} else {
+  populateDefaultInstances()
+}
 
 const router = new Router
 
