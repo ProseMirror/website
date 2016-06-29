@@ -1,10 +1,9 @@
 const {schema} = require("prosemirror/dist/schema-basic")
-const {newInstance} = require("./instance")
 
 const $node = schema.node, $text = schema.text
 const em = schema.marks.em.create(), strong = schema.marks.strong.create()
 
-function populateDefaultInstances() {
+function populateDefaultInstances(newInstance) {
 
 newInstance("Example", $node("doc", null, [
   $node("heading", {level: 2}, [$text("Example Document")]),

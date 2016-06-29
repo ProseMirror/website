@@ -129,7 +129,7 @@ if (json) {
     newInstance(prop, schema.nodeFromJSON(json[prop].doc),
                 new Comments(json[prop].comments.map(c => Comment.fromJSON(c))))
 } else {
-  populateDefaultInstances()
+  populateDefaultInstances(newInstance)
 }
 
 let saveTimeout = null, saveEvery = 1e4
@@ -167,7 +167,6 @@ function newInstance(id, doc, comments) {
   }
   return instances[id] = new Instance(id, doc, comments)
 }
-exports.newInstance = newInstance
 
 function instanceInfo() {
   let found = []
