@@ -47,21 +47,21 @@ nav {
   width: auto;
   border-right: 349px solid transparent;
   text-align: right;
-  direction: rtl; /* scrollbar on the left */
   z-index: 1;
 }
 
 nav .menubutton { display: none; }
 
 article {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   border-left: 2px solid #38a;
   border-right: 1px solid #ddf;
-  padding: 30px 50px 100px 50px;
+  padding: 30px 90px 100px 90px;
   background: white;
   z-index: 2;
   position: relative;
+  left: 50px;
   min-height: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -90,8 +90,12 @@ nav ul a, nav ul a:visited {
 nav ul {
   list-style: none;
   padding: 0;
-  margin: 0 0 1em;
-  direction: ltr;
+  margin: 1em 0;
+}
+
+nav ul ul {
+  font-size: 90%;
+  margin: 0 0 .5em;
 }
 
 nav ul a.active, nav ul a:hover {
@@ -119,6 +123,7 @@ nav ul a.active, nav ul a:hover[href^="#"] {
     border: none;
     padding: 20px 20px 40px;
     margin: 0;
+    left: 0;
   }
 
   nav {
@@ -127,7 +132,6 @@ nav ul a.active, nav ul a:hover[href^="#"] {
     background: #06a;
     color: white;
     text-align: left;
-    direction: ltr;
     width: auto;
   }
 
@@ -172,6 +176,11 @@ nav ul a.active, nav ul a:hover[href^="#"] {
   }
 }
 
+h2 { font-size: 1.7em; }
+h3 { font-size: 1.4em; }
+h4 { font-size: 1.2em; }
+h5 { font-size: 1em; }
+
 h1, h2, h3, h4, h5, a, a:visited { color: #06a; }
 
 article > p:first-child, article > h1:first-child {
@@ -191,7 +200,6 @@ pre {
 ul {
   padding-left: 1.5em;
 }
-
 
 .ProseMirror {
   border: 1px solid silver;

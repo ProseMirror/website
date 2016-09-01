@@ -20,8 +20,12 @@
         if (found == null) found = i
       } else if (m = mark.href.match(/#(.*)/)) {
         var ref = document.getElementById(m[1])
-        if (ref && ref.getBoundingClientRect().top < 150)
-          found = mark
+        if (ref) {
+          var rect = ref.getBoundingClientRect()
+          if (rect.top != rect.bottom && rect.top < 150) {
+            found = mark
+          }
+        }
       }
     }
     set(found)

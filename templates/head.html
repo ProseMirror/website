@@ -19,8 +19,17 @@
   </a>
   <<if nav>>
     <ul>
-      <<for title, href in nav>>
-        <li><a href="<<t href>>"><<t title>></a></li>
+      <<for title, target in nav>>
+        <li>
+          <a href="<<t typeof target == "string" ? target : target.href>>"><<t title>></a>
+          <<if typeof target != "string" && target.sub>>
+            <ul>
+              <<for title_, href in target.sub>>
+                <li><a href="<<t href>>"><<t title_>></a></li>
+              <</for>>
+            </ul>
+          <</if>>
+        </li>
       <</for>>
     </ul>
   <</if>>
