@@ -3,13 +3,13 @@ var showing = null
 function hashChange() {
   var hash = document.location.hash.slice(1)
   var found = document.getElementById(hash), prefix, sect
-  if (found && (prefix = /^(.*?)\./.exec(hash)) && (sect = document.getElementById("part_" + prefix[1]))) {
+  if (found && (prefix = /^([^\.]+)/.exec(hash)) && (sect = document.getElementById("part_" + prefix[1]))) {
     if (!sect.style.display) {
       sect.style.display = "block"
       if (showing) showing.style.display = ""
       showing = sect
       var rect = found.getBoundingClientRect()
-      window.scrollTo(0, rect.top)
+      window.scrollTo(0, hash == prefix[1] ? 0 : rect.top)
     }
   }
 }

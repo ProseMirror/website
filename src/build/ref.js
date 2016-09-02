@@ -7,22 +7,14 @@ var sourceDir = __dirname + "/../../node_modules/prosemirror/"
 
 var modules = [{
   name: "state",
-  files: sourceDir + "src/state/*.js",
-  order: "index state selection transform",
   deps: ["model", "transform", "view"]
 }, {
   name: "view",
-  files: sourceDir + "src/view/*.js",
-  order: "index",
   deps: ["state"]
 }, {
-  name: "model",
-  files: sourceDir + "src/model/*.js",
-  order: "index node fragment mark replace resolvedpos schema content"
+  name: "model"
 }, {
   name: "transform",
-  files: sourceDir + "src/transform/*.js",
-  order: "index step mark_step replace_step map transform mark replace structure",
   deps: ["model"]
 }, {
   name: "commands",
@@ -60,7 +52,9 @@ var modules = [{
 }]
 
 let read = Object.create(null)
-modules.forEach(config => read[config.name] = builddocs.read(config))
+modules.forEach(config => read[config.name] = builddocs.read({
+  files: sourceDir + "src/" + config.name + "/*.js"
+}))
 
 let imports = Object.create(null)
 
@@ -89,10 +83,15 @@ function importsFor(mod) {
   return result
 }
 
+function moduleHead(name) {
+  return `<h2 id=${name}><a href="#${name}>"><span class=kind>module</span> ${name}</a></h2>`
+}
+
 let toc = {Intro: "#top.intro"}, output = modules.map(module => {
-  let tocPart = toc[module.name] = {href: "#" + module.name + "._module", sub: null}
-  let text = builddocs.build({
+  let tocPart = toc[module.name] = {href: "#" + module.name, sub: null}
+  let text = moduleHead(module.name) + builddocs.build({
     name: module.name,
+    main: sourceDir + "src/" + module.name + "/README.md",
     imports: [{
       constructor: false,
       T: false
