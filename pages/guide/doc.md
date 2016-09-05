@@ -103,7 +103,7 @@ don't actually exist as objects, they are just a counting convention.
 
  * When entering or leaving a node that can have content, that counts
    as one token. So if the document starts with a paragraph, the start
-   of that paragraph couns as position 1.
+   of that paragraph counts as position 1.
 
  * Each character counts as one token. So if the paragraph at the
    start of the document contains the word “hi”, position 2 is after
