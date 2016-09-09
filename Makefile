@@ -10,7 +10,7 @@ all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
 
 BUILD:=browserify
 
-public/ref.html: pages/ref.html node_modules/prosemirror/src/*/*.js templates/* src/build/*.js
+public/ref.html: pages/ref.html node_modules/prosemirror-*/src/* templates/* src/build/*.js
 	node src/build/build.js --ref $<
 
 public/changelog.html: pages/changelog.html node_modules/prosemirror/CHANGELOG.md

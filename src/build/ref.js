@@ -3,8 +3,6 @@ var glob = require("glob")
 var getdocs = require("getdocs")
 var builddocs = require("builddocs")
 
-var sourceDir = __dirname + "/../../node_modules/prosemirror/"
-
 var modules = [{
   name: "state",
   deps: ["model", "transform", "view"]
@@ -18,42 +16,35 @@ var modules = [{
   deps: ["model"]
 }, {
   name: "commands",
-  files: sourceDir + "src/commands/*.js",
   deps: ["state"]
 }, {
   name: "history",
-  files: sourceDir + "src/history/*.js",
   deps: ["state"]
 }, {
   name: "collab",
-  files: sourceDir + "src/collab/*.js",
   deps: ["state"]
 }, {
   name: "keymap",
-  files: sourceDir + "src/keymap/*.js",
   deps: ["state"]
 }, {
   name: "inputrules",
-  files: sourceDir + "src/inputrules/*.js",
-  order: "index inputrules rules util",
   deps: ["state"]
 }, {
   name: "schema-basic",
-  files: sourceDir + "src/schema-basic/*.js",
   deps: ["model"]
 }, {
   name: "schema-list",
-  files: sourceDir + "src/schema-list/*.js",
   deps: ["state"]
 }, {
   name: "schema-table",
-  files: sourceDir + "src/schema-table/*.js",
   deps: ["state"]
 }]
 
+var baseDir = __dirname + "/../../node_modules/"
+
 let read = Object.create(null)
 modules.forEach(config => read[config.name] = builddocs.read({
-  files: sourceDir + "src/" + config.name + "/*.js"
+  files: baseDir + "prosemirror-" + config.name + "/src/*.js"
 }))
 
 let imports = Object.create(null)
@@ -91,7 +82,7 @@ let toc = {Intro: "#top.intro"}, output = modules.map(module => {
   let tocPart = toc[module.name] = {href: "#" + module.name, sub: null}
   let text = moduleHead(module.name) + builddocs.build({
     name: module.name,
-    main: sourceDir + "src/" + module.name + "/README.md",
+    main: baseDir + "prosemirror-" + module.name + "/src/README.md",
     imports: [{
       constructor: false,
       T: false
