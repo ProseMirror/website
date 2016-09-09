@@ -1,7 +1,7 @@
 var showing = null
 
 function hashChange() {
-  var hash = document.location.hash.slice(1)
+  var hash = decodeURIComponent(document.location.hash.slice(1))
   var found = document.getElementById(hash), prefix, sect
   if (found && (prefix = /^([^\.]+)/.exec(hash)) && (sect = document.getElementById("part_" + prefix[1]))) {
     if (!sect.style.display) {
