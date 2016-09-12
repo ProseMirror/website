@@ -34,7 +34,7 @@ The role of the central authority is actually rather simple. It must...
  - Accept changes from editors, and when these can be applied, add
    them to its list of changes
 
- - Provide a way for editors to fetch changes since a given version
+ - Provide a way for editors to receive changes since a given version
 
 Let's implement a trivial central authority that runs in the same
 JavaScript environment as the editors.
@@ -75,67 +75,69 @@ they received, along with the new changes they added, and their client
 ID (which is a way for them to later recognize which changes came from
 them).
 
+When the steps are accepted, they'll notice because the authority will
+notify them that new steps are available, and then pass them _their
+own_ steps. In a real implementation, you can also have `receiveSteps`
+return a status, and immediately confirm the sent steps, as an
+optimization. But the mechanism used here is necessary to guarantee
+synchronization on unreliable connections, so you should always use it
+as the base case.
+
 This implementation of an authority keeps an endlessly growing array
 of steps, the length of which denotes its current version.
 
 ## The `collab` Module
 
-The [`collab`](##collab) module will take care of the tracking of
-local changes, receiving of remote changes, and signalling when
-something has to be sent to the central authority. It exports a
-[`collabEditing`](##collabEditing) plugin which, when enabled, will
-attach itself to your editor and act as a communication channel
-between the editor and the authority.
+The [`collab`](##collab) module exports a [`collab`](##collab.collab)
+plugin, which will take care of the tracking of local changes,
+receiving of remote changes, and indicating when something has to be
+sent to the central authority.
 
 ```javascript
-var prosemirror = require("prosemirror")
-var collabEditing = require("prosemirror/dist/collab").collabEditing
+var EditorState = require("prosemirror-state").EditorState
+var EditorView = require("prosemirror-view").EditorView
+var schema = require("prosemirror-schema-basic").schema
+var collab = require("prosemirror-collab")
 
 function collabEditor(authority, place) {
-  var editor = new prosemirror.ProseMirror({
-    doc: authority.doc,
-    place: place,
-    plugins: [collabEditing.config({version: authority.steps.length})]
+  var view = new EditorView(place, {
+    state: EditorState.create({schema: schema, plugins: [collab.collab]}),
+    onAction: function(action) {
+      var newState = view.state.applyAction(action)
+      view.updateState(newState)
+      var sendable = collab.sendableSteps(newState)
+      if (sendable)
+        authority.receiveSteps(sendable.version, sendable.steps,
+                               sendable.clientID)
+    }
   })
-  var collab = collabEditing.get(editor)
-
-  function send() {
-    var data = collab.sendableSteps()
-    authority.receiveSteps(data.version, data.steps, data.clientID)
-  }
-
-  collab.mustSend.add(send)
 
   authority.onNewSteps.push(function() {
-    var newData = authority.stepsSince(collab.version)
-    collab.receive(newData.steps, newData.clientIDs)
-    if (collab.hasSendableSteps()) send()
+    var newData = authority.stepsSince(collab.getVersion(view.state))
+    view.props.onAction(
+      collab.receiveAction(view.state, newData.steps, newData.clientIDs))
   })
 
-  return editor
+  return view
 }
 ```
 
-Here we load the `collab` module, and define a function that produces
-an editor wired up to a collaboration authority.
+The `collabEditor` function creates an editor view that has the
+`collab` plugin loaded. Whenever the state is updated, it checks
+whether there is anything to send to the authority. If so, it sends
+it.
 
-To do so, it wires up the `send` function to the collab module's
-[`"mustSend"`](##Collab.event_mustSend) event. The function retrieves
-the unconfirmed steps that the editor has and passes them to
-`receiveSteps`.
-
-It also adds a listener to the authority's `onNewSteps` array, and
-when that is called, fetches the steps it did not have yet, and pushes
-them into the editor with the [`receive`](##Collab.receive) method.
+It also registers a function that the authority should call when new
+steps are available, and which creates an [action](##state.Action)
+that updates our local editor state to reflect those steps.
 
 When a set of steps gets rejected by the authority, they will remain
 unconfirmed until, supposedly soon after, we receive new steps from
-the authority. After that happens, the code
-[checks](##Collab.hasSendableSteps) whether there are unconfirmed
-steps, and if so, tries to send them again.
+the authority. After that happens, because the `onNewSteps` callback
+calls `onAction`, the code will try to submit its changes again.
 
-That's all there is to it. Of course, with more complicated data
-channels (such as long polling in
+That's all there is to it. Of course, with asynchronous data channels
+(such as long polling in
 [the collab demo](https://github.com/ProseMirror/website/blob/master/src/demo/collab/client/collab.js)
 or web sockets), you'll need somewhat more complicated communication
 and syncronization code. And you'll probably also want your authority
