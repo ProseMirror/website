@@ -3,27 +3,28 @@
 
 # Guide to Document Schemas
 
-Each ProseMirror editor and [document](doc.html) has a
-[schema](##Schema) associated with it. The schema describes the kind
-of [nodes](##Node) that may occur in the document, and the way they
+Each ProseMirror [document](doc.html) has a [schema](##model.Schema)
+associated with it. The schema describes the kind of
+[nodes](##model.Node) that may occur in the document, and the way they
 are nested. For example, it might say that the top-level node can
 contain one or more blocks, and that paragraph nodes can contain any
-number of inline nodes, with any [marks](##Mark) applied to them.
+number of inline nodes, with any [marks](##model.Mark) applied to
+them.
 
-There is a package with a [basic schema](##schema) available, but the
-nice thing about ProseMirror is that it allows you to define your own
-schemas.
+There is a package with a [basic schema](##schema-basic) available,
+but the nice thing about ProseMirror is that it allows you to define
+your own schemas.
 
 ## Node Types
 
-Every node in a document has a [type](##NodeType), which represents
+Every node in a document has a [type](##model.NodeType), which represents
 its semantic meaning and its properties, such as the way it is
 rendered in the editor. Individual node types are classes that inherit
-from one of these subclasses of [`NodeType`](##NodeType):
+from one of these subclasses of [`NodeType`](##model.NodeType):
 
- * [`Block`](##Block) for block-level nodes.
+ * [`Block`](##model.Block) for block-level nodes.
 
- * [`Inline`](##Inline) for inline (paragraph-level) nodes.
+ * [`Inline`](##model.Inline) for inline (paragraph-level) nodes.
 
 When you define a schema, you enumerate the node types that may occur
 within it, along with the nodes each of them may have as content.
@@ -57,7 +58,7 @@ You can say, for example `"paragraph"` for “one paragraph”, or
 “zero or one caption node”. You can also use regular-expression-like
 ranges, such as `{2}` (“exactly two”) `{1, 5}` (“one to five”) or
 `{2,}` (“two or more”) after node names. In brace notation, you can
-substitute a reference to an [attribute](##NodeType.attrs) of the
+substitute a reference to an [attribute](##model.NodeType.attrs) of the
 parent node for any of the numbers. For example `"table_cell{.width}"`
 to require that the node contain the number of table cells specified
 by the parent node's `width` attribute.
@@ -84,13 +85,12 @@ const groupSchema = new Schema({
 })
 ```
 
-Here `"block+"` is equivalent to `"(paragraph | blockquote)+"`. Groups
-can also refer to other groups to extend them.
+Here `"block+"` is equivalent to `"(paragraph | blockquote)+"`.
 
 Note that the order in which your nodes appear in an or-expression is
 significant. When creating a placeholder for a non-optional node, for
 example to make sure a document is still valid after a
-[replace step](##Transform.replace) the first type in the expression
+[replace step](##transform.ReplaceStep) the first type in the expression
 will be used. If that is a group, the first type in the group
 (determined by the order in which the group's members appear in your
 `nodes` map) is used. If I switched the positions of `"paragraph"` and
@@ -118,8 +118,8 @@ atom (string, number, bool, null) or a reference to an attribute in
 the parent node, written with a prefixed dot, for example
 `"table_row[width=.width]"`.
 
-By default, nodes do not support [marks][##Mark]. When desired, you
-have to explicitly allow them using angle bracket syntax. So
+By default, nodes do not support [marks][##model.Mark]. When desired,
+you have to explicitly allow them using angle bracket syntax. So
 `"text*"` means “text without marks”, whereas `"text<em>*"` means
 “text with optional emphasis mark”, `"text<em strong>*"` text with
 optional strong or emphasis mark, and `"text<_>*"` can be used to say
@@ -129,8 +129,8 @@ optional strong or emphasis mark, and `"text<_>*"` can be used to say
 
 Marks are used to add extra styling or other information to inline
 content. A schema must declare all mark types it allows in its
-[spec](##SchemaSpec). Mark types are classes much like node types,
-except that they inherit from [`MarkType`](##MarkType) instead.
+[schema](##model.Schema). Mark types are classes much like node types,
+except that they inherit from [`MarkType`](##model.MarkType) instead.
 
 Here's a simple schema that supports strong and emphasis marks on
 text:
@@ -139,7 +139,7 @@ text:
 const markSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "paragraph+"},
-    paragraph: {type: Paragraph, content: "text[_]*"},
+    paragraph: {type: Paragraph, content: "text<_>*"},
     text: {type: Text}
   },
   marks: {
@@ -148,6 +148,26 @@ const markSchema = new Schema({
   }
 })
 ```
+
+## Extending a schema
+
+The `nodes` and `marks` options passed to the
+[`Schema` constructor](##model.Schema) take
+[`OrderedMap` objects](##model.OrderedMap) as well as plain JavaScript
+objects. The schema's [`nodeSpec`](##model.Schema.nodeSpec) and
+[`markSpec`](##model.Schema.markSpec) properties are always
+`OrderedMap`s.
+
+These support a number of methods to conveniently update them when
+building a new schema. For example you could say
+`schema.markSpec.remove("blockquote")` to derive a set of nodes
+without the `blockquote` node, which can then be passed as the `nodes`
+field for a new schema.
+
+The [schema-list](##schema-list) and [schema-table](##schema-table)
+modules both export a [convenience](##schema-list.addListNodes)
+[function](##schema-table.addTableNodes) to add the nodes exported by
+those modules to a nodeset.
 
 ## Attributes
 
