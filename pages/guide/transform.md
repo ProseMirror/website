@@ -11,7 +11,7 @@ first.
 
 Why can't you just mutate the document and be done with it? Or at
 least create a new version of a document and just set the editor's
-[`doc`](##ProseMirror.doc) property to it?
+[`doc`](##state.EditorState.doc) property to it?
 
 There are several reasons. One is code clarity. Immutable data
 structures really do lead to cleaner code. But the transform system
@@ -22,10 +22,9 @@ the document to a new one. This is used to implement the undo history,
 and other potentially useful things, such as
 [change tracking](../demo/track.html).
 
-In short, if you use [`setDoc`](##ProseMirror.setDoc) to update the
-document in your editor, you will reset the undo history and cause an
-error if your editor has collaborative editing enabled. If you use
-transforms, no such problems occur.
+In short, if you create a fresh [state](##state.EditorState) to update
+the document in your editor, you will reset the undo history and make
+collaborative editing break. If you use transforms, things just work.
 
 ## Steps
 
@@ -33,35 +32,38 @@ Updates to documents are decomposed into [steps](##transform) that
 describe an update. You usually don't need to work with these
 directly, but it is useful to know how they work.
 
-Examples of steps are [`"join"`](##Transform.join) to join two
-adjacent nodes together, or [`"addMark"`](##Transform.addMark) to add a
-mark to a given range.
+Examples of steps are [`ReplaceStep`](##transform.ReplaceStep) to
+replace a piece of a document, or
+[`AddMarkStep`](##transform.AddMarkStep) to add a mark to a given
+range.
 
 When a step is applied to a document, it returns a
-[value](##StepResult) that holds either a new document or a failure
-message, if the step can't be meaningfully applied to the document. A
-step can be [inverted](##Step.invert), producing a new step that
-exactly undoes the thing the step did. This is how the undo history is
-implemented.
+[value](##transform.StepResult) that holds either a new document or,
+if the step can't be meaningfully applied to the document, a failure
+message. A step can be [inverted](##transform.Step.invert), producing
+a new step that exactly undoes the thing the step did. This is how the
+undo history is implemented.
 
-You can also [get](##Step.posMap) a [position map](##PosMap) from a
-step. This can be used to map [positions](./doc.html#indexing) in the
-old document to positions in the new one (or
-[vice-versa](##PosMap.invert)).
+You can also [get](##transform.Step.posMap) a
+[position map](##transform.PosMap) from a step. This is a data
+structure that describes the parts of the document it replaces, which
+can be used, among other things, to map
+[positions](./doc.html#indexing) in the old document to positions in
+the new one (or [vice-versa](##transform.PosMap.invert)).
 
 ## Transforms
 
 To make accumulating a bunch of steps convenient, the
-[`Transform`](##Transform) abstraction is an object that wraps a
-document, and provides a number of methods that allow you to make
-changes to that document, accumulating steps and position maps in the
-process. For each step, it will immediately compute the document.
+[`Transform`](##transform.Transform) abstraction is an object that
+wraps a document, and provides a number of methods that allow you to
+make changes to that document, accumulating steps and position maps in
+the process. For each step, it will immediately compute the document.
 
 When working with an editor, you'll usually want to create an
-[`EditorTransform`](##EditorTransform), which adds some
-selection-related [methods](##EditorTransform.replaceSelection), and
-an [`apply`](##EditorTransform.apply) method to _commit_ the changes
-to the editor.
+[`EditorTransform`](##state.EditorTransform), which adds some
+selection-related [methods](##state.EditorTransform.replaceSelection),
+and an [`action`](##state.EditorTransform.action) method to apply the
+transform to a [state](##state.EditorState).
 
 ## Rebasing
 
@@ -83,11 +85,13 @@ be applied to the document created by the other instead. In pseudocode:
     rebase(stepB, mapA) = stepB'
     stepB'(docA) = docAB
 
-The [`map`](##Step.map) method on step objects takes a
-[mappable](##Mappable) thing (such as a [position map](##PosMap) or
-[transform](##Transform)), and maps the positions associated with the
-step through it. This may end up returning `null`, if the content the
-step applied to was deleted by the steps that produced the mapping.
+The [`map`](##transform.Step.map) method on step objects takes a
+[mappable](##transform.Mappable) thing (such as a
+[position map](##transform.PosMap) or [mapping](##transform.Mapping),
+which each `Transform` object [has one](##transform.Transform.mapping)
+of), and maps the positions associated with the step through it. This
+may end up returning `null`, if the content the step applied to was
+deleted by the steps that produced the mapping.
 
 Things get more complicated when you want to rebase a chain of steps
 over another chain of steps.
@@ -117,7 +121,7 @@ But when `stepB1` inserted some content, and `stepB2` did something to
 that content, then mapping `stepB2` through `invert(mapB1)` will
 return `null`, because the inverse of `stepB1` _deletes_ the content
 to which it applies. However, this content is reintroduced later in
-the pipeline, by `mapB1`. The [`Remapping`](##Remapping) abstraction
-provides a way to track such pipelines, including the inverse
-relations between the maps in it. You can map steps through it in such
-a way that they survive situations like the one above.
+the pipeline, by `mapB1`. The [`Mapping`](##transform.Mapping)
+abstraction provides a way to track such pipelines, including the
+inverse relations between the maps in it. You can map steps through it
+in such a way that they survive situations like the one above.
