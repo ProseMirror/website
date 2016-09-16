@@ -32,6 +32,18 @@ code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
 .scripted nav ul li.toc_open ul {
   display: block;
 }
+
+.next-link {
+  display: block;
+  text-align: right;
+  color: #aaa;
+  font-size: 200%;
+  margin-top: 1em;
+  text-decoration: none;
+}
+.next-link:visited {
+  color: #aaa;
+}
 </style>
 
 <section class=doc_part id="part_top">
@@ -46,6 +58,52 @@ code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
   </section>
 <</for>>
 
-<script src="/docs.js"></script>
+<script>
+var showing = null
+
+function hashChange() {
+  var hash = decodeURIComponent(document.location.hash.slice(1))
+  var found = document.getElementById(hash), prefix, sect
+  if (found && (prefix = /^([^\.]+)/.exec(hash)) && (sect = document.getElementById("part_" + prefix[1]))) {
+    if (!sect.style.display) {
+      sect.style.display = "block"
+      if (showing) showing.style.display = ""
+      showing = sect
+      var rect = found.getBoundingClientRect()
+      window.scrollTo(0, hash == prefix[1] ? 0 : rect.top)
+    }
+  }
+}
+
+window.addEventListener("hashchange", hashChange)
+hashChange()
+if (!showing) {
+  showing = document.querySelector("section")
+  showing.style.display = "block"
+}
+
+var toc = document.querySelector("nav ul")
+var openToc = null
+
+for (var item = toc.firstChild; item; item = item.nextSibling) {
+  if (item.nodeName != "li") (function(item) {
+    item.addEventListener("click", function(e) {
+      if (openToc == item) return
+      if (openToc) openToc.className = ""
+      item.className = "toc_open"
+      openToc = item
+    })
+  }(item))
+}
+
+var sections = document.querySelectorAll("section")
+for (var i = 0; i < sections.length - 1; i++) {
+  var next = sections[i].appendChild(document.createElement("a"))
+  next.className = "next-link"
+  next.textContent = "⮞"
+  next.title = "Next section"
+  next.href = "#" + sections[i + 1].id.slice(5)
+}
+</script>
 
 <<foot>>
