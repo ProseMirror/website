@@ -20,6 +20,14 @@ dt {
   display: block;
 }
 
+.extends {
+  font-weight: normal;
+  font-size: 12px;
+}
+.extends code {
+  color: black;
+}
+
 code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
   color: inherit;
   text-decoration: none;
@@ -38,7 +46,7 @@ code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
   text-align: right;
   color: #aaa;
   font-size: 200%;
-  margin-top: 1em;
+  margin-top: 1rem;
   text-decoration: none;
 }
 .next-link:visited {
@@ -70,7 +78,7 @@ function hashChange() {
       if (showing) showing.style.display = ""
       showing = sect
       var rect = found.getBoundingClientRect()
-      window.scrollTo(0, hash == prefix[1] ? 0 : rect.top)
+      window.scrollTo(0, hash == prefix[1] ? 0 : rect.top + pageYOffset)
     }
   }
 }

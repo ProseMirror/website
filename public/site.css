@@ -183,6 +183,10 @@ h5 { font-size: 1em; }
 
 h1, h2, h3, h4, h5, a, a:visited { color: #06a; }
 
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 1rem;
+}
+
 article > p:first-child, article > h1:first-child {
   margin-top: 0;
 }

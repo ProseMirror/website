@@ -75,7 +75,7 @@ function importsFor(mod) {
 }
 
 function moduleHead(name) {
-  return `<h2 id=${name}><a href="#${name}>"><span class=kind>module</span> ${name}</a></h2>`
+  return `<h2 id=${name}><a href="#${name}"><span class=kind>module</span> ${name}</a></h2>`
 }
 
 let toc = {Intro: "#top.intro"}, output = modules.map(module => {
