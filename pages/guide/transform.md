@@ -44,12 +44,12 @@ message. A step can be [inverted](##transform.Step.invert), producing
 a new step that exactly undoes the thing the step did. This is how the
 undo history is implemented.
 
-You can also [get](##transform.Step.posMap) a
-[position map](##transform.PosMap) from a step. This is a data
+You can also [get](##transform.Step.getMap) a
+[change map](##transform.StepMap) from a step. This is a data
 structure that describes the parts of the document it replaces, which
 can be used, among other things, to map
 [positions](./doc.html#indexing) in the old document to positions in
-the new one (or [vice-versa](##transform.PosMap.invert)).
+the new one (or [vice-versa](##transform.StepMap.invert)).
 
 ## Transforms
 
@@ -87,7 +87,7 @@ be applied to the document created by the other instead. In pseudocode:
 
 The [`map`](##transform.Step.map) method on step objects takes a
 [mappable](##transform.Mappable) thing (such as a
-[position map](##transform.PosMap) or [mapping](##transform.Mapping),
+[position map](##transform.StepMap) or [mapping](##transform.Mapping),
 which each `Transform` object [has one](##transform.Transform.mapping)
 of), and maps the positions associated with the step through it. This
 may end up returning `null`, if the content the step applied to was
