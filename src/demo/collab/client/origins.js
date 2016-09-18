@@ -35,7 +35,7 @@ function getClass(origin) {
 function showOrigins(pm, steps, maps) {
   let collab = collabEditing.get(pm)
   steps.forEach((step, i) => {
-    if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
+    if (step.origin && step.stepType == "replace" && step.slice && step.slice.content.length) {
       let remap = new Remapping([], maps.slice(i).concat(collab.unconfirmedMaps))
       let start = remap.map(step.from, -1)
       let end = remap.map(step.to, 1)
