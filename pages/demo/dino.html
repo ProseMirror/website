@@ -34,10 +34,8 @@ is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/dino.js"
 
 <div id="content" style="display: none">
   <p>You can insert dinosaurs by typing their names enclosed by
-  brackets, such as <code>[pterodactyl]</code>. You'll get a simple
-  completion tooltip as you do so, and can press tab to select the top
-  completion. The menu bar also contains a dinosaur-insertion
-  submenu.</p>
+  brackets, such as <code>[pterodactyl]</code>. The insert menu bar
+  also allows you to insert dinosaurs.</p>
   <p>This paragraph <img class=dinosaur dino-type="stegosaurus">, for example,
   <img class=dinosaur dino-type="triceratops">
   is full <img class=dinosaur dino-type="tyrannosaurus"> of
@@ -46,10 +44,9 @@ is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/dino.js"
   on.</p>
 </div>
 
-<p><strong>Note:</strong> The document-model customization API is not
-finished yet. It is powerful enough to kludge in something like this,
-but there's a bunch of work to do before we can write robust
-extensions that interact properly with all parts of the system.</p>
+<p><strong>Note:</strong> The schema API allows for more powerful
+things than this, such as adding nodes with content, or completely
+redefining the document structure.</p>
 
 <p>Next demo: <a href="lint.html">inspecting and manipulating documents</a>.</p>
 
