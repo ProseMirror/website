@@ -1,11 +1,9 @@
-const {EditorView} = require("prosemirror-view")
-const {EditorState, Plugin} = require("prosemirror-state")
+const {EditorState} = require("prosemirror-state")
 const {insertPoint} = require("prosemirror-transform")
 const {MenuBarEditorView, MenuItem} = require("prosemirror-menu")
 const {Schema, DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
-const {crel} = require("crel")
 const {InputRule, inputRules} = require("prosemirror-inputrules")
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]

@@ -1,65 +1,74 @@
-const {ProseMirror} = require("prosemirror/dist/edit")
-const {schema} = require("prosemirror/dist/schema-basic")
-const {elt} = require("prosemirror/dist/util/dom")
-const {exampleSetup} = require("prosemirror/dist/example-setup")
-
-let pm = window.pm = new ProseMirror({
-  place: document.querySelector("#editor"),
-  doc: schema.parseDOM(document.querySelector("#content")),
-  plugins: [exampleSetup]
-})
+const {EditorState, TextSelection} = require("prosemirror-state")
+const {MenuBarEditorView} = require("prosemirror-menu")
+const {DOMParser} = require("prosemirror-model")
+const {schema} = require("prosemirror-schema-basic")
+const {exampleSetup} = require("prosemirror-example-setup")
+const crel = require("crel")
 
 let delay = null
 
-pm.on.change.add(() => {
-  clearTimeout(delay)
-  delay = setTimeout(runLint, 500)
+let {editor: view} = new MenuBarEditorView(document.querySelector("#editor"), {
+  state: EditorState.create({
+    doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
+    plugins: [exampleSetup({schema})]
+  }),
+  onAction: action => {
+    view.updateState(view.state.applyAction(action))
+    clearTimeout(delay)
+    delay = setTimeout(() => runLint(view), 500)
+  }
 })
 
 let output = document.querySelector("#lint_output")
-function runLint() {
-  if (showingProb) clearProb(showingProb)
+let showingProb = null, range = null, overlay = null
+
+function runLint(view) {
+  if (showingProb) clearProb(view, showingProb)
   delay = null
   output.textContent = ""
-  lint(pm.doc).forEach(prob => {
-    let note = output.appendChild(elt("div", {class: "problem"}, prob.msg))
+  lint(view.state.doc).forEach(prob => {
+    let note = output.appendChild(crel("div", {class: "problem"}, prob.msg))
     if (prob.fix)
-      note.appendChild(elt("button", {class: "fixbutton"}, "Fix")).addEventListener("click", () => {
+      note.appendChild(crel("button", {class: "fixbutton"}, "Fix")).addEventListener("click", () => {
         if (delay == null) {
-          prob.fix(pm, prob)
-          pm.focus()
+          prob.fix(prob, view.state, view.props.onAction)
+          view.focus()
         }
       })
     note.addEventListener("mouseover", event => {
-      if (!note.contains(event.relatedTarget)) showProb(prob)
+      if (!note.contains(event.relatedTarget)) showProb(view, prob)
     })
     note.addEventListener("mouseout", event => {
-      if (!note.contains(event.relatedTarget)) clearProb(prob)
+      if (!note.contains(event.relatedTarget)) clearProb(view, prob)
     })
     note.addEventListener("click", () => {
       if (delay == null) {
-        pm.setTextSelection(prob.from, prob.to)
-        pm.focus()
+        let doc = view.state.doc
+        view.props.onAction(new TextSelection(doc.resolve(prob.from), doc.resolve(prob.to)).action({scrollIntoView: true}))
+        view.focus()
       }
     })
   })
 }
 
-let showingProb = null, range = null, overlay = null
-function showProb(prob) {
-  if (showingProb) clearProb(showingProb)
+function showProb(view, prob) {
+  if (showingProb) clearProb(view, showingProb)
   if (delay != null) return
   showingProb = prob
+  /* FIXME restore when decorations are back
   if (prob.from != prob.to)
     range = pm.markRange(prob.from, prob.to, {className: "markprob"})
-  overlay = document.body.appendChild(elt("img", {src: "/img/bouncing_arrow.gif", class: "probarrow"}))
-  let coords = pm.coordsAtPos(prob.from)
+   */
+  overlay = document.body.appendChild(crel("img", {src: "/img/bouncing_arrow.gif", class: "probarrow"}))
+  let coords = view.coordsAtPos(prob.from)
   overlay.style.left = (coords.left - 55) + "px"
   overlay.style.top = (((coords.top + coords.bottom) / 2) - 16) + "px"
 }
-function clearProb(prob) {
+
+function clearProb(view, prob) {
   if (showingProb != prob) return
-  if (range) pm.removeRange(range)
+  /* FIXME restore
+  if (range) pm.removeRange(range) */
   document.body.removeChild(overlay)
   showingProb = range = overlay = null
 }
@@ -106,25 +115,27 @@ function lint(doc) {
 }
 
 function fixPunc(match) {
-  return (pm, prob) => {
-    pm.tr.delete(prob.from, prob.to)
-         .insert(prob.from, pm.schema.text(match[1] + " "))
-         .apply()
+  return (prob, state, onAction) => {
+    onAction(state.tr.delete(prob.from, prob.to)
+             .insert(prob.from, state.schema.text(match[1] + " "))
+             .action())
   }
 }
 
 function fixHeader(level) {
-  return (pm, prob) => pm.tr.setBlockType(prob.from, prob.to, pm.schema.nodeType("heading"), {level}).apply()
+  return (prob, state, onAction) => {
+    onAction(state.tr.setBlockType(prob.from, prob.to, state.schema.nodeType("heading"), {level}).action())
+  }
 }
 
-function addAlt(pm, prob) {
+function addAlt(prob, state, onAction) {
   let alt = prompt("Alt text", "")
-  let img = pm.doc.nodeAt(prob.from)
-  if (alt) pm.tr.setNodeType(prob.from, null, {
+  let img = state.doc.nodeAt(prob.from)
+  if (alt) onAction(state.tr.setNodeType(prob.from, null, {
     src: img.attrs.src,
     alt: alt,
     title: img.attrs.title
-  }).apply()
+  }).action())
 }
 
-runLint()
+runLint(view)

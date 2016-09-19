@@ -1,8 +1,13 @@
-<<in {title, meta, nav}>>
+<<in {title, meta, nav, editor}>>
 <!doctype html>
 
 <meta charset="utf-8">
 <link rel=stylesheet href=/css/site.css>
+<<if editor>>
+  <link rel=stylesheet href=/css/prosemirror.css>
+  <link rel=stylesheet href=/css/menu.css>
+  <link rel=stylesheet href=/css/example-setup.css>
+<</if>>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title><<t title>></title>
