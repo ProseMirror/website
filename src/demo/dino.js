@@ -1,69 +1,59 @@
-const {ProseMirror, Keymap} = require("prosemirror/dist/edit")
-const {Inline, Attribute, Schema} = require("prosemirror/dist/model")
-const {schema} = require("prosemirror/dist/schema-basic")
-const {exampleSetup, buildMenuItems} = require("prosemirror/dist/example-setup")
-const {elt} = require("prosemirror/dist/util/dom")
-const {InputRule, inputRules} = require("prosemirror/dist/inputrules")
-const {Tooltip, FieldPrompt, SelectField} = require("prosemirror/dist/ui")
-const {insertItem} = require("prosemirror/dist/menu")
+const {EditorView} = require("prosemirror-view")
+const {EditorState} = require("prosemirror-state")
+const {MenuBarEditorView, MenuItem} = require("prosemirror-menu")
+const {Schema, DOMParser} = require("prosemirror-model")
+const {schema} = require("prosemirror-schema-basic")
+const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
+const {crel} = require("crel")
+const {InputRule, inputRules} = require("prosemirror-inputrules")
 
 const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
 
-class Dino extends Inline {
-  get attrs() {
-    return {type: new Attribute("brontosaurus")}
-  }
-  get matchDOMTag() {
-    return {"img[dino-type]": dom => {
+const dino = {
+  attrs: {type: {default: "brontosaurus"}},
+  toDOM: node => ["img", {"dino-type": node.attrs.type,
+                          src: "/img/dino/" + node.attrs.type + ".png",
+                          title: node.attrs.type,
+                          class: "dinosaur"}],
+  parseDOM: [{
+    tag: "img[dino-type]",
+    getAttrs: dom => {
       let type = dom.getAttribute("dino-type")
       if (dinos.indexOf(type) > -1) return {type}
-    }}
-  }
-  toDOM(node) {
-    return ["img", {"dino-type": node.attrs.type,
-                    src: "/img/dino/" + node.attrs.type + ".png",
-                    title: node.attrs.type,
-                    class: "dinosaur"}]
-  }
+    },
+    group: "inline"
+  }]
 }
 
 const dinoSchema = new Schema({
-  nodes: schema.nodeSpec.addBefore("image", "dino", {type: Dino, group: "inline"}),
+  nodes: schema.nodeSpec.addBefore("image", "dino", dino),
   marks: schema.markSpec
 })
+const dinoType = dinoSchema.nodes.dino
 
-const dinoField = new SelectField({
-  label: "Type",
-  required: true,
-  options: dinos.map(name => ({value: name, label: name}))
-})
-
-const dinoMenuItem = insertItem(dinoSchema.nodes.dino, {
-  title: "Insert a dino",
-  label: "Dino",
-  attrs(pm, callback) {
-    new FieldPrompt(pm, "Insert a dino", {type: dinoField}).open(callback)
-  }
-})
-
-const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", (pm, match, pos) => {
-  let start = pos - match[0].length
-  pm.tr.delete(start, pos).insertInline(start, dinoSchema.nodes.dino.create({type: match[1]})).apply()
-})
+const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), "]", (view, match, start, end) =>
+  pm.tr.replaceWith(start, end, dinoType.create({type: match[1]})))
 
 let menu = buildMenuItems(dinoSchema)
-menu.insertMenu.content.push(dinoMenuItem)
+menu.insertMenu.content = menu.insertMenu.content.concat(dinos.map(name => {
+  return new MenuItem({
+    title: "Insert " + name,
+    label: name,
+    select(state) { return canInsert(state, dinoType) },
+    run(state, onAction) { onAction(state.tr.replaceSelection(dinoType.create({type: name})).action()) }
+  })
+}))
 
-let pm = window.pm = new ProseMirror({
-  place: document.querySelector("#editor"),
-  doc: dinoSchema.parseDOM(document.querySelector("#content")),
-  plugins: [
-    exampleSetup.config({menuBar: {float: true, content: menu.fullMenu}})
-  ]
+let view = new MenuBarEditorView(document.querySelector("#editor"), {
+  state: EditorState.create({
+    doc: DOMParser.fromSchema(dinoSchema).parse(document.querySelector("#content")),
+    plugins: [exampleSetup({schema: dinoSchema}), inputRules({rules: [dinoInputRule]})]
+  }),
+  onAction: action => view.updateState(view.editor.state.applyAction(action))
 })
+window.pm = view.editor
 
-inputRules.get(pm).addRule(dinoInputRule)
-
+/*
 let tooltip = new Tooltip(pm.wrapper, "below"), open, closingTooltip
 pm.on.interaction.add(() => {
   clearTimeout(closingTooltip)
@@ -119,3 +109,4 @@ pm.addKeymap(new Keymap({
     else return false
   }
 }))
+*/
