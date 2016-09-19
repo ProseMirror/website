@@ -163,35 +163,48 @@ function renderCommits(state) {
                     "\u00a0 " + commit.message + "\u00a0 ",
                     crel("button", {class: "commit-revert"}, "revert"))
     node.lastChild.addEventListener("click", () => revertCommit(commit))
-    /*node.addEventListener("mouseover", e => {
+    node.addEventListener("mouseover", e => {
       if (!node.contains(e.relatedTarget)) highlightCommit(commit)
     })
     node.addEventListener("mouseout", e => {
       if (!node.contains(e.relatedTarget)) clearHighlight(commit)
-    })*/
+    })
     out.appendChild(node)
   })
 }
-/*
+
 let highlighted = null
+
+function annotateRange({from, to}) {
+  let left = document.body.appendChild(crel("span", {class: "marker-left"}))
+  let right = document.body.appendChild(crel("span", {class: "marker-right"}))
+  let leftPos = view.editor.coordsAtPos(from), rightPos = view.editor.coordsAtPos(to)
+  left.style.left = leftPos.left + "px"
+  left.style.top = (leftPos.bottom - 3) + "px"
+  right.style.right = (document.body.clientWidth - rightPos.right) + "px"
+  right.style.top = (rightPos.bottom - 3) + "px"
+  return {left, right}
+}
+function clearRange({left, right}) {
+  document.body.removeChild(left)
+  document.body.removeChild(right)
+}
 
 function highlightCommit(commit) {
   if (highlighted && highlighted.commit == commit) return
+  let state = view.editor.state.trackedChanges
   if (highlighted) clearHighlight(highlighted.commit)
   highlighted = {
-    ranges: blameMap.filter(span => span.commit == commit)
-                    .map(span => pm.markRange(span.from, span.to, {className: "commit-blame"})),
+    ranges: state.blameMap.filter(span => state.commits[span.commit] == commit).map(annotateRange),
     commit: commit
   }
 }
 function clearHighlight(commit) {
   if (highlighted && highlighted.commit == commit) {
-    for (let i = 0; i < highlighted.ranges.length; i++)
-      pm.removeRange(highlighted.ranges[i])
+    highlighted.ranges.forEach(clearRange)
     highlighted = null
   }
 }
-*/
 
 function revertCommit(commit) {
   let state = view.editor.state.trackedChanges

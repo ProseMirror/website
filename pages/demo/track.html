@@ -39,6 +39,20 @@
     margin: 6px 0;
     position: relative;
   }
+  .marker-left, .marker-right {
+    position: fixed;
+    border-bottom: 2px solid #07c;
+    height: 3px;
+    width: 15px;
+    z-index: 100;
+    display: block;
+  }
+  .marker-left {
+    border-left: 2px solid #07c;
+  }
+  .marker-right {
+    border-right: 2px solid #07c;
+  }
 </style>
 
 <p>Changes are first-class values in ProseMirror. You can hold on to
