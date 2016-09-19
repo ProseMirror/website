@@ -7,15 +7,15 @@ const crel = require("crel")
 
 let delay = null
 
-let {editor: view} = new MenuBarEditorView(document.querySelector("#editor"), {
+let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: [exampleSetup({schema})]
   }),
   onAction: action => {
-    view.updateState(view.state.applyAction(action))
+    view.updateState(view.editor.state.applyAction(action))
     clearTimeout(delay)
-    delay = setTimeout(() => runLint(view), 500)
+    delay = setTimeout(() => runLint(view.editor), 500)
   }
 })
 

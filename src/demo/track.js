@@ -1,118 +1,178 @@
-const {ProseMirror} = require("prosemirror/dist/edit")
-const {Remapping, ReplaceStep} = require("prosemirror/dist/transform")
-const {elt} = require("prosemirror/dist/util/dom")
-const {schema} = require("prosemirror/dist/schema-basic")
-const {exampleSetup} = require("prosemirror/dist/example-setup")
+const {EditorState, Plugin} = require("prosemirror-state")
+const {MenuBarEditorView} = require("prosemirror-menu")
+const {Mapping} = require("prosemirror-transform")
+const {schema} = require("prosemirror-schema-basic")
+const {exampleSetup} = require("prosemirror-example-setup")
+const crel = require("crel")
 
-let pm = window.pm = new ProseMirror({
-  place: document.querySelector("#editor"),
-  schema: schema,
-  plugins: [exampleSetup]
-})
-
-class Commit {
-  constructor() {
-    this.message = this.time = null
-    this.hidden = false
-    this.steps = []
-    this.maps = []
-  }
-  finish(message) {
-    this.message = message
-    this.time = new Date
-    return this
-  }
-}
-
-let commits = window.commits = []
-let uncommitted = new Commit
-let blameMap = [{from: 0, to: 2, commit: null}]
-
-pm.on.transform.add(transform => {
-  let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i], transform.maps[i]))
-  uncommitted.steps = uncommitted.steps.concat(inverted)
-  uncommitted.maps = uncommitted.maps.concat(transform.maps)
-
-  adjustBlameMap(transform.steps, transform.maps, uncommitted)
-  setDisabled()
-})
-
-pm.tr.typeText("Type something, and then commit it.").apply()
-uncommitted.hidden = true
-doCommit("Initial content")
-
-function setDisabled() {
-  let input = document.querySelector("#message")
-  let button = document.querySelector("#commitbutton")
-  input.disabled = button.disabled = uncommitted.steps == 0
-}
-setDisabled()
-
-function doCommit(message) {
-  if (uncommitted.steps.length == 0) return
-  commits.push(uncommitted.finish(message))
-  uncommitted = new Commit
-  renderCommits()
-  setDisabled()
-}
-
-function adjustBlameMap(steps, maps, commit) {
-  for (let i = 0; i < maps.length; i++) {
-    let map = maps[i]
-    for (let j = 0; j < blameMap.length; j++) {
-      let span = blameMap[j]
-      span.from = map.map(span.from, 1)
-      span.to = map.map(span.to, -1)
-      if (span.from == span.to) blameMap.splice(j--, 1)
-    }
-    let step = steps[i], to
-    if (step instanceof ReplaceStep && !step.structure && (to = map.map(step.to, 1)) && step.from != to) {
-      let pos = 0, span = {from: step.from, to, commit}
-      while (pos < blameMap.length && blameMap[pos].to <= step.from) ++pos
-      let after = blameMap[pos]
-      if (after && after.from < span.to) {
-        blameMap.splice(pos, 1, {from: after.from, to: span.from, commit: after.commit},
-                        span, {from: span.to, to: after.to, commit: after.commit})
-      } else {
-        blameMap.splice(pos, 0, span)
+const trackPlugin = new Plugin({
+  stateFields: {
+    trackedChanges: {
+      init(_, instance) {
+        return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
+      },
+      applyAction(state, action) {
+        if (action.type == "transform")
+          return state.trackedChanges.applyTransform(action.transform)
+        if (action.type == "commit")
+          return state.trackedChanges.applyCommit(action.message, action.time)
+        else
+          return state.trackedChanges
       }
     }
   }
-  for (let i = 0; i < blameMap.length - 1; i++) {
-    let span = blameMap[i]
-    if (span.commit == blameMap[i + 1].commit) {
-      span.to = blameMap[i + 1].to
-      blameMap.splice(i + 1, 1)
-    }
+})
+
+class Span {
+  constructor(from, to, commit) {
+    this.from = from; this.to = to; this.commit = commit
   }
 }
 
-function findInBlameMap(pos) {
-  for (let i = 0; i < blameMap.length; i++)
-    if (blameMap[i].to >= pos && blameMap[i].commit) return blameMap[i].commit
+class Commit {
+  constructor(message, time, steps, maps, hidden) {
+    this.message = message
+    this.time = time
+    this.steps = steps
+    this.maps = maps
+    this.hidden = hidden
+  }
 }
 
-function renderCommits() {
+class TrackState {
+  constructor(blameMap, commits, uncommittedSteps, uncommittedMaps) {
+    this.blameMap = blameMap
+    this.commits = commits
+    this.uncommittedSteps = uncommittedSteps
+    this.uncommittedMaps = uncommittedMaps
+  }
+
+  applyTransform(transform) {
+    let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i]))
+    return new TrackState(updateBlameMap(this.blameMap, transform, this.commits.length),
+                          this.commits,
+                          this.uncommittedSteps.concat(inverted),
+                          this.uncommittedMaps.concat(transform.mapping.maps))
+  }
+
+  applyCommit(message, time) {
+    if (this.uncommittedSteps.length == 0) return this
+    let commit = new Commit(message, time, this.uncommittedSteps, this.uncommittedMaps)
+    return new TrackState(this.blameMap, this.commits.concat(commit), [], [])
+  }
+}
+
+function updateBlameMap(map, transform, id) {
+  let result = [], mapping = transform.mapping
+  for (let i = 0; i < map.length; i++) {
+    let span = map[i]
+    let from = mapping.map(span.from, 1), to = mapping.map(span.to, -1)
+    if (from < to) result.push(new Span(from, to, span.commit))
+  }
+
+  for (let i = 0; i < mapping.maps.length; i++) {
+    let map = mapping.maps[i], after = mapping.slice(i + 1)
+    map.forEach((_s, _e, start, end) => {
+      insertIntoBlameMap(result, after.map(start, 1), after.map(end, -1), id)
+    })
+  }
+
+  return result
+}
+
+function insertIntoBlameMap(map, from, to, commit) {
+  let pos = 0, next
+  for (; pos < map.length; pos++) {
+    next = map[pos]
+    if (next.commit == commit) {
+      if (next.to >= from) break
+    } else if (next.to > from) { // Different commit, not before
+      if (next.from < from) { // Sticks out to the left (loop below will handle right side)
+        let left = new Span(next.from, from, next.commit)
+        if (next.to > to) map.splice(pos++, 0, left)
+        else map[pos++] = left
+      }
+      break
+    }
+  }
+
+  while (next = map[pos]) {
+    if (next.commit == commit) {
+      if (next.from > to) break
+      from = Math.min(from, next.from)
+      to = Math.max(to, next.to)
+      map.splice(pos, 1)
+    } else {
+      if (next.from >= to) break
+      if (next.to > to) {
+        map[pos] = new Span(to, next.to, next.commit)
+        break
+      } else {
+        map.splice(pos, 1)
+      }
+    }
+  }
+
+  map.splice(pos, 0, new Span(from, to, commit))
+}
+
+let view = window.view = new MenuBarEditorView(document.querySelector("#editor"), {
+  state: EditorState.create({
+    schema,
+    plugins: [exampleSetup({schema}), trackPlugin]
+  }),
+  onAction: action => {
+    let newState = view.editor.state.applyAction(action)
+    view.updateState(newState)
+    setDisabled(newState)
+    renderCommits(newState)
+  }
+})
+
+function commitAction(message) {
+  return {type: "commit", message, time: new Date}
+}
+
+view.props.onAction(view.editor.state.tr.insertText("Type something, and then commit it.").action())
+view.props.onAction(commitAction("Initial commit"))
+
+function setDisabled(state) {
+  let input = document.querySelector("#message")
+  let button = document.querySelector("#commitbutton")
+  input.disabled = button.disabled = state.trackedChanges.uncommittedSteps.length == 0
+}
+setDisabled(view.editor.state)
+
+function doCommit(message) {
+  view.props.onAction(commitAction(message))
+}
+
+let lastRendered = null
+function renderCommits(state) {
+  if (lastRendered == state.trackedChanges) return
+  lastRendered = state.trackedChanges
+
   let out = document.querySelector("#commits")
   out.textContent = ""
-  commits.filter(c => !c.hidden).forEach(commit => {
-    let node = elt("div", {class: "commit"},
-                   elt("span", {class: "commit-time"},
-                       commit.time.getHours() + ":" + (commit.time.getMinutes() < 10 ? "0" : "")
-                       + commit.time.getMinutes()),
-                   "\u00a0 " + commit.message + "\u00a0 ",
-                   elt("button", {class: "commit-revert"}, "revert"))
+  let commits = state.trackedChanges.commits
+  commits.forEach(commit => {
+    let node = crel("div", {class: "commit"},
+                    crel("span", {class: "commit-time"},
+                         commit.time.getHours() + ":" + (commit.time.getMinutes() < 10 ? "0" : "")
+                         + commit.time.getMinutes()),
+                    "\u00a0 " + commit.message + "\u00a0 ",
+                    crel("button", {class: "commit-revert"}, "revert"))
     node.lastChild.addEventListener("click", () => revertCommit(commit))
-    node.addEventListener("mouseover", e => {
+    /*node.addEventListener("mouseover", e => {
       if (!node.contains(e.relatedTarget)) highlightCommit(commit)
     })
     node.addEventListener("mouseout", e => {
       if (!node.contains(e.relatedTarget)) clearHighlight(commit)
-    })
+    })*/
     out.appendChild(node)
   })
 }
-
+/*
 let highlighted = null
 
 function highlightCommit(commit) {
@@ -131,28 +191,25 @@ function clearHighlight(commit) {
     highlighted = null
   }
 }
+*/
 
 function revertCommit(commit) {
-  let found = commits.indexOf(commit)
+  let state = view.editor.state.trackedChanges
+  let found = state.commits.indexOf(commit)
   if (found == -1) return
 
-  if (uncommitted.steps.length) return alert("Commit your changes first!")
+  if (state.uncommittedSteps.length) return alert("Commit your changes first!")
 
-  let remap = new Remapping([], commits.slice(found + 1).reduce((maps, c) => maps.concat(c.maps), []))
-  let tr = pm.tr
+  let remap = new Mapping(state.commits.slice(found).reduce((maps, c) => maps.concat(c.maps), []))
+  let tr = view.editor.state.tr
   for (let i = commit.steps.length - 1; i >= 0; i--) {
-    let remapped = commit.steps[i].map(remap)
+    let remapped = commit.steps[i].map(remap.slice(i + 1))
     let result = remapped && tr.maybeStep(remapped)
-    let id = remap.addToFront(commit.maps[i])
-    if (result && result.doc) remap.addToBack(remapped.posMap(), id)
+    if (result && result.doc) remap.appendMap(remapped.getMap(), i)
   }
-  commit.hidden = true
   if (tr.steps.length) {
-    tr.apply()
-    uncommitted.hidden = true
-    doCommit("Revert “" + commit.message + "”")
-  } else {
-    renderCommits()
+    view.props.onAction(tr.action())
+    view.props.onAction(commitAction(`Revert '${commit.message}'`))
   }
 }
 
@@ -160,16 +217,24 @@ document.querySelector("#commit").addEventListener("submit", e => {
   e.preventDefault()
   doCommit(e.target.elements.message.value || "Unnamed")
   e.target.elements.message.value = ""
-  pm.focus()
+  view.editor.focus()
 })
+
+function findInBlameMap(pos, state) {
+  let map = state.trackedChanges.blameMap
+  for (let i = 0; i < map.length; i++)
+    if (map[i].to >= pos && map[i].commit != null)
+      return map[i].commit
+}
 
 document.querySelector("#blame").addEventListener("mousedown", e => {
   e.preventDefault()
-  let pos = e.target.getBoundingClientRect()
-  let commit = findInBlameMap(pm.selection.head)
-  let node = elt("div", {class: "blame-info"},
-                 commit ? ["It was: ", elt("strong", null, commit.message || "Uncommitted")]
-                        : "No commit found")
+  let pos = e.target.getBoundingClientRect(), state = view.editor.state
+  let commitID = findInBlameMap(state.selection.head, state)
+  let commit = commitID != null && state.trackedChanges.commits[commitID]
+  let node = crel("div", {class: "blame-info"},
+                  commitID != null ? ["It was: ", crel("strong", null, commit ? commit.message : "Uncommitted")]
+                  : "No commit found")
   node.style.right = (document.body.clientWidth - pos.right) + "px"
   node.style.top = (pos.bottom + 2) + "px"
   document.body.appendChild(node)
