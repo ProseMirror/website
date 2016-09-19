@@ -116,35 +116,35 @@ function insertIntoBlameMap(map, from, to, commit) {
   map.splice(pos, 0, new Span(from, to, commit))
 }
 
-let view = window.view = new MenuBarEditorView(document.querySelector("#editor"), {
-  state: EditorState.create({
-    schema,
-    plugins: [exampleSetup({schema}), trackPlugin]
-  }),
-  onAction: action => {
-    let newState = view.editor.state.applyAction(action)
-    view.updateState(newState)
-    setDisabled(newState)
-    renderCommits(newState)
-  }
-})
+let state = EditorState.create({
+  schema,
+  plugins: [exampleSetup({schema}), trackPlugin]
+}), view
+
+function onAction(action) {
+  state = state.applyAction(action)
+  view.updateState(state)
+  setDisabled(state)
+  renderCommits(state)
+}
+
+view = new MenuBarEditorView(document.querySelector("#editor"), {state, onAction})
 
 function commitAction(message) {
   return {type: "commit", message, time: new Date}
 }
 
-view.props.onAction(view.editor.state.tr.insertText("Type something, and then commit it.").action())
-view.props.onAction(commitAction("Initial commit"))
+onAction(state.tr.insertText("Type something, and then commit it.").action())
+onAction(commitAction("Initial commit"))
 
 function setDisabled(state) {
   let input = document.querySelector("#message")
   let button = document.querySelector("#commitbutton")
   input.disabled = button.disabled = state.trackedChanges.uncommittedSteps.length == 0
 }
-setDisabled(view.editor.state)
 
 function doCommit(message) {
-  view.props.onAction(commitAction(message))
+  onAction(commitAction(message))
 }
 
 let lastRendered = null
@@ -192,10 +192,10 @@ function clearRange({left, right}) {
 
 function highlightCommit(commit) {
   if (highlighted && highlighted.commit == commit) return
-  let state = view.editor.state.trackedChanges
+  let tState = state.trackedChanges
   if (highlighted) clearHighlight(highlighted.commit)
   highlighted = {
-    ranges: state.blameMap.filter(span => state.commits[span.commit] == commit).map(annotateRange),
+    ranges: tState.blameMap.filter(span => tState.commits[span.commit] == commit).map(annotateRange),
     commit: commit
   }
 }
@@ -207,22 +207,22 @@ function clearHighlight(commit) {
 }
 
 function revertCommit(commit) {
-  let state = view.editor.state.trackedChanges
-  let found = state.commits.indexOf(commit)
+  let tState = state.trackedChanges
+  let found = tState.commits.indexOf(commit)
   if (found == -1) return
 
-  if (state.uncommittedSteps.length) return alert("Commit your changes first!")
+  if (tState.uncommittedSteps.length) return alert("Commit your changes first!")
 
-  let remap = new Mapping(state.commits.slice(found).reduce((maps, c) => maps.concat(c.maps), []))
-  let tr = view.editor.state.tr
+  let remap = new Mapping(tState.commits.slice(found).reduce((maps, c) => maps.concat(c.maps), []))
+  let tr = state.tr
   for (let i = commit.steps.length - 1; i >= 0; i--) {
     let remapped = commit.steps[i].map(remap.slice(i + 1))
     let result = remapped && tr.maybeStep(remapped)
     if (result && result.doc) remap.appendMap(remapped.getMap(), i)
   }
   if (tr.steps.length) {
-    view.props.onAction(tr.action())
-    view.props.onAction(commitAction(`Revert '${commit.message}'`))
+    onAction(tr.action())
+    onAction(commitAction(`Revert '${commit.message}'`))
   }
 }
 
@@ -242,7 +242,7 @@ function findInBlameMap(pos, state) {
 
 document.querySelector("#blame").addEventListener("mousedown", e => {
   e.preventDefault()
-  let pos = e.target.getBoundingClientRect(), state = view.editor.state
+  let pos = e.target.getBoundingClientRect()
   let commitID = findInBlameMap(state.selection.head, state)
   let commit = commitID != null && state.trackedChanges.commits[commitID]
   let node = crel("div", {class: "blame-info"},
