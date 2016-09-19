@@ -1,33 +1,25 @@
 <<head {title: "ProseMirror demo",
-        nav: {demos: "/index.html#demos"}}>>
+        nav: {demos: "/index.html#demos"},
+        editor: true}>>
 
 <h2>Editing with ProseMirror</h2>
 
-<style>
-.menustyle {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-</style>
-
-<p>You can set up a basic ProseMirror editor in a few lines of code:</p>
+<p>You can set up a basic ProseMirror editor something like this:</p>
 
 <pre>
-import {ProseMirror} from "prosemirror/dist/edit"
-import {defaultSchema} from "prosemirror/dist/schema"
-let pm = new ProseMirror({place: someElement, schema: defaultSchema})</pre>
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {schema} from "prosemirror-schema-basic"
 
-<p>You might want to include some more modules, for example to add a
-menu. Menu styles are just extension modules in ProseMirror. This page
-includes the classical toolbar style, and a tooltip based one. You can
-use the control below the editor to switch between them.</p>
+let view = new EditorView(document.body, {
+  state: EditorState.create({schema}),
+  onAction: action => view.updateState(view.state.applyAction(action))
+})
+</pre>
 
-<p>Once you have an editor instance, you can call methods
-like <code>getContent("html")</code>
-or <code>getContent("markdown")</code> to get its content in a given
-format. Or you can directly access its internal document format and
-work with that.</p>
+<p>That editor will be extremely basic—in fact, it'll be unusable
+because it doesn't bind any keys yet. Read [this
+guide](../guide/basics.html) to learn how to set those up.</p>
 
 <h3>Demo</h3>
 
@@ -35,14 +27,6 @@ work with that.</p>
 is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/basic.js">here</a>.</p>
 
 <div id=editor></div>
-
-<div style="position: relative">
-  <div class=menustyle>
-    Menu style: <select id=menustyle>
-      <option selected value=bar>top bar</option>
-      <option value=tooltip>tooltips</option>
-    </select></div>
-</div>
 
 <p>Next demo: <a href="markdown.html">editing markdown</a>.</p>
 
