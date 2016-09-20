@@ -1,6 +1,7 @@
-const {schema} = require("prosemirror/dist/schema-basic")
+const {schema} = require("../schema")
 
-const $node = schema.node, $text = schema.text
+const $node = (type, attrs, content, marks) => schema.node(type, attrs, content, marks)
+const $text = (str, marks) => schema.text(str, marks)
 const em = schema.marks.em.create(), strong = schema.marks.strong.create()
 
 function populateDefaultInstances(newInstance) {

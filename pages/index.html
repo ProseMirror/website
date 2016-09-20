@@ -7,7 +7,8 @@
          "og:description": "In-browser structured text editing component"},
   nav: {features: "#features",
         project: "#project",
-        demos: "#demos"}
+        demos: "#demos"},
+  editor: true
 }>>
 
 <p>ProseMirror is an in-browser semantic rich text editor component.
@@ -50,7 +51,7 @@ This is what it might look like:</p>
   pointer-events: none;
 }
 
-.ProseMirror {
+.ProseMirror-menubar-wrapper {
   margin: 4px -15px 1em;
   border-radius: 10px;
   background: white;
@@ -205,14 +206,5 @@ organizations</a>.</p>
 </div>
 
 <script src="demo/bundle_basic.js"></script>
-
-<script>
-  var updated = false
-  pm.content.addEventListener("focus", function() {
-    if (updated) return
-    updated = document.querySelector(".demotip").innerHTML =
-      "<a href='#demos' style='text-decoration: none; pointer-events: auto; color: inherit'>Find more demos below ↓</a>"
-  })
-</script>
 
 <<foot>>

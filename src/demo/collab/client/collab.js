@@ -1,15 +1,15 @@
-const {schema} = require("prosemirror/dist/schema-basic")
-const {exampleSetup, buildMenuItems} = require("prosemirror/dist/example-setup")
-const {Step} = require("prosemirror/dist/transform")
-const {elt} = require("prosemirror/dist/util/dom")
-const {ProseMirror, Plugin} = require("prosemirror/dist/edit")
-const {collabEditing} = require("prosemirror/dist/collab")
-const {MenuItem} = require("prosemirror/dist/menu")
+const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
+const {Step} = require("prosemirror-transform")
+const {MenuBarEditorView} = require("prosemirror-menu")
+const {EditorState} = require("prosemirror-state")
+const {history} = require("prosemirror-history")
+const {collab, receiveAction, sendableSteps, getVersion} = require("prosemirror-collab")
+const {MenuItem} = require("prosemirror-menu")
+const crel = require("crel")
 
+const {schema} = require("../schema")
 const {GET, POST} = require("./http")
 const {Reporter} = require("./reporter")
-const {commentPlugin, commentUIPlugin, addAnnotation, annotationIcon} = require("./comment")
-const {showOrigins} = require("./origins")
 
 const report = new Reporter()
 
@@ -17,46 +17,93 @@ function badVersion(err) {
   return err.status == 400 && /invalid version/i.test(err)
 }
 
-// A class to manage the connection to the collaborative editing server,
-// sending and retrieving the document state.
-const connectionPlugin = new Plugin(class ServerConnection {
-  constructor(pm) {
-    this.pm = pm
-    commentUIPlugin.attach(pm)
-    this.url = null
+class State {
+  constructor(edit, comm) {
+    this.edit = edit
+    this.comm = comm
+  }
+}
 
-    this.state = this.request = this.collab = this.comments = null
+class EditorConnection {
+  constructor(report, url) {
+    this.report = report
+    this.url = url
+    this.state = new State(null, "start")
+    this.request = null
     this.backOff = 0
+    this.view = null
+    this.onAction = this.onAction.bind(this)
+    this.start()
   }
 
-  // Get the current state of the document from the collaboration
-  // server and bootstrap the editor instance with the data.
-  start(url, c) {
-    this.state = "start"
-    this.url = url
-
-    if (this.request) this.request.abort()
-    this.request = GET(this.url, (err, data) => {
-      if (err) {
-        report.failure(err)
+  // All state changes go through this
+  onAction(action) {
+    if (action.type == "loaded") {
+      info.users.textContent = userString(action.users) // FIXME ewww
+      let editState = EditorState.create({
+        doc: action.doc,
+        plugins: [exampleSetup({schema, history: false}),
+                  history.configure({preserveItems: true}),
+                  collab({version: action.version})]
+      })
+      this.state = new State(editState, "poll")
+      this.poll()
+    } else if (action.type == "restart") {
+      this.state = new State(null, "start")
+      this.start()
+    } else if (action.type == "poll") {
+      this.state = new State(this.state.edit, "poll")
+      this.poll()
+    } else if (action.type == "recover") {
+      if (action.error.status && action.error.status < 500) {
+        this.report.failure(err)
+        this.state = new State(null, null)
       } else {
-        report.success()
-        data = JSON.parse(data)
-        collabEditing.detach(this.pm)
-        this.pm.setDoc(this.pm.schema.nodeFromJSON(data.doc))
-        collabEditing.detach(this.pm)
-        collabEditing.config({version: data.version}).attach(this.pm)
-        this.collab = collabEditing.get(this.pm)
-        this.collab.mustSend.add(() => this.mustSend())
-        commentPlugin.detach(this.pm)
-        this.comments = commentPlugin.config({version: data.commentVersion}).attach(this.pm)
-        this.comments.mustSend.add(() => this.mustSend())
-        data.comments.forEach(comment => this.comments.addJSONComment(comment))
-        info.users.textContent = userString(data.users)
-        this.backOff = 0
-        this.poll()
-        if (c) c()
+        this.state = new State(this.state.edit, "recover")
+        this.recover(action.error)
       }
+    } else {
+      let editState = this.state.edit.applyAction(action), sendable
+      if (editState.doc.content.size > 40000) {
+        if (this.state.comm != "detached") this.report.failure("Document too big. Detached.")
+        this.state = new State(editState, "detached")
+      } else if ((this.state.comm == "poll" || action.requestDone) && (sendable = sendableSteps(editState))) {
+        this.closeRequest()
+        this.state = new State(editState, "send")
+        this.send(sendable)
+      } else if (action.requestDone) {
+        this.state = new State(editState, "poll")
+        this.poll()
+      } else {
+        this.state = new State(editState, this.state.comm)
+      }
+    }
+
+    // Sync the editor with this.state.edit
+    if (this.state.edit) {
+      if (this.view)
+        this.view.updateState(this.state.edit)
+      else
+        this.view = new MenuBarEditorView(document.querySelector("#editor"),
+                                          {state: this.state.edit, onAction: this.onAction})
+    } else if (this.view) {
+      document.querySelector("#editor").removeChild(this.view.wrapper)
+      this.view = null
+    }
+  }
+
+  // Load the document from the server and start up
+  start() {
+    this.run(GET(this.url)).then(data => {
+      data = JSON.parse(data)
+      this.report.success()
+      this.backOff = 0
+      this.onAction({type: "loaded",
+                     doc: schema.nodeFromJSON(data.doc),
+                     version: data.version,
+                     users: data.users})
+    }, err => {
+      this.report.failure(err)
     })
   }
 
@@ -65,101 +112,84 @@ const connectionPlugin = new Plugin(class ServerConnection {
   // for a new version of the document to be created if the client
   // is already up-to-date.
   poll() {
-    this.state = "poll"
-    let url = this.url + "/events?version=" + this.collab.version + "&commentVersion=" + this.comments.version
-    let req = this.request = GET(url, (err, data) => {
-      if (this.request != req) return
-
-      if (err && (err.status == 410 || badVersion(err))) {
+    this.run(GET(this.url + "/events?version=" + getVersion(this.state.edit))).then(data => {
+      this.report.success()
+      data = JSON.parse(data)
+      this.backOff = 0
+      if (data.steps && data.steps.length) {
+        let action = receiveAction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
+        action.requestDone = true
+        this.onAction(action)
+      } else {
+        this.poll()
+      }
+      info.users.textContent = userString(data.users)
+    }, err => {
+      if (err.status == 410 || badVersion(err)) {
         // Too far behind. Revert to server state
         report.failure(err)
-        this.start(this.url)
+        this.onAction({type: "restart"})
       } else if (err) {
-        this.recover(err)
-      } else {
-        report.success()
-        data = JSON.parse(data)
-        this.backOff = 0
-        if (data.steps && data.steps.length) {
-          let maps = this.collab.receive(data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
-          showOrigins(this.pm, data.steps.slice(data.steps.length - maps.length), maps)
-        }
-        if (data.comment && data.comment.length)
-          this.comments.receive(data.comment, data.commentVersion)
-        this.sendOrPoll()
-        info.users.textContent = userString(data.users)
+        this.onAction({type: "recover", error: err})
       }
     })
   }
 
-  mustSend() {
-    // Only interrupt polling -- in other situations we wait for the
-    // current action to complete
-    if (this.state == "poll") {
-      this.request.abort()
-      if (this.pm.doc.content.size > 40000) {
-        collabEditing.detach(this.pm)
-        report.failure("Document too big. Detached.")
-        return
-      }
-      this.send()
-    }
-  }
-
-  sendOrPoll() {
-    if (this.collab.hasSendableSteps() || this.comments.hasUnsentEvents())
-      this.send()
-    else
-      this.poll()
-  }
-
-  // Send all unshared events to the server.
-  send() {
-    this.state = "send"
-    let sendable = this.collab.sendableSteps()
-    let comments = this.comments.unsentEvents()
+  // Send the given steps to the server
+  send(sendable) {
     let json = JSON.stringify({version: sendable.version,
                                steps: sendable.steps.map(s => s.toJSON()),
-                               clientID: sendable.clientID,
-                               comment: comments})
-
-    let req = this.request = POST(this.url + "/events", json, "application/json", err => {
-      if (this.request != req) return
-
-      if (err && err.status == 409) {
+                               clientID: sendable.clientID})
+    this.run(POST(this.url + "/events", json, "application/json")).then(() => {
+      this.report.success()
+      this.backOff = 0
+      let action = receiveAction(this.state.edit, sendable.steps, repeat(sendable.clientID, sendable.steps.length))
+      action.requestDone = true
+      this.onAction(action)
+    }, err => {
+      if (err.status == 409) {
         // The client's document conflicts with the server's version.
         // Poll for changes and then try again.
         this.backOff = 0
-        this.poll()
-      } else if (err && badVersion(err)) {
-        report.failure(err)
-        this.start(this.url)
-      } else if (err) {
-        this.recover(err)
+        this.onAction({type: "poll"})
+      } else if (badVersion(err)) {
+        this.report.failure(err)
+        this.onAction({type: "restart"})
       } else {
-        report.success()
-        this.backOff = 0
-        this.collab.receive(sendable.steps, repeat(sendable.clientID, sendable.steps.length))
-        this.poll()
+        this.onAction({type: "recover", error: err})
       }
     })
   }
 
+  // Try to recover from an error
   recover(err) {
-    if (err.status && err.status < 500) {
-      report.failure(err)
-    } else {
-      this.state = "recover"
-      let newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200
-      if (newBackOff > 1000 && this.backOff < 1000) report.delay(err)
-      this.backOff = newBackOff
-      setTimeout(() => {
-        if (this.state != "recover") return
-        this.sendOrPoll()
-      }, this.backOff)
+    let newBackOff = this.backOff ? Math.min(this.backOff * 2, 6e4) : 200
+    if (newBackOff > 1000 && this.backOff < 1000) this.report.delay(err)
+    this.backOff = newBackOff
+    setTimeout(() => {
+      if (this.state.comm == "recover") this.onAction({type: "retry", requestDone: true})
+    }, this.backOff)
+  }
+
+  closeRequest() {
+    if (this.request) {
+      this.request.abort()
+      this.request = null
     }
   }
-})
+
+  run(request) {
+    return this.request = request
+  }
+
+  close() {
+    this.closeRequest()
+    if (this.view) {
+      document.querySelector("#editor").removeChild(this.view.wrapper)
+      this.view = null
+    }
+  }
+}
 
 function repeat(val, n) {
   let result = []
@@ -167,7 +197,7 @@ function repeat(val, n) {
   return result
 }
 
-const annotationMenuItem = new MenuItem({
+/*const annotationMenuItem = new MenuItem({
   title: "Add an annotation",
   run: addAnnotation,
   select: pm => addAnnotation(pm, false),
@@ -175,16 +205,7 @@ const annotationMenuItem = new MenuItem({
 })
 
 let menu = buildMenuItems(schema)
-menu.fullMenu[0].push(annotationMenuItem)
-
-let pm = window.pm = new ProseMirror({
-  place: document.querySelector("#editor"),
-  schema: schema,
-  plugins: [
-    exampleSetup.config({menuBar: {content: menu.fullMenu, float: true}}),
-    connectionPlugin
-  ]
-})
+menu.fullMenu[0].push(annotationMenuItem)*/
 
 let info = {
   name: document.querySelector("#docname"),
@@ -242,11 +263,15 @@ function newDocument() {
     location.hash = "#edit-" + encodeURIComponent(name)
 }
 
+let connection = null
+
 function connectFromHash() {
   let isID = /^#edit-(.+)/.exec(location.hash)
   if (isID) {
-    connectionPlugin.get(pm).start("/docs/" + isID[1], () => pm.focus())
+    if (connection) connection.close()
     info.name.textContent = decodeURIComponent(isID[1])
+    connection = window.connection = new EditorConnection(report, "/docs/" + isID[1])
+    connection.request.then(() => connection.view.editor.focus())
     return true
   }
 }

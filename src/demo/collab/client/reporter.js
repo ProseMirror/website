@@ -1,5 +1,3 @@
-const {elt, insertCSS} = require("prosemirror/dist/util/dom")
-
 class Reporter {
   constructor() {
     this.state = this.node = null
@@ -27,40 +25,16 @@ class Reporter {
     this.clearState()
     this.state = type
     this.setAt = Date.now()
-    this.node = elt("div", {class: "ProseMirror-report ProseMirror-report-" + type}, message)
-    document.body.appendChild(this.node)
+    this.node = document.body.appendChild(document.createElement("div"))
+    this.node.className = "ProseMirror-report ProseMirror-report-" + type
+    this.node.textContent = message
   }
 
   success() {
-    if (this.state == "fail" && this.setAt > Date.now() - 1000 * 10) return
-    this.clearState()
+    if (this.state == "fail" && this.setAt > Date.now() - 1000 * 10)
+      setTimeout(() => this.success(), 5000)
+    else
+      this.clearState()
   }
 }
 exports.Reporter = Reporter
-
-insertCSS(`
-
-.ProseMirror-report {
-  position: fixed;
-  top: 0; right: 0;
-  border-bottom-left-radius: 5px;
-  border-width: 1px;
-  border-top-width: 0;
-  border-right-width: 0;
-  border-style: solid;
-  padding: 3px 27px 5px 12px;
-  white-space: pre;
-  z-index: 1000;
-}
-
-.ProseMirror-report-fail {
-  background: rgb(255, 230, 230);
-  border-color: rgb(200, 150, 150);
-}
-
-.ProseMirror-report-delay {
-  background: rgb(255, 255, 200);
-  border-color: rgb(200, 200, 120);
-}
-
-`)

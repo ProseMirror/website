@@ -1,8 +1,7 @@
+const {Step} = require("prosemirror-transform")
+
 const {Router} = require("./route")
-
-const {Step} = require("prosemirror/dist/transform")
-const {schema} = require("prosemirror/dist/schema-basic")
-
+const {schema} = require("../schema")
 const {getInstance, instanceInfo} = require("./instance")
 
 const router = new Router
@@ -11,7 +10,7 @@ exports.handleCollabRequest = function(req, resp) {
   return router.resolve(req, resp)
 }
 
-// An object for outputting an HTTP request.
+// Object that represents an HTTP response.
 class Output {
   constructor(code, body, type) {
     this.code = code
@@ -121,16 +120,10 @@ class Waiting {
   }
 }
 
-function stepJSON(step) {
-  let obj = step.toJSON()
-  obj.origin = step.origin
-  return obj
-}
-
 function outputEvents(inst, data) {
   return Output.json({version: inst.version,
                       commentVersion: inst.comments.version,
-                      steps: data.steps.map(stepJSON),
+                      steps: data.steps.map(s => s.toJSON()),
                       clientIDs: data.steps.map(step => step.clientID),
                       comment: data.comment})
 }
@@ -140,7 +133,7 @@ function outputEvents(inst, data) {
 // current version of the document.
 handle("GET", ["docs", null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
-  let commentVersion = nonNegInteger(req.query.commentVersion)
+  let commentVersion = 0 //nonNegInteger(req.query.commentVersion)
 
   let inst = getInstance(id, reqIP(req))
   let data = inst.getEvents(version, commentVersion)

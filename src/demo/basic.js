@@ -13,10 +13,18 @@ const schema = new Schema({
 let content = document.querySelector("#content")
 content.style.display = "none"
 
+let tip = document.querySelector(".demotip")
+
 let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(content),
     plugins: [exampleSetup({schema})]
   }),
-  onAction: action => view.updateState(view.editor.state.applyAction(action))
+  onAction(action) { view.updateState(view.editor.state.applyAction(action)) },
+  onFocus() {
+    if (tip) {
+      tip.innerHTML = "<a href='#demos' style='text-decoration: none; pointer-events: auto; color: inherit'>Find more demos below ↓</a>"
+      tip = null
+    }
+  }
 })

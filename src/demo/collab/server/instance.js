@@ -1,10 +1,10 @@
-const {schema} = require("prosemirror/dist/schema-basic")
+const {readFileSync, writeFile} = require("fs")
 
+const {Mapping} = require("prosemirror-transform")
+
+const {schema} = require("../schema")
 const {Comments, Comment} = require("./comments")
 const {populateDefaultInstances} = require("./defaultinstances")
-
-const {readFileSync, writeFile} = require("fs")
-const {createHash} = require("crypto")
 
 const MAX_STEP_HISTORY = 10000
 
@@ -35,13 +35,11 @@ class Instance {
     this.checkVersion(version)
     if (this.version != version) return false
     let doc = this.doc, maps = []
-    let hash = getHash(ip + "t2ng1&")
     for (let i = 0; i < steps.length; i++) {
-      steps[i].origin = hash
       steps[i].clientID = clientID
       let result = steps[i].apply(doc)
       doc = result.doc
-      maps.push(steps[i].posMap())
+      maps.push(steps[i].getMap())
     }
     this.doc = doc
     this.version += steps.length
@@ -49,8 +47,8 @@ class Instance {
     if (this.steps.length > MAX_STEP_HISTORY)
       this.steps = this.steps.slice(this.steps.length - MAX_STEP_HISTORY)
 
-    this.comments.mapThrough(maps)
-    for (let i = 0; i < comments.length; i++) {
+    this.comments.mapThrough(new Mapping(maps))
+    if (comments) for (let i = 0; i < comments.length; i++) {
       let event = comments[i]
       if (event.type == "delete")
         this.comments.deleted(event.id)
@@ -105,12 +103,6 @@ class Instance {
         this.collecting = setTimeout(() => this.collectUsers(), 5000)
     }
   }
-}
-
-function getHash(str) {
-  let sum = createHash("sha1")
-  sum.update(str)
-  return sum.digest("hex").slice(0, 8)
 }
 
 const instances = Object.create(null)

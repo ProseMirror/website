@@ -1,6 +1,7 @@
 <<head {title: "ProseMirror Collaborative Demo",
         nav: {demos: "/index.html#demos",
-              "blog post": "http://marijnhaverbeke.nl/blog/collaborative-editing.html"}}>>
+              "blog post": "http://marijnhaverbeke.nl/blog/collaborative-editing.html"},
+        editor: true}>>
 
 <h2>Collaborate</h2>
 
@@ -78,6 +79,29 @@
 .docinfo {
   position: relative;
 }
+
+.ProseMirror-report {
+  position: fixed;
+  top: 0; right: 0;
+  border-bottom-left-radius: 5px;
+  border-width: 1px;
+  border-top-width: 0;
+  border-right-width: 0;
+  border-style: solid;
+  padding: 3px 27px 5px 12px;
+  white-space: pre;
+  z-index: 1000;
+}
+
+.ProseMirror-report-fail {
+  background: rgb(255, 230, 230);
+  border-color: rgb(200, 150, 150);
+}
+
+.ProseMirror-report-delay {
+  background: rgb(255, 255, 200);
+  border-color: rgb(200, 200, 120);
+}
 </style>
 
 <p>The editor below talks to a simple server-side service to allow
@@ -86,12 +110,14 @@ editing</a>. Everybody connected to a given document sees the same
 document, and has their changes sent over to other people working on
 the document.</p>
 
+<!-- FIXME uncomment when repaired
 <p>The demo also (crudely) shows how ProseMirror can be used to
 implement something like out-of-line annotations. If you select text
 and click the speech bubble icon in the menu, you'll be prompted to
 enter an annotation. These are synced to other users and show up as
 text with yellow background. Put the cursor in an annotation to see
 what it says.</p>
+-->
 
 <h3>Demo</h3>
 

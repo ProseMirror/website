@@ -1,3 +1,5 @@
+// FIXME this is disabled until ProseMirror supports decorations again
+
 const {elt} = require("prosemirror/dist/util/dom")
 const {Plugin} = require("prosemirror/dist/edit")
 const {Subscription} = require("subscription")

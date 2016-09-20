@@ -1,6 +1,4 @@
-const {Remapping} = require("prosemirror/dist/transform")
-const {insertCSS} = require("prosemirror/dist/util/dom")
-const {collabEditing} = require("prosemirror/dist/collab")
+/* FIXME rewrite and re-enable when decorations are back
 
 function buildColor(hue, sat, light) {
   function hex(off) {
@@ -32,7 +30,7 @@ function getClass(origin) {
   return known[origin] = "user-" + origin
 }
 
-function showOrigins(pm, steps, maps) {
+function showOrigins(pm, steps, clientIDs, maps) {
   let collab = collabEditing.get(pm)
   steps.forEach((step, i) => {
     if (step.origin && step.name == "replace" && step.param && step.param.content.size) {
@@ -47,3 +45,4 @@ function showOrigins(pm, steps, maps) {
   })
 }
 exports.showOrigins = showOrigins
+*/

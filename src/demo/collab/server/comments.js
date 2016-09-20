@@ -1,5 +1,3 @@
-const {mapThrough} = require("prosemirror/dist/transform")
-
 class Comment {
   constructor(from, to, text, id) {
     this.from = from
@@ -21,10 +19,10 @@ class Comments {
     this.version = 0
   }
 
-  mapThrough(maps) {
+  mapThrough(mapping) {
     for (let i = this.comments.length - 1; i >= 0; i--) {
       let comment = this.comments[i]
-      let from = mapThrough(maps, comment.from, 1), to = mapThrough(maps, comment.to, -1)
+      let from = mapping.map(comment.from, 1), to = mapping.map(comment.to, -1)
       if (from >= to) {
         this.comments.splice(i, 1)
       } else {
