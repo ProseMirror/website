@@ -2,14 +2,18 @@
 
 These are the sources for http://prosemirror.net
 
-This currently contains a front-page, a bunch of client-side demos,
-and the server-side code to support the collaborative demo.
+This currently contains a [front-page](http://prosemirror.net), the
+[demos](http://prosemirror.net/#demos) (including server-side code to
+support the
+[collaborative demo](http://prosemirror.net/demo/collab.html)), the
+[guides](http://prosemirror.net/docs.html), and the scripts to build
+the [reference docs](http://prosemirror.net/ref.html).
 
 ## Installation
 
 Install [Node.js](http://nodejs.org).
 
-Install node submodules
+Install the module's dependencies:
 
 ```bash
 npm install
@@ -32,13 +36,13 @@ npm run devserver -- --port 8888
 ```
 
 That will get you a server at [localhost:8888](http://localhost:8888/)
-that serves the files in `public/`, along with, the collaborative
+that serves the files in `public/`, along with the collaborative
 editing backend, and updates the demo pages to use
-[moduleserve](https://github.com/marijnh/moduleserve) to run the demos
-directly from the source files, rather than using the bundle. You can
-now edit them and see the changes with a single refresh. (Though the
-server-side collaborative code still needs a server refresh to
-update.)
+[moduleserve](https://github.com/marijnh/moduleserve) so that you can
+run the demos directly from the source files, rather than using the
+bundled code. You can now edit them and see the changes with a single
+refresh. (Though the server-side collaborative code still needs a
+server refresh to update.)
 
 Note that this is not secure (it provides filesystem access of HTTP)
 and not fast (the browser will fetch each module individually), and
