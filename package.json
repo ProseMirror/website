@@ -20,6 +20,7 @@
     "prosemirror-schema-table": "^0.11.0",
     "prosemirror-keymap": "^0.11.0",
     "prosemirror-history": "^0.11.0",
+    "prosemirror-collab": "^0.11.0",
     "prosemirror-commands": "^0.11.0",
     "prosemirror-example-setup": "^0.11.0",
     "prosemirror-menu": "^0.11.0",
