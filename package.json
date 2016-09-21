@@ -23,11 +23,13 @@
     "prosemirror-commands": "^0.11.0",
     "prosemirror-example-setup": "^0.11.0",
     "prosemirror-menu": "^0.11.0",
+    "prosemirror-markdown": "^0.11.0",
     "crel": "^3.0.0"
   },
   "devDependencies": {
     "bubleify": "^0.5.1",
     "browserify": "^13.0.0",
+    "punycode": "^1.4.0",
     "getdocs": "^0.4.0",
     "glob": "^6.0.1",
     "markdown-it": "^5.0.2",
