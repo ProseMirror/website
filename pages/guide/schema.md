@@ -19,22 +19,17 @@ your own schemas.
 
 Every node in a document has a [type](##model.NodeType), which represents
 its semantic meaning and its properties, such as the way it is
-rendered in the editor. Individual node types are classes that inherit
-from one of these subclasses of [`NodeType`](##model.NodeType):
-
- * [`Block`](##model.Block) for block-level nodes.
-
- * [`Inline`](##model.Inline) for inline (paragraph-level) nodes.
+rendered in the editor.
 
 When you define a schema, you enumerate the node types that may occur
-within it, along with the nodes each of them may have as content.
+within it, describing each with a [spec object](##model.NodeSpec):
 
 ```
 const trivialSchema = new Schema({
   nodes: {
-    doc: {type: Doc, content: "paragraph+"},
-    paragraph: {type: Paragraph, content: "text*"},
-    text: {type: Text},
+    doc: {content: "paragraph+"},
+    paragraph: {content: "text*"},
+    text: {inline: true},
     /* ... and so on */
   }
 })
@@ -77,10 +72,10 @@ then refer to that group by its name in your expressions.
 ```
 const groupSchema = new Schema({
   nodes: {
-    doc: {type: Doc, content: "block+"},
-    paragraph: {type: Paragraph, group: "block", content: "text*"},
-    blockquote: {type: Blockquote, group: "block", content: "block+"},
-    text: {type: Text}
+    doc: {content: "block+"},
+    paragraph: {group: "block", content: "text*"},
+    blockquote: {group: "block", content: "block+"},
+    text: {inline: true}
   }
 })
 ```
@@ -138,9 +133,9 @@ text:
 ```
 const markSchema = new Schema({
   nodes: {
-    doc: {type: Doc, content: "paragraph+"},
-    paragraph: {type: Paragraph, content: "text<_>*"},
-    text: {type: Text}
+    doc: {content: "paragraph+"},
+    paragraph: {content: "text<_>*"},
+    text: {inline: true}
   },
   marks: {
     strong: StrongMark,
