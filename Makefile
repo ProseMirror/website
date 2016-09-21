@@ -13,7 +13,10 @@ BUILD:=browserify
 public/ref.html: pages/ref.html node_modules/prosemirror-*/src/* templates/* src/build/*.js
 	node src/build/build.js --ref $<
 
-public/changelog.html: pages/changelog.html node_modules/prosemirror/CHANGELOG.md
+CHANGELOG.md:
+	curl https://raw.githubusercontent.com/ProseMirror/prosemirror/master/CHANGELOG.md > CHANGELOG.md
+
+public/changelog.html: pages/changelog.html CHANGELOG.md
 	node src/build/build.js $<
 
 public/%.html: pages/%.* templates/* src/build/*.js

@@ -3,3 +3,4 @@
 /public/demo/bundle_*.js
 .tern-port
 /src/demo/collab/demo-instances.json
+/CHANGELOG.md
