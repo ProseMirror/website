@@ -70,12 +70,12 @@ This is what it might look like:</p>
   (limited, hard to use) and classical HTML WYSIWYG editors (content
   becomes a non-semantic blob). ProseMirror aims to fill this gap.</p>
 
-  <p>It does this by decoupling its content model from HTML.
-  ProseMirror ships with a default document <em>schema</em> that is
-  quite close to <a href="http://commonmark.org">CommonMark</a>, but
-  allows you to define your own content schema, including exactly the
-  elements you need, and possibly adding your
-  own <a href="demo_dino.html">custom elements</a>.</p>
+  <p>It does this by decoupling its content model from HTML. Documents
+  are represented with a JavaScript data structure, and their
+  structure is described by a <a href="guide/schema.html">schema</a>
+  that you can provide yourself. This gives you full control over the
+  kind of <a href="demo/dino.html">elements</a> that may appear in
+  your document, and the way they nest and relate to each other.</p>
 
   <ul>
     <li>Users get a clean, consistent interface that allows them to enter
@@ -99,44 +99,39 @@ This is what it might look like:</p>
 throughout.</p>
 
 <ul>
-  <li>Support for <a href="demo_collab.html">collaborative editing</a>
+  <li>Support for <a href="demo/collab.html">collaborative editing</a>
   (<a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">details</a>)
 
-  <li>Export and import from ProseMirror's document format to HTML or
-  Markdown
+  <li>Export and import from ProseMirror's document format to HTML (or
+  <a href="demo/markdown.html">Markdown</a>)
 
   <li>A clean, immutable document data structure (not the DOM) to
   program against
 
   <li>Document schemas that can be modified
-  and <a href="demo_dino.html">extended</a> without having to rewrite
+  and <a href="demo/dino.html">extended</a> without having to rewrite
   the whole editor
 
   <li>A rich set of
-  editing <a href="ref.html#Command">commands</a> that can
+  editing <a href="ref.html#commands">commands</a> that can
   appear in the menu or be bound to keys, and the ability to define
   your own
 
-  <li>Two menu styles (<a href="ref.html#menu/menubar">bar</a>
-  and <a href="ref.html#menu/tooltipmenu">tooltip</a>) in the
-  distribution, and a programming interface to implement your own
-  style
+  <li>An API that easily integrates with React-style or linear
+  dataflow based architectures
 
-  <li>Support
-  for <a href="ref.html#ProseMirror.markRange">marking</a>
-  pieces of the document, optionally styling them, and keeping track of
-  where that piece is even after the document changes
+  <li>Menus and other UI elements live outside of the core library,
+  and can be implemented according to your own preference (and the
+  frameworks you may use)
 
-  <li>The ability to enable and
-  define <a href="ref.html#inputrules">input rules</a>, making
-  things (text shortcuts, wrapping in markup) happen whenever certain
-  strings are typed
+  <li>A modular architecture to make sure you only load the code you
+  need
+
+  <li>A plugin system that allows you to easily enable additional
+  functionality and package up your extensions in a convenient format
 
   <li>Changes are first-class values and can be stored, inspected,
   and <a href="demo_track.html">manipulated</a>
-
-  <li>The look of the editor can, to a great extent, be changed simply
-  by adding CSS rules
 </ul>
 
 <h3 id=project>Project</h3>
@@ -153,10 +148,7 @@ help <a href="http://marijnhaverbeke.nl/fund/">fund</a> its
 maintenance.</p>
 
 <p>ProseMirror is being developed
-on <a href="https://github.com/prosemirror/prosemirror">GitHub</a>.
-You can find a git
-mirror <a href="http://marijnhaverbeke.nl/git/prosemirror">here</a> as
-well. Contributions
+on <a href="https://github.com/prosemirror/">GitHub</a>. Contributions
 are <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">welcome</a>.</p>
 
 <p>The easiest way to install ProseMirror is
@@ -164,7 +156,7 @@ with <a href="https://www.npmjs.com/package/prosemirror">npm</a>. It
 is currently in <strong>beta</strong> stage, meaning that you are
 encouraged to try it out
 and <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">report</a>
-issues, but that you are still likely to run into bugs.</p>
+issues.</p>
 
 <p>Discussing the project, or asking questions, is best done on
 the <a href="https://github.com/ProseMirror/prosemirror/blob/master/CONTRIBUTING.md">forum</a>.
