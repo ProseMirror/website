@@ -154,8 +154,9 @@ the schema can be derived from the document.
 Here we initialize a state by parsing the content found in the DOM
 element with the `content` ID:
 
+    var content = document.getElementById("content")
     var state = EditorState.create({
-      doc: schema.parseDOM(document.getElementById("content"))
+      doc: DOMParser.fromSchema(schema).parse(content)
     })
 
 Documents, as well as entire states, can be serialized to JSON with
