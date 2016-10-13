@@ -6,21 +6,20 @@ const {exampleSetup} = require("prosemirror-example-setup")
 const crel = require("crel")
 
 const trackPlugin = new Plugin({
-  stateFields: {
-    trackedChanges: {
-      init(_, instance) {
-        return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
-      },
-      applyAction(state, action) {
-        if (action.type == "transform")
-          return state.trackedChanges.applyTransform(action.transform)
-        if (action.type == "commit")
-          return state.trackedChanges.applyCommit(action.message, action.time)
-        else
-          return state.trackedChanges
-      }
+  state: {
+    init(_, instance) {
+      return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
+    },
+    applyAction(action, tracked) {
+      if (action.type == "transform")
+        return tracked.applyTransform(action.transform)
+      if (action.type == "commit")
+        return tracked.applyCommit(action.message, action.time)
+      else
+        return tracked
     }
-  }
+  },
+  name: "track"
 })
 
 class Span {
@@ -140,7 +139,7 @@ onAction(commitAction("Initial commit"))
 function setDisabled(state) {
   let input = document.querySelector("#message")
   let button = document.querySelector("#commitbutton")
-  input.disabled = button.disabled = state.trackedChanges.uncommittedSteps.length == 0
+  input.disabled = button.disabled = trackPlugin.getState(state).uncommittedSteps.length == 0
 }
 
 function doCommit(message) {
@@ -149,12 +148,13 @@ function doCommit(message) {
 
 let lastRendered = null
 function renderCommits(state) {
-  if (lastRendered == state.trackedChanges) return
-  lastRendered = state.trackedChanges
+  let curState = trackPlugin.getState(state)
+  if (lastRendered == curState) return
+  lastRendered = curState
 
   let out = document.querySelector("#commits")
   out.textContent = ""
-  let commits = state.trackedChanges.commits
+  let commits = curState.commits
   commits.forEach(commit => {
     let node = crel("div", {class: "commit"},
                     crel("span", {class: "commit-time"},
@@ -192,7 +192,7 @@ function clearRange({left, right}) {
 
 function highlightCommit(commit) {
   if (highlighted && highlighted.commit == commit) return
-  let tState = state.trackedChanges
+  let tState = trackPlugin.getState(state)
   if (highlighted) clearHighlight(highlighted.commit)
   highlighted = {
     ranges: tState.blameMap.filter(span => tState.commits[span.commit] == commit).map(annotateRange),
@@ -207,7 +207,7 @@ function clearHighlight(commit) {
 }
 
 function revertCommit(commit) {
-  let tState = state.trackedChanges
+  let tState = trackPlugin.getState(state)
   let found = tState.commits.indexOf(commit)
   if (found == -1) return
 
@@ -234,7 +234,7 @@ document.querySelector("#commit").addEventListener("submit", e => {
 })
 
 function findInBlameMap(pos, state) {
-  let map = state.trackedChanges.blameMap
+  let map = trackPlugin.getState(state).blameMap
   for (let i = 0; i < map.length; i++)
     if (map[i].to >= pos && map[i].commit != null)
       return map[i].commit
@@ -244,7 +244,7 @@ document.querySelector("#blame").addEventListener("mousedown", e => {
   e.preventDefault()
   let pos = e.target.getBoundingClientRect()
   let commitID = findInBlameMap(state.selection.head, state)
-  let commit = commitID != null && state.trackedChanges.commits[commitID]
+  let commit = commitID != null && trackPlugin.getState(state).commits[commitID]
   let node = crel("div", {class: "blame-info"},
                   commitID != null ? ["It was: ", crel("strong", null, commit ? commit.message : "Uncommitted")]
                   : "No commit found")
