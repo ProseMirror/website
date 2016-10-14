@@ -138,4 +138,4 @@ function addAlt(prob, state, onAction) {
   }).action())
 }
 
-runLint(view)
+runLint(view.editor)
