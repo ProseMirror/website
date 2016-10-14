@@ -68,7 +68,7 @@ editor's style sheet, you should have a working editor.
 
 Running browserify on a big codebase takes a while, so during
 development, this is a bit of a pain. One solution is to use
-`watchify`, which is like `browserify`, but a persistent process that
+[watchify](https://github.com/substack/watchify), which is like `browserify`, but a persistent process that
 immediately updates the bundle file whenever one of the files it
 depends on change. This is faster, and doesn't require you to explitly
 run any commands every time you want to test your code.
