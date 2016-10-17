@@ -1,4 +1,5 @@
-const {EditorState, TextSelection} = require("prosemirror-state")
+const {EditorState, Plugin, TextSelection} = require("prosemirror-state")
+const {Decoration, DecorationSet} = require("prosemirror-view")
 const {MenuBarEditorView} = require("prosemirror-menu")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
@@ -7,23 +8,53 @@ const crel = require("crel")
 
 let delay = null
 
+let showProbPlugin = new Plugin({
+  state: {
+    init: () => ({prob: null, deco: DecorationSet.empty}),
+    applyAction: (action, prev, state) => {
+      switch (action.type) {
+      case "transform":
+        return {prob: prev.prob, deco: prev.deco.map(action.transform.mapping, action.transform.doc)}
+      case "showProb":
+        return {prob: action.prob, deco: action.prob ? decoForProb(state.doc, action.prob) : DecorationSet.empty}
+      default:
+        return prev
+      }
+    }
+  },
+
+  props: {
+    decorations(state) {
+      return showProbPlugin.getState(state).deco
+    }
+  }
+})
+
+function decoForProb(doc, prob) {
+  let decos = [Decoration.widget(prob.from, crel("span", {class: "probarrow"}, crel("img", {src: "/img/bouncing_arrow.gif"})))]
+  if (prob.from != prob.to)
+    decos.push(Decoration.inline(prob.from, prob.to, {class: "markprob"}))
+  return DecorationSet.create(doc, decos)
+}
+
 let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
-    plugins: [exampleSetup({schema})]
+    plugins: [exampleSetup({schema}), showProbPlugin]
   }),
   onAction: action => {
     view.updateState(view.editor.state.applyAction(action))
-    clearTimeout(delay)
-    delay = setTimeout(() => runLint(view.editor), 500)
+    if (action.type == "transform") {
+      clearTimeout(delay)
+      delay = setTimeout(() => runLint(view.editor), 500)
+    }
   }
 })
 
 let output = document.querySelector("#lint_output")
-let showingProb = null, range = null, overlay = null
 
 function runLint(view) {
-  if (showingProb) clearProb(view, showingProb)
+  clearProb(view)
   delay = null
   output.textContent = ""
   lint(view.state.doc).forEach(prob => {
@@ -52,25 +83,12 @@ function runLint(view) {
 }
 
 function showProb(view, prob) {
-  if (showingProb) clearProb(view, showingProb)
-  if (delay != null) return
-  showingProb = prob
-  /* FIXME restore when decorations are back
-  if (prob.from != prob.to)
-    range = pm.markRange(prob.from, prob.to, {className: "markprob"})
-   */
-  overlay = document.body.appendChild(crel("img", {src: "/img/bouncing_arrow.gif", class: "probarrow"}))
-  let coords = view.coordsAtPos(prob.from)
-  overlay.style.left = (coords.left - 55) + "px"
-  overlay.style.top = (((coords.top + coords.bottom) / 2) - 16) + "px"
+  view.props.onAction({type: "showProb", prob})
 }
-
 function clearProb(view, prob) {
-  if (showingProb != prob) return
-  /* FIXME restore
-  if (range) pm.removeRange(range) */
-  document.body.removeChild(overlay)
-  showingProb = range = overlay = null
+  let cur = showProbPlugin.getState(view.state).prob
+  if (prob ? cur == prob : cur)
+    view.props.onAction({type: "showProb", prob: null})
 }
 
 let badWords = /obviously|clearly|evidently|actually/ig

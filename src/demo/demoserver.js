@@ -25,7 +25,6 @@ for (let i = 2; i < process.argv.length; i++) {
 let moduleServer = new ModuleServer({root: root})
 let fileServer = ecstatic({root: root})
 
-let cachedDemoPages = Object.create(null)
 let demos = {
   "/index.html": "../src/demo/basic",
   "/demo/basic.html": "../src/demo/basic",
@@ -42,15 +41,11 @@ function transformDemoPage(req, resp) {
   let match = demos.hasOwnProperty(path) && demos[path]
   if (!match) return false
 
-  let cached = cachedDemoPages[path]
-  if (!cached) {
-    let file = fs.readFileSync(root + path, "utf8")
-    file = file.replace(/<script src="(demo\/)?bundle_[^"]+"><\/script>/,
-                        '<script src="/moduleserve/load.js" data-module="' + demos[path] + '" data-require></script>')
-    cached = cachedDemoPages[path] = file
-  }
+  let file = fs.readFileSync(root + path, "utf8")
+      .replace(/<script src="(demo\/)?bundle_[^"]+"><\/script>/,
+               '<script src="/moduleserve/load.js" data-module="' + demos[path] + '" data-require></script>')
   resp.writeHead(200, {"Content-Type": "text/html"})
-  resp.end(cached)
+  resp.end(file)
   return true
 }
 

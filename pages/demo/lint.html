@@ -5,12 +5,13 @@
 <h2>Working with content</h2>
 
 <style>
-  .markprob { background: #fdd; border-bottom: 1px solid #f22 }
+  .markprob { background: #fdd; border-bottom: 1px solid #f22; margin-bottom: -1px; }
   .problem { padding: 2px; cursor: pointer }
   .problem:hover { background: #fdd; border-radius: 5px }
   .problem:before { border-radius: 100px; background: #f22; color: white; content: "!"; font-weight: bold; width: 1.1em; height: 1.1em;
                     display: inline-block; text-align: center; margin: 0 10px 0 5px; padding-left: .5px; line-height: 1.1em }
-  .probarrow { position: fixed; width: 55px; height: 33px; z-index: 3 }
+  .probarrow { width: 0; display: inline-block; position: relative; overflow: visible }
+  .probarrow img { width: 55px; height: 33px; position: absolute; right: 0; bottom: -10px; }
   .fixbutton { background: #0ae; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px }
 </style>
 
