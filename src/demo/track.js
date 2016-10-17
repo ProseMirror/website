@@ -1,4 +1,5 @@
 const {EditorState, Plugin} = require("prosemirror-state")
+const {Decoration, DecorationSet} = require("prosemirror-view")
 const {MenuBarEditorView} = require("prosemirror-menu")
 const {Mapping} = require("prosemirror-transform")
 const {schema} = require("prosemirror-schema-basic")
@@ -20,6 +21,29 @@ const trackPlugin = new Plugin({
     }
   },
   name: "track"
+})
+
+const highlightPlugin = new Plugin({
+  state: {
+    init() { return {deco: DecorationSet.empty, commit: null} },
+    applyAction(action, prev, state) {
+      if (action.type == "highlightCommit" && prev.commit != action.commit) {
+        let tState = trackPlugin.getState(state)
+        let decos = tState.blameMap
+            .filter(span => tState.commits[span.commit] == action.commit)
+            .map(span => Decoration.inline(span.from, span.to, {class: "blame-marker"}))
+        return {deco: DecorationSet.create(state.doc, decos), commit: action.commit}
+      } else if (action.type == "clearHighlight" && prev.commit == action.commit) {
+        return {deco: DecorationSet.empty, commit: null}
+      } else {
+        return prev
+      }
+    }
+  },
+  name: "highlight",
+  props: {
+    decorations(state) { return highlightPlugin.getState(state).deco }
+  }
 })
 
 class Span {
@@ -117,17 +141,20 @@ function insertIntoBlameMap(map, from, to, commit) {
 
 let state = EditorState.create({
   schema,
-  plugins: [exampleSetup({schema}), trackPlugin]
+  plugins: [exampleSetup({schema}), trackPlugin, highlightPlugin]
 }), view
+
+let lastRendered = null
 
 function onAction(action) {
   state = state.applyAction(action)
   view.updateState(state)
   setDisabled(state)
-  renderCommits(state)
+  renderCommits(state, onAction)
 }
 
 view = new MenuBarEditorView(document.querySelector("#editor"), {state, onAction})
+window.view = view.editor
 
 function commitAction(message) {
   return {type: "commit", message, time: new Date}
@@ -146,8 +173,7 @@ function doCommit(message) {
   onAction(commitAction(message))
 }
 
-let lastRendered = null
-function renderCommits(state) {
+function renderCommits(state, onAction) {
   let curState = trackPlugin.getState(state)
   if (lastRendered == curState) return
   lastRendered = curState
@@ -164,46 +190,13 @@ function renderCommits(state) {
                     crel("button", {class: "commit-revert"}, "revert"))
     node.lastChild.addEventListener("click", () => revertCommit(commit))
     node.addEventListener("mouseover", e => {
-      if (!node.contains(e.relatedTarget)) highlightCommit(commit)
+      if (!node.contains(e.relatedTarget)) onAction({type: "highlightCommit", commit})
     })
     node.addEventListener("mouseout", e => {
-      if (!node.contains(e.relatedTarget)) clearHighlight(commit)
+      if (!node.contains(e.relatedTarget)) onAction({type: "clearHighlight", commit})
     })
     out.appendChild(node)
   })
-}
-
-let highlighted = null
-
-function annotateRange({from, to}) {
-  let left = document.body.appendChild(crel("span", {class: "marker-left"}))
-  let right = document.body.appendChild(crel("span", {class: "marker-right"}))
-  let leftPos = view.editor.coordsAtPos(from), rightPos = view.editor.coordsAtPos(to)
-  left.style.left = leftPos.left + "px"
-  left.style.top = (leftPos.bottom - 3) + "px"
-  right.style.right = (document.body.clientWidth - rightPos.right) + "px"
-  right.style.top = (rightPos.bottom - 3) + "px"
-  return {left, right}
-}
-function clearRange({left, right}) {
-  document.body.removeChild(left)
-  document.body.removeChild(right)
-}
-
-function highlightCommit(commit) {
-  if (highlighted && highlighted.commit == commit) return
-  let tState = trackPlugin.getState(state)
-  if (highlighted) clearHighlight(highlighted.commit)
-  highlighted = {
-    ranges: tState.blameMap.filter(span => tState.commits[span.commit] == commit).map(annotateRange),
-    commit: commit
-  }
-}
-function clearHighlight(commit) {
-  if (highlighted && highlighted.commit == commit) {
-    highlighted.ranges.forEach(clearRange)
-    highlighted = null
-  }
 }
 
 function revertCommit(commit) {
