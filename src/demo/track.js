@@ -35,6 +35,8 @@ const highlightPlugin = new Plugin({
         return {deco: DecorationSet.create(state.doc, decos), commit: action.commit}
       } else if (action.type == "clearHighlight" && prev.commit == action.commit) {
         return {deco: DecorationSet.empty, commit: null}
+      } else if (action.type == "transform" && prev.commit) {
+        return {deco: prev.deco.map(action.transform.mapping, action.transform.doc), commit: prev.commit}
       } else {
         return prev
       }

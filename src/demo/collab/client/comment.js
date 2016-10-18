@@ -1,119 +1,96 @@
-// FIXME this is disabled until ProseMirror supports decorations again
-
-const {elt} = require("prosemirror/dist/util/dom")
-const {Plugin} = require("prosemirror/dist/edit")
-const {Subscription} = require("subscription")
-const {Tooltip, FieldPrompt, TextField} = require("prosemirror/dist/ui")
+const crel = require("crel")
+const {Plugin} = require("prosemirror-state")
+const {Decoration, DecorationSet} = require("prosemirror-view")
 
 class Comment {
-  constructor(text, id, range) {
+  constructor(text, id) {
     this.id = id
     this.text = text
-    this.range = range
   }
 }
 
-function notEmpty(obj) { for (let _ in obj) return true }
+function deco(from, to, comment) {
+  return Decoration.inline(from, to, {class: "comment"}, {comment})
+}
 
-class CommentStore {
-  constructor(pm, options) {
-    this.pm = pm
-    this.comments = Object.create(null)
-    this.version = options.version
-    this.created = Object.create(null)
-    this.deleted = Object.create(null)
-    this.mustSend = new Subscription
+class CommentState {
+  constructor(version, decos, unsent) {
+    this.version = version
+    this.decos = decos
+    this.unsent = unsent
   }
 
-  createComment(text) {
-    let id = randomID()
-    let sel = this.pm.selection
-    this.addComment(sel.from, sel.to, text, id)
-    this.created[id] = true
-    this.mustSend.dispatch()
+  findComment(id) {
+    let current = this.decos.find()
+    for (let i = 0; i < current.length; i++)
+      if (current[i].options.comment.id == id) return current[i]
   }
 
-  addComment(from, to, text, id) {
-    if (!this.comments[id]) {
-      let range = this.pm.markRange(from, to, {
-        className: "comment",
-        id: id,
-        onRemove: () => this.removeComment(id)
-      })
-      this.comments[id] = new Comment(text, id, range)
+  commentsAt(pos) {
+    return this.decos.find(pos, pos)
+  }
+
+  applyAction(action, doc) {
+    if (action.type == "transform")
+      return new CommentState(this.version, this.decos.map(action.transform.mapping, action.transform.doc), this.unsent)
+    if (action.type == "newComment")
+      return new CommentState(this.version, this.decos.add(doc, [deco(action.from, action.to, action.comment)]),
+                              this.unsent.concat(action))
+    if (action.type == "deleteComment")
+      return new CommentState(this.version, this.decos.remove([this.findComment(action.comment.id)]), this.unsent.concat(action))
+    if (action.type == "receive")
+      return this.receive(action.comments, doc)
+    return this
+  }
+
+  receive({version, events, sent}, doc) {
+    let set = this.decos
+    for (let i = 0; i < events.length; i++) {
+      let event = events[i]
+      if (event.type == "delete") {
+        let found = this.findComment(event.id)
+        if (found) set = set.remove([found])
+      } else { // "create"
+        if (!this.findComment(event.id))
+          set = set.add(doc, [deco(event.from, event.to, new Comment(event.text, event.id))])
+      }
     }
-  }
-
-  addJSONComment(obj) {
-    this.addComment(obj.from, obj.to, obj.text, obj.id)
-  }
-
-  removeComment(id) {
-    let found = this.comments[id]
-    if (found) {
-      this.pm.removeRange(found.range)
-      delete this.comments[id]
-      return true
-    }
-  }
-
-  deleteComment(id) {
-    if (this.removeComment(id)) {
-      this.deleted[id] = true
-      this.mustSend.dispatch()
-    }
-  }
-
-  hasUnsentEvents() {
-    return notEmpty(this.created) || notEmpty(this.deleted)
+    return new CommentState(version, set, this.unsent.slice(sent))
   }
 
   unsentEvents() {
     let result = []
-    for (let id in this.created) {
-      let found = this.comments[id]
-      if (found) result.push({type: "create", id,
-                              from: found.range.from,
-                              to: found.range.to,
-                              text: found.text})
-    }
-    for (let id in this.deleted) {
-      if (!(id in this.created)) result.push({type: "delete", id})
+    for (let i = 0; i < this.unsent.length; i++) {
+      let action = this.unsent[i]
+      if (action.type == "newComment") {
+        let found = this.findComment(action.comment.id)
+        if (found) result.push({type: "create", id: action.comment.id,
+                                from: found.from, to: found.to,
+                                text: action.comment.text})
+      } else {
+        result.push({type: "delete", id: action.comment.id})
+      }
     }
     return result
   }
 
-  eventsSent(n) {
-    this.unsent = this.unsent.slice(n)
-  }
-
-  receive(events, version) {
-    events.forEach(event => {
-      if (event.type == "delete") {
-        if (event.id in this.deleted) delete this.deleted[event.id]
-        else this.removeComment(event.id)
-      } else { // "create"
-        if (event.id in this.created) delete this.created[event.id]
-        else this.addJSONComment(event)
-      }
-    })
-    this.version = version
-  }
-
-  findCommentsAt(pos) {
-    let found = []
-    for (let id in this.comments) {
-      let comment = this.comments[id]
-      if (comment.range.from < pos && comment.range.to > pos)
-        found.push(comment)
-    }
-    return found
+  static init(config) {
+    let decos = config.comments.comments.map(c => deco(c.from, c.to, new Comment(c.text, c.id)))
+    return new CommentState(config.comments.version, DecorationSet.create(config.doc, decos), [])
   }
 }
 
-const commentPlugin = exports.commentPlugin = new Plugin(CommentStore, {
-  version: 0
+const commentPlugin = new Plugin({
+  name: "comments",
+  state: {
+    init: CommentState.init,
+    applyAction(action, prev, state) { return prev.applyAction(action, state.doc) }
+  },
+  props: {
+    decorations(state) { return commentPlugin.getState(state).decos }
+  }
 })
+exports.commentPlugin = commentPlugin
 
 function randomID() {
   return Math.floor(Math.random() * 0xffffffff)
@@ -121,15 +98,13 @@ function randomID() {
 
 // Command for adding an annotation
 
-exports.addAnnotation = function(pm, apply) {
-  let comments = commentPlugin.get(pm)
-  if (!comments || pm.selection.empty) return false
-  if (apply !== false) new FieldPrompt(pm, "Add an annotation", {
-    text: new TextField({
-      label: "Annotation text",
-      required: true
-    })
-  }).open(({text}) => comments.createComment(text))
+exports.addAnnotation = function(state, onAction) {
+  let sel = state.selection
+  if (sel.empty) return false
+  if (onAction) {
+    let text = prompt("Annotation text", "")
+    if (text) onAction({type: "newComment", from: sel.from, to: sel.to, comment: new Comment(text, randomID())})
+  }
   return true
 }
 
@@ -140,79 +115,33 @@ exports.annotationIcon = {
 
 // Comment UI
 
-class CommentUI {
-  constructor(pm) {
-    this.pm = pm
-    this.update = pm.updateScheduler([
-      pm.on.selectionChange,
-      pm.on.change,
-      pm.on.blur,
-      pm.on.focus
-    ], () => this.prepareUpdate())
-    this.tooltip = new Tooltip(pm.wrapper, "below")
-    this.highlighting = null
-    this.displaying = null
-  }
-
-  prepareUpdate() {
-    let sel = this.pm.selection, comments = commentPlugin.get(this.pm), found
-    if (!comments || !sel.empty || !this.pm.hasFocus() ||
-        (found = comments.findCommentsAt(sel.head)).length == 0) {
-      return () => {
-        this.tooltip.close()
-        this.clearHighlight()
-        this.displaying = null
-      }
-    } else {
-      let id = found.map(c => c.id).join(" ")
-      if (id != this.displaying) {
-        this.displaying = id
-        let coords = bottomCenterOfSelection()
-        return () => this.tooltip.open(this.renderComments(found), coords)
+exports.commentUI = function(onAction) {
+  return new Plugin({
+    name: "commentUI",
+    props: {
+      decorations(state) {
+        return commentTooltip(state, onAction)
       }
     }
-  }
-
-  highlightComment(comment) {
-    this.clearHighlight()
-    this.highlighting = this.pm.markRange(comment.range.from, comment.range.to,
-                                          {className: "currentComment"})
-  }
-
-  clearHighlight() {
-    if (this.highlighting) {
-      this.pm.removeRange(this.highlighting)
-      this.highlighting = null
-    }
-  }
-
-  renderComment(comment) {
-    let btn = elt("button", {class: "commentDelete", title: "Delete annotation"}, "×")
-    btn.addEventListener("click", () => {
-      this.clearHighlight()
-      commentPlugin.get(this.pm).deleteComment(comment.id)
-      this.prepareUpdate()
-    })
-    let li = elt("li", {class: "commentText"}, comment.text, btn)
-    li.addEventListener("mouseover", e => {
-      if (!li.contains(e.relatedTarget)) this.highlightComment(comment)
-    })
-    li.addEventListener("mouseout", e => {
-      if (!li.contains(e.relatedTarget)) this.clearHighlight()
-    })
-    return li
-  }
-
-  renderComments(comments) {
-    let rendered = comments.map(c => this.renderComment(c))
-    return elt("ul", {class: "commentList"}, rendered)
-  }
+  })
 }
 
-function bottomCenterOfSelection() {
-  let range = window.getSelection().getRangeAt(0), rects = range.getClientRects()
-  let {left, right, bottom} = rects[rects.length - 1] || range.getBoundingClientRect()
-  return {top: bottom, left: (left + right) / 2}
+function commentTooltip(state, onAction) {
+  let sel = state.selection
+  if (!sel.empty) return null
+  let comments = commentPlugin.getState(state).commentsAt(sel.from)
+  if (!comments.length) return null
+  return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, onAction))])
 }
 
-exports.commentUIPlugin = new Plugin(CommentUI)
+function renderComment(comment, onAction) {
+  let btn = crel("button", {class: "commentDelete", title: "Delete annotation"}, "×")
+  btn.addEventListener("click", () => onAction({type: "deleteComment", comment}))
+  return crel("li", {class: "commentText"}, comment.text, btn)
+}
+
+function renderComments(comments, onAction) {
+  return crel("div", {class: "tooltip-wrapper"},
+              crel("ul", {class: "commentList"},
+                   comments.map(c => renderComment(c.options.comment, onAction))))
+}

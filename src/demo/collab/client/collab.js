@@ -10,6 +10,7 @@ const crel = require("crel")
 const {schema} = require("../schema")
 const {GET, POST} = require("./http")
 const {Reporter} = require("./reporter")
+const {commentPlugin, commentUI} = require("./comment")
 
 const report = new Reporter()
 
@@ -38,13 +39,17 @@ class EditorConnection {
 
   // All state changes go through this
   onAction(action) {
+    let newEditState = null
     if (action.type == "loaded") {
       info.users.textContent = userString(action.users) // FIXME ewww
       let editState = EditorState.create({
         doc: action.doc,
         plugins: [exampleSetup({schema, history: false}),
                   history.configure({preserveItems: true}),
-                  collab({version: action.version})]
+                  collab({version: action.version}),
+                  commentPlugin,
+                  commentUI(this.onAction)],
+        comments: action.comments
       })
       this.state = new State(editState, "poll")
       this.poll()
@@ -62,20 +67,28 @@ class EditorConnection {
         this.state = new State(this.state.edit, "recover")
         this.recover(action.error)
       }
+    } else if (action.type == "receive") {
+      newEditState = this.state.edit
+      if (action.inner) newEditState = newEditState.applyAction(action.inner)
+      newEditState = newEditState.applyAction(action)
     } else {
-      let editState = this.state.edit.applyAction(action), sendable
-      if (editState.doc.content.size > 40000) {
+      newEditState = this.state.edit.applyAction(action)
+    }
+
+    if (newEditState) {
+      let sendable
+      if (newEditState.doc.content.size > 40000) {
         if (this.state.comm != "detached") this.report.failure("Document too big. Detached.")
-        this.state = new State(editState, "detached")
-      } else if ((this.state.comm == "poll" || action.requestDone) && (sendable = sendableSteps(editState))) {
+        this.state = new State(newEditState, "detached")
+      } else if ((this.state.comm == "poll" || action.requestDone) && (sendable = this.sendable(newEditState))) {
         this.closeRequest()
-        this.state = new State(editState, "send")
-        this.send(sendable)
+        this.state = new State(newEditState, "send")
+        this.send(newEditState, sendable)
       } else if (action.requestDone) {
-        this.state = new State(editState, "poll")
+        this.state = new State(newEditState, "poll")
         this.poll()
       } else {
-        this.state = new State(editState, this.state.comm)
+        this.state = new State(newEditState, this.state.comm)
       }
     }
 
@@ -101,7 +114,8 @@ class EditorConnection {
       this.onAction({type: "loaded",
                      doc: schema.nodeFromJSON(data.doc),
                      version: data.version,
-                     users: data.users})
+                     users: data.users,
+                     comments: {version: data.commentVersion, comments: data.comments}})
     }, err => {
       this.report.failure(err)
     })
@@ -112,14 +126,15 @@ class EditorConnection {
   // for a new version of the document to be created if the client
   // is already up-to-date.
   poll() {
-    this.run(GET(this.url + "/events?version=" + getVersion(this.state.edit))).then(data => {
+    let query = "version=" + getVersion(this.state.edit) + "&commentVersion=" + commentPlugin.getState(this.state.edit).version
+    this.run(GET(this.url + "/events?" + query)).then(data => {
       this.report.success()
       data = JSON.parse(data)
       this.backOff = 0
-      if (data.steps && data.steps.length) {
+      if (data.steps.length || data.comment.length) {
         let action = receiveAction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
-        action.requestDone = true
-        this.onAction(action)
+        this.onAction({type: "receive", inner: action, requestDone: true,
+                       comments: {version: data.commentVersion, events: data.comment, sent: 0}})
       } else {
         this.poll()
       }
@@ -135,17 +150,24 @@ class EditorConnection {
     })
   }
 
+  sendable(editState) {
+    let steps = sendableSteps(editState)
+    let comments = commentPlugin.getState(editState).unsentEvents()
+    if (steps || comments.length) return {steps, comments}
+  }
+
   // Send the given steps to the server
-  send(sendable) {
-    let json = JSON.stringify({version: sendable.version,
-                               steps: sendable.steps.map(s => s.toJSON()),
-                               clientID: sendable.clientID})
-    this.run(POST(this.url + "/events", json, "application/json")).then(() => {
+  send(editState, {steps, comments}) {
+    let json = JSON.stringify({version: getVersion(editState),
+                               steps: steps ? steps.steps.map(s => s.toJSON()) : [],
+                               clientID: steps ? steps.clientID : 0,
+                               comment: comments || []})
+    this.run(POST(this.url + "/events", json, "application/json")).then(data => {
       this.report.success()
       this.backOff = 0
-      let action = receiveAction(this.state.edit, sendable.steps, repeat(sendable.clientID, sendable.steps.length))
-      action.requestDone = true
-      this.onAction(action)
+      let action = steps && receiveAction(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length))
+      this.onAction({type: "receive", inner: action, requestDone: true,
+                     comments: {version: JSON.parse(data).commentVersion, events: [], sent: comments.length}})
     }, err => {
       if (err.status == 409) {
         // The client's document conflicts with the server's version.

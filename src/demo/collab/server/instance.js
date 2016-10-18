@@ -31,7 +31,7 @@ class Instance {
     if (this.collecting != null) clearInterval(this.collecting)
   }
 
-  addEvents(version, steps, comments, ip, clientID) {
+  addEvents(version, steps, comments, clientID) {
     this.checkVersion(version)
     if (this.version != version) return false
     let doc = this.doc, maps = []

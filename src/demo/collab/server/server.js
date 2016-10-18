@@ -133,7 +133,7 @@ function outputEvents(inst, data) {
 // current version of the document.
 handle("GET", ["docs", null, "events"], (id, req, resp) => {
   let version = nonNegInteger(req.query.version)
-  let commentVersion = 0 //nonNegInteger(req.query.commentVersion)
+  let commentVersion = nonNegInteger(req.query.commentVersion)
 
   let inst = getInstance(id, reqIP(req))
   let data = inst.getEvents(version, commentVersion)
@@ -160,8 +160,7 @@ function reqIP(request) {
 handle("POST", ["docs", null, "events"], (data, id, req) => {
   let version = nonNegInteger(data.version)
   let steps = data.steps.map(s => Step.fromJSON(schema, s))
-  let ip = reqIP(req)
-  let result = getInstance(id, ip).addEvents(version, steps, data.comment, ip, data.clientID)
+  let result = getInstance(id, reqIP(req)).addEvents(version, steps, data.comment, data.clientID)
   if (!result)
     return new Output(409, "Version not current")
   else
