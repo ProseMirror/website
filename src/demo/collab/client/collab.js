@@ -10,7 +10,7 @@ const crel = require("crel")
 const {schema} = require("../schema")
 const {GET, POST} = require("./http")
 const {Reporter} = require("./reporter")
-const {commentPlugin, commentUI} = require("./comment")
+const {commentPlugin, commentUI, addAnnotation, annotationIcon} = require("./comment")
 
 const report = new Reporter()
 
@@ -97,8 +97,11 @@ class EditorConnection {
       if (this.view)
         this.view.updateState(this.state.edit)
       else
-        this.view = new MenuBarEditorView(document.querySelector("#editor"),
-                                          {state: this.state.edit, onAction: this.onAction})
+        this.view = new MenuBarEditorView(document.querySelector("#editor"), {
+          state: this.state.edit,
+          onAction: this.onAction,
+          menuContent: menu.fullMenu
+        })
     } else if (this.view) {
       document.querySelector("#editor").removeChild(this.view.wrapper)
       this.view = null
@@ -219,15 +222,14 @@ function repeat(val, n) {
   return result
 }
 
-/*const annotationMenuItem = new MenuItem({
+const annotationMenuItem = new MenuItem({
   title: "Add an annotation",
   run: addAnnotation,
-  select: pm => addAnnotation(pm, false),
+  select: state => addAnnotation(state),
   icon: annotationIcon
 })
-
 let menu = buildMenuItems(schema)
-menu.fullMenu[0].push(annotationMenuItem)*/
+menu.fullMenu[0].push(annotationMenuItem)
 
 let info = {
   name: document.querySelector("#docname"),
