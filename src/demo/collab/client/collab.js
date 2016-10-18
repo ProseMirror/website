@@ -134,7 +134,7 @@ class EditorConnection {
       this.report.success()
       data = JSON.parse(data)
       this.backOff = 0
-      if (data.steps.length || data.comment.length) {
+      if (data.steps && (data.steps.length || data.comment.length)) {
         let action = receiveAction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
         this.onAction({type: "receive", inner: action, requestDone: true,
                        comments: {version: data.commentVersion, events: data.comment, sent: 0}})
@@ -236,10 +236,8 @@ let info = {
   users: document.querySelector("#users")
 }
 document.querySelector("#changedoc").addEventListener("click", e => {
-  GET("/docs/", (err, data) => {
-    if (err) report.failure(err)
-    else showDocList(e.target, JSON.parse(data))
-  })
+  GET("/docs/").then(data => showDocList(e.target, JSON.parse(data)),
+                     err => report.failure(err))
 })
 
 function userString(n) {
@@ -251,13 +249,13 @@ let docList
 function showDocList(node, list) {
   if (docList) docList.parentNode.removeChild(docList)
 
-  let ul = docList = document.body.appendChild(elt("ul", {class: "doclist"}))
+  let ul = docList = document.body.appendChild(crel("ul", {class: "doclist"}))
   list.forEach(doc => {
-    ul.appendChild(elt("li", {"data-name": doc.id},
-                       doc.id + " " + userString(doc.users)))
+    ul.appendChild(crel("li", {"data-name": doc.id},
+                        doc.id + " " + userString(doc.users)))
   })
-  ul.appendChild(elt("li", {"data-new": "true", style: "border-top: 1px solid silver; margin-top: 2px"},
-                     "Create a new document"))
+  ul.appendChild(crel("li", {"data-new": "true", style: "border-top: 1px solid silver; margin-top: 2px"},
+                      "Create a new document"))
 
   let rect = node.getBoundingClientRect()
   ul.style.top = (rect.bottom + 10 + pageYOffset - ul.offsetHeight) + "px"
