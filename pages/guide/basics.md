@@ -238,8 +238,8 @@ will execute those commands when the corresponding key is pressed.
       state: EditorState.create({
         schema: schema,
         plugins: [history.history, keymap({
-          "Mod-Z": history.undo,
-          "Mod-Y": history.redo
+          "Mod-z": history.undo,
+          "Mod-y": history.redo
         })]
       }),
       onAction: function(action) {
