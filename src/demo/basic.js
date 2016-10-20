@@ -18,7 +18,7 @@ let tip = document.querySelector(".demotip")
 let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(content),
-    plugins: [exampleSetup({schema})]
+    plugins: exampleSetup({schema})
   }),
   onAction(action) { view.updateState(view.editor.state.applyAction(action)) },
   onFocus() {

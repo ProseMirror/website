@@ -17,7 +17,7 @@ function toProseMirror(content) {
   let view = new MenuBarEditorView(place, {
     state: EditorState.create({
       doc: defaultMarkdownParser.parse(content),
-      plugins: [exampleSetup({schema})]
+      plugins: exampleSetup({schema})
     }),
     onAction: action => view.updateState(view.editor.state.applyAction(action))
   })

@@ -44,11 +44,12 @@ class EditorConnection {
       info.users.textContent = userString(action.users) // FIXME ewww
       let editState = EditorState.create({
         doc: action.doc,
-        plugins: [exampleSetup({schema, history: false}),
-                  history.configure({preserveItems: true}),
-                  collab({version: action.version}),
-                  commentPlugin,
-                  commentUI(this.onAction)],
+        plugins: exampleSetup({schema, history: false}).concat([
+          history({preserveItems: true}),
+          collab({version: action.version}),
+          commentPlugin,
+          commentUI(this.onAction)
+        ]),
         comments: action.comments
       })
       this.state = new State(editState, "poll")

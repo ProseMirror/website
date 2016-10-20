@@ -25,7 +25,7 @@ let showProbPlugin = new Plugin({
 
   props: {
     decorations(state) {
-      return showProbPlugin.getState(state).deco
+      return this.getState(state).deco
     }
   }
 })
@@ -40,7 +40,7 @@ function decoForProb(doc, prob) {
 let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
-    plugins: [exampleSetup({schema}), showProbPlugin]
+    plugins: exampleSetup({schema}).concat(showProbPlugin)
   }),
   onAction: action => {
     view.updateState(view.editor.state.applyAction(action))

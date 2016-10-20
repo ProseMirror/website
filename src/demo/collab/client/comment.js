@@ -81,13 +81,12 @@ class CommentState {
 }
 
 const commentPlugin = new Plugin({
-  name: "comments",
   state: {
     init: CommentState.init,
     applyAction(action, prev, state) { return prev.applyAction(action, state.doc) }
   },
   props: {
-    decorations(state) { return commentPlugin.getState(state).decos }
+    decorations(state) { return this.getState(state).decos }
   }
 })
 exports.commentPlugin = commentPlugin
@@ -117,7 +116,6 @@ exports.annotationIcon = {
 
 exports.commentUI = function(onAction) {
   return new Plugin({
-    name: "commentUI",
     props: {
       decorations(state) {
         return commentTooltip(state, onAction)

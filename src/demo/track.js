@@ -19,8 +19,7 @@ const trackPlugin = new Plugin({
       else
         return tracked
     }
-  },
-  name: "track"
+  }
 })
 
 const highlightPlugin = new Plugin({
@@ -42,9 +41,8 @@ const highlightPlugin = new Plugin({
       }
     }
   },
-  name: "highlight",
   props: {
-    decorations(state) { return highlightPlugin.getState(state).deco }
+    decorations(state) { return this.getState(state).deco }
   }
 })
 
@@ -143,7 +141,7 @@ function insertIntoBlameMap(map, from, to, commit) {
 
 let state = EditorState.create({
   schema,
-  plugins: [exampleSetup({schema}), trackPlugin, highlightPlugin]
+  plugins: exampleSetup({schema}).concat(trackPlugin, highlightPlugin)
 }), view
 
 let lastRendered = null

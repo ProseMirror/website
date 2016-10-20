@@ -49,7 +49,7 @@ menu.insertMenu.content = dinos.map(name => new MenuItem({
 let view = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(dinoSchema).parse(document.querySelector("#content")),
-    plugins: [exampleSetup({schema: dinoSchema}), inputRules({rules: [dinoInputRule]})]
+    plugins: exampleSetup({schema: dinoSchema}).concat(inputRules({rules: [dinoInputRule]}))
   }),
   onAction: action => view.updateState(view.editor.state.applyAction(action)),
   menuContent: menu.fullMenu
