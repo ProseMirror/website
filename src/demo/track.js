@@ -104,6 +104,7 @@ function updateBlameMap(map, transform, id) {
 }
 
 function insertIntoBlameMap(map, from, to, commit) {
+  if (from >= to) return
   let pos = 0, next
   for (; pos < map.length; pos++) {
     next = map[pos]
