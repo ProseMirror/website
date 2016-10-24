@@ -198,7 +198,7 @@ implements an undo/redo history. Here's how you could use it:
 
     var view = new EditorView(document.body, {
       state: EditorState.create({schema: schema,
-                                 plugins: [history.history]}),
+                                 plugins: [history.history()]}),
       onAction: function(action) {
         view.updateState(view.state.applyAction(action))
       },
@@ -209,7 +209,7 @@ implements an undo/redo history. Here's how you could use it:
       }
     })
 
-The changes are that we pass `plugins: [history.history]` when
+The changes are that we pass `plugins: [history.history()]` when
 creating the state, to enable the history plugin, and that we add a
 `handleKeyDown` prop which, when Ctrl-Z is pressed, calls
 `history.undo`.
@@ -237,7 +237,7 @@ will execute those commands when the corresponding key is pressed.
     var view = new EditorView(document.body, {
       state: EditorState.create({
         schema: schema,
-        plugins: [history.history, keymap({
+        plugins: [history.history(), keymap({
           "Mod-z": history.undo,
           "Mod-y": history.redo
         })]
