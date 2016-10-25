@@ -89,9 +89,9 @@ of steps, the length of which denotes its current version.
 ## The `collab` Module
 
 The [`collab`](##collab) module exports a [`collab`](##collab.collab)
-plugin, which will take care of the tracking of local changes,
-receiving of remote changes, and indicating when something has to be
-sent to the central authority.
+function which returns a plugin, which will take care of the tracking
+of local changes, receiving of remote changes, and indicating when
+something has to be sent to the central authority.
 
 ```javascript
 var EditorState = require("prosemirror-state").EditorState
@@ -101,7 +101,7 @@ var collab = require("prosemirror-collab")
 
 function collabEditor(authority, place) {
   var view = new EditorView(place, {
-    state: EditorState.create({schema: schema, plugins: [collab.collab]}),
+    state: EditorState.create({schema: schema, plugins: [collab.collab()]}),
     onAction: function(action) {
       var newState = view.state.applyAction(action)
       view.updateState(newState)
