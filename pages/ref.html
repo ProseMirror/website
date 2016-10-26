@@ -108,7 +108,7 @@ var sections = document.querySelectorAll("section")
 for (var i = 0; i < sections.length - 1; i++) {
   var next = sections[i].appendChild(document.createElement("a"))
   next.className = "next-link"
-  next.textContent = "⮞"
+  next.textContent = "➤"
   next.title = "Next section"
   next.href = "#" + sections[i + 1].id.slice(5)
 }
