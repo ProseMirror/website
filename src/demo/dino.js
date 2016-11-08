@@ -43,7 +43,7 @@ menu.insertMenu.content = dinos.map(name => new MenuItem({
   select(state) {
     return insertPoint(state.doc, state.selection.from, dinoType) != null
   },
-  run(state, onAction) { onAction(state.tr.replaceSelection(dinoType.create({type: name})).action()) }
+  run(state, onAction) { onAction(state.tr.replaceSelectionWith(dinoType.create({type: name})).action()) }
 })).concat(menu.insertMenu.content)
 
 let view = new MenuBarEditorView(document.querySelector("#editor"), {

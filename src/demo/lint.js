@@ -75,7 +75,7 @@ function runLint(view) {
     note.addEventListener("click", () => {
       if (delay == null) {
         let doc = view.state.doc
-        view.props.onAction(new TextSelection(doc.resolve(prob.from), doc.resolve(prob.to)).action({scrollIntoView: true}))
+        view.props.onAction(TextSelection.create(doc, prob.from, prob.to).action({scrollIntoView: true}))
         view.focus()
       }
     })
