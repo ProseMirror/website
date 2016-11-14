@@ -103,9 +103,11 @@ class EditorConnection {
           onAction: this.onAction,
           menuContent: menu.fullMenu
         })
+        window.view = this.view.editor
     } else if (this.view) {
       document.querySelector("#editor").removeChild(this.view.wrapper)
       this.view = null
+      window.view = undefined
     }
   }
 
@@ -213,6 +215,7 @@ class EditorConnection {
     if (this.view) {
       document.querySelector("#editor").removeChild(this.view.wrapper)
       this.view = null
+      window.view = undefined
     }
   }
 }

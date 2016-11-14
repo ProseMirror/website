@@ -50,6 +50,7 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
     }
   }
 })
+window.view = view.editor
 
 let output = document.querySelector("#lint_output")
 

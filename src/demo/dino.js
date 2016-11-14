@@ -54,3 +54,4 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
   onAction: action => view.updateState(view.editor.state.applyAction(action)),
   menuContent: menu.fullMenu
 })
+window.view = view.editor

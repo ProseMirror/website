@@ -7,6 +7,7 @@ let place = document.querySelector("#editor")
 
 let getContent
 function toTextArea(content, focus) {
+  window.view = undefined
   let te = place.appendChild(document.createElement("textarea"))
   te.style.cssText = "font-family: inherit; font-size: inherit"
   te.value = content
@@ -21,6 +22,7 @@ function toProseMirror(content) {
     }),
     onAction: action => view.updateState(view.editor.state.applyAction(action))
   })
+  window.view = view.editor
   view.editor.focus()
   getContent = () => defaultMarkdownSerializer.serialize(view.editor.state.doc)
 }

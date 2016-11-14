@@ -28,3 +28,4 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
     }
   }
 })
+window.view = view.editor
