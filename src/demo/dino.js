@@ -10,6 +10,7 @@ const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "p
 
 const dino = {
   attrs: {type: {default: "brontosaurus"}},
+  draggable: true,
   toDOM: node => ["img", {"dino-type": node.attrs.type,
                           src: "/img/dino/" + node.attrs.type + ".png",
                           title: node.attrs.type,
