@@ -25,7 +25,7 @@ const trackPlugin = new Plugin({
 const highlightPlugin = new Plugin({
   state: {
     init() { return {deco: DecorationSet.empty, commit: null} },
-    applyAction(action, prev, state) {
+    applyAction(action, highlighted, prev, state) {
       if (action.type == "highlightCommit" && prev.commit != action.commit) {
         let tState = trackPlugin.getState(state)
         let decos = tState.blameMap
