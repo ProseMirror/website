@@ -4,6 +4,7 @@ all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      public/demo/bundle_basic.js \
      public/demo/bundle_markdown.js \
      public/demo/bundle_dino.js \
+     public/demo/bundle_nodeview.js \
      public/demo/bundle_lint.js \
      public/demo/bundle_track.js \
      public/demo/bundle_collab.js

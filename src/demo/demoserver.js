@@ -30,6 +30,7 @@ let demos = {
   "/demo/basic.html": "../src/demo/basic",
   "/demo/markdown.html": "../src/demo/markdown",
   "/demo/dino.html": "../src/demo/dino",
+  "/demo/nodeview.html": "../src/demo/nodeview",
   "/demo/lint.html": "../src/demo/lint",
   "/demo/track.html": "../src/demo/track",
   "/demo/collab.html": "../src/demo/collab/client/collab"
