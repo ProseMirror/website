@@ -67,7 +67,7 @@ code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
 <</for>>
 
 <script>
-var showing = null
+var showing = null, openToc = null
 
 function hashChange() {
   var hash = decodeURIComponent(document.location.hash.slice(1))
@@ -79,6 +79,13 @@ function hashChange() {
       showing = sect
       var rect = found.getBoundingClientRect()
       window.scrollTo(0, hash == prefix[1] ? 0 : rect.top + pageYOffset)
+      var toc = document.querySelector('nav li a[href="#' + prefix[1] + '"]')
+      toc = toc && toc.parentNode
+      if (openToc != toc) {
+        if (openToc) openToc.className = ""
+        toc.className = "toc_open"
+        openToc = toc
+      }
     }
   }
 }
@@ -88,20 +95,6 @@ hashChange()
 if (!showing) {
   showing = document.querySelector("section")
   showing.style.display = "block"
-}
-
-var toc = document.querySelector("nav ul")
-var openToc = null
-
-for (var item = toc.firstChild; item; item = item.nextSibling) {
-  if (item.nodeName != "li") (function(item) {
-    item.addEventListener("click", function(e) {
-      if (openToc == item) return
-      if (openToc) openToc.className = ""
-      item.className = "toc_open"
-      openToc = item
-    })
-  }(item))
 }
 
 var sections = document.querySelectorAll("section")
