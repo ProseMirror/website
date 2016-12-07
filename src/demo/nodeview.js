@@ -82,7 +82,7 @@ class CodeBlockView {
       return CodeMirror.Pass
     this.view.focus()
     let targetPos = this.getPos() + (dir < 0 ? 0 : this.value.length + 2)
-    this.view.props.onAction(Selection.near(this.view.state.doc.resolve(targetPos), dir).action())
+    this.view.props.onAction(Selection.near(this.view.state.doc.resolve(targetPos), dir).scrollAction())
   }
 
   update(node) {
