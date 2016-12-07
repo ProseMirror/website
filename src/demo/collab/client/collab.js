@@ -105,7 +105,7 @@ class EditorConnection {
         })
         window.view = this.view.editor
     } else if (this.view) {
-      document.querySelector("#editor").removeChild(this.view.wrapper)
+      this.view.destroy()
       this.view = null
       window.view = undefined
     }
