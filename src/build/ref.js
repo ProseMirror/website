@@ -85,7 +85,8 @@ let toc = {Intro: "#top.intro"}, output = modules.map(module => {
     main: baseDir + "prosemirror-" + module.name + "/src/README.md",
     imports: [{
       constructor: false,
-      T: false
+      T: false,
+      OrderedMap: "https://github.com/marijnh/orderedmap#readme"
     }, ...importsFor(module)],
     qualifiedImports: {
       dom: builddocs.browserImports
