@@ -11,15 +11,13 @@ let delay = null
 let showProbPlugin = new Plugin({
   state: {
     init: () => ({prob: null, deco: DecorationSet.empty}),
-    applyAction: (action, prev, state) => {
-      switch (action.type) {
-      case "transform":
-        return {prob: prev.prob, deco: prev.deco.map(action.transform.mapping, action.transform.doc)}
-      case "showProb":
-        return {prob: action.prob, deco: action.prob ? decoForProb(state.doc, action.prob) : DecorationSet.empty}
-      default:
-        return prev
-      }
+    apply: (tr, prev, state) => {
+      let show = tr.get(showProbPlugin)
+      if (show !== undefined)
+        return {prob: show, deco: show ? decoForProb(state.doc, show) : DecorationSet.empty}
+      if (tr.steps.length)
+        return {prob: prev.prob, deco: prev.deco.map(tr.mapping, tr.doc)}
+      return prev
     }
   },
 
@@ -42,9 +40,9 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema}).concat(showProbPlugin)
   }),
-  onAction: action => {
-    view.updateState(view.editor.state.applyAction(action))
-    if (action.type == "transform") {
+  dispatchTransaction: tr => {
+    view.updateState(view.editor.state.apply(tr))
+    if (tr.steps.length) {
       clearTimeout(delay)
       delay = setTimeout(() => runLint(view.editor), 500)
     }
@@ -63,7 +61,7 @@ function runLint(view) {
     if (prob.fix)
       note.appendChild(crel("button", {class: "fixbutton"}, "Fix")).addEventListener("click", () => {
         if (delay == null) {
-          prob.fix(prob, view.state, view.props.onAction)
+          prob.fix(prob, view.state, view.dispatch)
           view.focus()
         }
       })
@@ -76,7 +74,7 @@ function runLint(view) {
     note.addEventListener("click", () => {
       if (delay == null) {
         let doc = view.state.doc
-        view.props.onAction(TextSelection.create(doc, prob.from, prob.to).action({scrollIntoView: true}))
+        view.dispatch(view.state.tr.setSelection(TextSelection.create(doc, prob.from, prob.to)).scrollIntoView())
         view.focus()
       }
     })
@@ -84,12 +82,12 @@ function runLint(view) {
 }
 
 function showProb(view, prob) {
-  view.props.onAction({type: "showProb", prob})
+  view.dispatch(view.state.tr.set(showProbPlugin, prob))
 }
 function clearProb(view, prob) {
   let cur = showProbPlugin.getState(view.state).prob
   if (prob ? cur == prob : cur)
-    view.props.onAction({type: "showProb", prob: null})
+    view.dispatch(view.state.tr.set(showProbPlugin, null))
 }
 
 let badWords = /obviously|clearly|evidently|actually/ig
@@ -134,27 +132,26 @@ function lint(doc) {
 }
 
 function fixPunc(match) {
-  return (prob, state, onAction) => {
-    onAction(state.tr.delete(prob.from, prob.to)
-             .insert(prob.from, state.schema.text(match[1] + " "))
-             .action())
+  return (prob, state, dispatch) => {
+    dispatch(state.tr.delete(prob.from, prob.to)
+             .insert(prob.from, state.schema.text(match[1] + " ")))
   }
 }
 
 function fixHeader(level) {
-  return (prob, state, onAction) => {
-    onAction(state.tr.setBlockType(prob.from, prob.to, state.schema.nodeType("heading"), {level}).action())
+  return (prob, state, dispatch) => {
+    dispatch(state.tr.setBlockType(prob.from, prob.to, state.schema.nodeType("heading"), {level}))
   }
 }
 
-function addAlt(prob, state, onAction) {
+function addAlt(prob, state, dispatch) {
   let alt = prompt("Alt text", "")
   let img = state.doc.nodeAt(prob.from)
-  if (alt) onAction(state.tr.setNodeType(prob.from, null, {
+  if (alt) dispatch(state.tr.setNodeType(prob.from, null, {
     src: img.attrs.src,
     alt: alt,
     title: img.attrs.title
-  }).action())
+  }))
 }
 
 runLint(view.editor)

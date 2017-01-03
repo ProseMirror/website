@@ -4,6 +4,7 @@ const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
 const {undo, redo} = require("prosemirror-history")
+const {keymap} = require("prosemirror-keymap")
 const CodeMirror = require("codemirror")
 require("codemirror/mode/javascript/javascript")
 
@@ -15,22 +16,6 @@ function computeChange(oldVal, newVal) {
   while (oldEnd > start && newEnd > start &&
          oldVal.charCodeAt(oldEnd - 1) == newVal.charCodeAt(newEnd - 1)) { oldEnd--; newEnd-- }
   return {from: start, to: oldEnd, text: newVal.slice(start, newEnd)}
-}
-
-// We add two nodes around the editor that are invisible but that can
-// receive a cursor, so that the browser's cursor motion code will
-// allow the cursor to enter our wrapping node. (ProseMirror will then
-// normalize the selection by placing the cursor in the actual
-// code block.)
-function wrapDOM(dom) {
-  let dummy = document.createElement("div")
-  dummy.textContent = "\u200b"
-  dummy.style.height = 0
-  let wrap = document.createElement("div")
-  wrap.appendChild(dummy.cloneNode(true))
-  wrap.appendChild(dom)
-  wrap.appendChild(dummy)
-  return wrap
 }
 
 class CodeBlockView {
@@ -49,15 +34,14 @@ class CodeBlockView {
         Left: () => this.maybeEscape("char", -1),
         Down: () => this.maybeEscape("line", 1),
         Right: () => this.maybeEscape("char", 1),
-        [`${mod}-Z`]: () => undo(this.view.state, this.view.props.onAction),
-        [`Shift-${mod}-Z`]: () => redo(this.view.state, this.view.props.onAction),
-        [`${mod}-Y`]: () => redo(this.view.state, this.view.props.onAction)
+        [`${mod}-Z`]: () => undo(this.view.state, this.view.dispatch),
+        [`Shift-${mod}-Z`]: () => redo(this.view.state, this.view.dispatch),
+        [`${mod}-Y`]: () => redo(this.view.state, this.view.dispatch)
       })
     })
     setTimeout(() => this.cm.refresh(), 20)
 
-    this.cm.getWrapperElement().contentEditable = false
-    this.dom = wrapDOM(this.cm.getWrapperElement())
+    this.dom = this.cm.getWrapperElement()
 
     this.updating = false
     this.cm.on("changes", () => {if (!this.updating) this.valueChanged()})
@@ -71,7 +55,7 @@ class CodeBlockView {
       let start = this.getPos() + 1
       let tr = this.view.state.tr.replaceWith(start + change.from, start + change.to,
                                               change.text ? schema.text(change.text) : null)
-      this.view.props.onAction(tr.action())
+      this.view.dispatch(tr)
     }
   }
 
@@ -82,7 +66,8 @@ class CodeBlockView {
       return CodeMirror.Pass
     this.view.focus()
     let targetPos = this.getPos() + (dir < 0 ? 0 : this.value.length + 2)
-    this.view.props.onAction(Selection.near(this.view.state.doc.resolve(targetPos), dir).scrollAction())
+    this.view.dispatch(this.view.state.tr.setSelection(Selection.near(this.view.state.doc.resolve(targetPos), dir)).scrollIntoView())
+    this.view.focus()
   }
 
   update(node) {
@@ -111,14 +96,32 @@ class CodeBlockView {
   stopEvent() { return true }
 }
 
+function arrowHandler(dir) {
+  return (state, dispatch, view) => {
+    if (state.selection.empty && view.endOfTextblock(dir)) {
+      let side = dir == "left" || dir == "up" ? -1 : 1, $head = state.selection.$head
+      let nextPos = Selection.near(state.doc.resolve(side > 0 ? $head.after() : $head.before()), side)
+      if (nextPos.$head && nextPos.$head.parent.type.name == "code_block") {
+        dispatch(state.tr.setSelection(nextPos))
+        return true
+      }
+    }
+    return false
+  }
+}
+
+const arrowHandlers = keymap({
+  ArrowLeft: arrowHandler("left"),
+  ArrowRight: arrowHandler("right"),
+  ArrowUp: arrowHandler("up"),
+  ArrowDown: arrowHandler("down")
+})
+
 menuView = new MenuBarEditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
-    plugins: exampleSetup({schema})
+    plugins: exampleSetup({schema}).concat(arrowHandlers)
   }),
-  onAction(action) {
-    menuView.updateState(view.state.applyAction(action))
-  },
   handleClickOn(_view, _pos, node) { return node.type.name == "code_block" },
   nodeViews: {code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos)}
 })

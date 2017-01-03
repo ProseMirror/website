@@ -11,13 +11,11 @@ const trackPlugin = new Plugin({
     init(_, instance) {
       return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
     },
-    applyAction(action, tracked) {
-      if (action.type == "transform")
-        return tracked.applyTransform(action.transform)
-      if (action.type == "commit")
-        return tracked.applyCommit(action.message, action.time)
-      else
-        return tracked
+    apply(tr, tracked) {
+      if (tr.steps.length) tracked = tracked.applyTransform(tr)
+      let commitMessage = tr.get(this)
+      if (commitMessage) tracked = tracked.applyCommit(commitMessage, new Date(tr.time))
+      return tracked
     }
   }
 })
@@ -25,17 +23,18 @@ const trackPlugin = new Plugin({
 const highlightPlugin = new Plugin({
   state: {
     init() { return {deco: DecorationSet.empty, commit: null} },
-    applyAction(action, prev, oldState, state) {
-      if (action.type == "highlightCommit" && prev.commit != action.commit) {
+    apply(tr, prev, oldState, state) {
+      let highlight = tr.get(this)
+      if (highlight && highlight.add != null && prev.commit != highlight.add) {
         let tState = trackPlugin.getState(oldState)
         let decos = tState.blameMap
-            .filter(span => tState.commits[span.commit] == action.commit)
+            .filter(span => tState.commits[span.commit] == highlight.add)
             .map(span => Decoration.inline(span.from, span.to, {class: "blame-marker"}))
-        return {deco: DecorationSet.create(state.doc, decos), commit: action.commit}
-      } else if (action.type == "clearHighlight" && prev.commit == action.commit) {
+        return {deco: DecorationSet.create(state.doc, decos), commit: highlight.add}
+      } else if (highlight && highlight.clear != null && prev.commit == highlight.clear) {
         return {deco: DecorationSet.empty, commit: null}
-      } else if (action.type == "transform" && prev.commit) {
-        return {deco: prev.deco.map(action.transform.mapping, action.transform.doc), commit: prev.commit}
+      } else if (tr.steps.length && prev.commit) {
+        return {deco: prev.deco.map(tr.mapping, tr.doc), commit: prev.commit}
       } else {
         return prev
       }
@@ -147,22 +146,18 @@ let state = EditorState.create({
 
 let lastRendered = null
 
-function onAction(action) {
-  state = state.applyAction(action)
+function dispatch(tr) {
+  state = state.apply(tr)
   view.updateState(state)
   setDisabled(state)
-  renderCommits(state, onAction)
+  renderCommits(state, dispatch)
 }
 
-view = new MenuBarEditorView(document.querySelector("#editor"), {state, onAction})
+view = new MenuBarEditorView(document.querySelector("#editor"), {state, dispatchTransaction: dispatch})
 window.view = view.editor
 
-function commitAction(message) {
-  return {type: "commit", message, time: new Date}
-}
-
-onAction(state.tr.insertText("Type something, and then commit it.").action())
-onAction(commitAction("Initial commit"))
+dispatch(state.tr.insertText("Type something, and then commit it."))
+dispatch(state.tr.set(trackPlugin, "Initial commit"))
 
 function setDisabled(state) {
   let input = document.querySelector("#message")
@@ -171,10 +166,10 @@ function setDisabled(state) {
 }
 
 function doCommit(message) {
-  onAction(commitAction(message))
+  dispatch(state.tr.set(trackPlugin, message))
 }
 
-function renderCommits(state, onAction) {
+function renderCommits(state, dispatch) {
   let curState = trackPlugin.getState(state)
   if (lastRendered == curState) return
   lastRendered = curState
@@ -191,10 +186,12 @@ function renderCommits(state, onAction) {
                     crel("button", {class: "commit-revert"}, "revert"))
     node.lastChild.addEventListener("click", () => revertCommit(commit))
     node.addEventListener("mouseover", e => {
-      if (!node.contains(e.relatedTarget)) onAction({type: "highlightCommit", commit})
+      if (!node.contains(e.relatedTarget))
+        dispatch(state.tr.set(highlightPlugin, {add: commit}))
     })
     node.addEventListener("mouseout", e => {
-      if (!node.contains(e.relatedTarget)) onAction({type: "clearHighlight", commit})
+      if (!node.contains(e.relatedTarget))
+        dispatch(state.tr.set(highlightPlugin, {clear: commit}))
     })
     out.appendChild(node)
   })
@@ -215,8 +212,7 @@ function revertCommit(commit) {
     if (result && result.doc) remap.appendMap(remapped.getMap(), i)
   }
   if (tr.steps.length) {
-    onAction(tr.action())
-    onAction(commitAction(`Revert '${commit.message}'`))
+    dispatch(tr.set(trackPlugin, `Revert '${commit.message}'`))
   }
 }
 

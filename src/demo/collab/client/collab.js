@@ -3,7 +3,7 @@ const {Step} = require("prosemirror-transform")
 const {MenuBarEditorView} = require("prosemirror-menu")
 const {EditorState} = require("prosemirror-state")
 const {history} = require("prosemirror-history")
-const {collab, receiveAction, sendableSteps, getVersion} = require("prosemirror-collab")
+const {collab, receiveTransaction, sendableSteps, getVersion} = require("prosemirror-collab")
 const {MenuItem} = require("prosemirror-menu")
 const crel = require("crel")
 
@@ -33,12 +33,12 @@ class EditorConnection {
     this.request = null
     this.backOff = 0
     this.view = null
-    this.onAction = this.onAction.bind(this)
+    this.dispatch = this.dispatch.bind(this)
     this.start()
   }
 
   // All state changes go through this
-  onAction(action) {
+  dispatch(action) {
     let newEditState = null
     if (action.type == "loaded") {
       info.users.textContent = userString(action.users) // FIXME ewww
@@ -48,7 +48,8 @@ class EditorConnection {
           history({preserveItems: true}),
           collab({version: action.version}),
           commentPlugin,
-          commentUI(this.onAction)
+          commentUI({dispatch: transaction => this.dispatch({type: "transaction", transaction}),
+                     getState: () => this.state.edit})
         ]),
         comments: action.comments
       })
@@ -68,12 +69,8 @@ class EditorConnection {
         this.state = new State(this.state.edit, "recover")
         this.recover(action.error)
       }
-    } else if (action.type == "receive") {
-      newEditState = this.state.edit
-      if (action.inner) newEditState = newEditState.applyAction(action.inner)
-      newEditState = newEditState.applyAction(action)
-    } else {
-      newEditState = this.state.edit.applyAction(action)
+    } else if (action.type == "transaction") {
+      newEditState = this.state.edit.apply(action.transaction)
     }
 
     if (newEditState) {
@@ -100,7 +97,7 @@ class EditorConnection {
       else
         this.view = new MenuBarEditorView(document.querySelector("#editor"), {
           state: this.state.edit,
-          onAction: this.onAction,
+          dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction}),
           menuContent: menu.fullMenu
         })
         window.view = this.view.editor
@@ -117,7 +114,7 @@ class EditorConnection {
       data = JSON.parse(data)
       this.report.success()
       this.backOff = 0
-      this.onAction({type: "loaded",
+      this.dispatch({type: "loaded",
                      doc: schema.nodeFromJSON(data.doc),
                      version: data.version,
                      users: data.users,
@@ -138,9 +135,9 @@ class EditorConnection {
       data = JSON.parse(data)
       this.backOff = 0
       if (data.steps && (data.steps.length || data.comment.length)) {
-        let action = receiveAction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
-        this.onAction({type: "receive", inner: action, requestDone: true,
-                       comments: {version: data.commentVersion, events: data.comment, sent: 0}})
+        let tr = receiveTransaction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
+        tr.set(commentPlugin, {type: "receive", version: data.commentVersion, events: data.comment, sent: 0})
+        this.dispatch({type: "transaction", transaction: tr, requestDone: true})
       } else {
         this.poll()
       }
@@ -149,9 +146,9 @@ class EditorConnection {
       if (err.status == 410 || badVersion(err)) {
         // Too far behind. Revert to server state
         report.failure(err)
-        this.onAction({type: "restart"})
+        this.dispatch({type: "restart"})
       } else if (err) {
-        this.onAction({type: "recover", error: err})
+        this.dispatch({type: "recover", error: err})
       }
     })
   }
@@ -171,20 +168,22 @@ class EditorConnection {
     this.run(POST(this.url + "/events", json, "application/json")).then(data => {
       this.report.success()
       this.backOff = 0
-      let action = steps && receiveAction(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length))
-      this.onAction({type: "receive", inner: action, requestDone: true,
-                     comments: {version: JSON.parse(data).commentVersion, events: [], sent: comments.length}})
+      let tr = steps
+          ? receiveTransaction(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length))
+          : this.state.edit.tr
+      tr.set(commentPlugin, {type: "receive", version: JSON.parse(data).commentVersion, events: [], sent: comments.length})
+      this.dispatch({type: "transaction", transaction: tr, requestDone: true})
     }, err => {
       if (err.status == 409) {
         // The client's document conflicts with the server's version.
         // Poll for changes and then try again.
         this.backOff = 0
-        this.onAction({type: "poll"})
+        this.dispatch({type: "poll"})
       } else if (badVersion(err)) {
         this.report.failure(err)
-        this.onAction({type: "restart"})
+        this.dispatch({type: "restart"})
       } else {
-        this.onAction({type: "recover", error: err})
+        this.dispatch({type: "recover", error: err})
       }
     })
   }
@@ -195,7 +194,7 @@ class EditorConnection {
     if (newBackOff > 1000 && this.backOff < 1000) this.report.delay(err)
     this.backOff = newBackOff
     setTimeout(() => {
-      if (this.state.comm == "recover") this.onAction({type: "retry", requestDone: true})
+      if (this.state.comm == "recover") this.dispatch({type: "retry", requestDone: true})
     }, this.backOff)
   }
 

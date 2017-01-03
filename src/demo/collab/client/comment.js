@@ -30,17 +30,21 @@ class CommentState {
     return this.decos.find(pos, pos)
   }
 
-  applyAction(action, doc) {
-    if (action.type == "transform")
-      return new CommentState(this.version, this.decos.map(action.transform.mapping, action.transform.doc), this.unsent)
-    if (action.type == "newComment")
-      return new CommentState(this.version, this.decos.add(doc, [deco(action.from, action.to, action.comment)]),
-                              this.unsent.concat(action))
-    if (action.type == "deleteComment")
-      return new CommentState(this.version, this.decos.remove([this.findComment(action.comment.id)]), this.unsent.concat(action))
-    if (action.type == "receive")
-      return this.receive(action.comments, doc)
-    return this
+  apply(tr) {
+    let action = tr.get(commentPlugin), actionType = action && action.type
+    if (!action && tr.steps.length == 0) return this
+    let base = this
+    if (actionType == "receive") base = base.receive(action, tr.doc)
+    let decos = base.decos, unsent = base.unsent
+    if (tr.steps.length) decos = decos.map(tr.mapping, tr.doc)
+    if (actionType == "newComment") {
+      decos = decos.add(tr.doc, [deco(action.from, action.to, action.comment)])
+      unsent = unsent.concat(action)
+    } else if (actionType == "deleteComment") {
+      decos = decos.remove([this.findComment(action.comment.id)])
+      unsent = unsent.concat(action)
+    }
+    return new CommentState(base.version, decos, unsent)
   }
 
   receive({version, events, sent}, doc) {
@@ -83,7 +87,7 @@ class CommentState {
 const commentPlugin = new Plugin({
   state: {
     init: CommentState.init,
-    applyAction(action, prev, state) { return prev.applyAction(action, state.doc) }
+    apply(tr, prev) { return prev.apply(tr) }
   },
   props: {
     decorations(state) { return this.getState(state).decos }
@@ -97,12 +101,13 @@ function randomID() {
 
 // Command for adding an annotation
 
-exports.addAnnotation = function(state, onAction) {
+exports.addAnnotation = function(state, dispatch) {
   let sel = state.selection
   if (sel.empty) return false
-  if (onAction) {
+  if (dispatch) {
     let text = prompt("Annotation text", "")
-    if (text) onAction({type: "newComment", from: sel.from, to: sel.to, comment: new Comment(text, randomID())})
+    if (text)
+      dispatch(state.tr.set(commentPlugin, {type: "newComment", from: sel.from, to: sel.to, comment: new Comment(text, randomID())}))
   }
   return true
 }
@@ -114,32 +119,34 @@ exports.annotationIcon = {
 
 // Comment UI
 
-exports.commentUI = function(onAction) {
+exports.commentUI = function(options) {
   return new Plugin({
     props: {
       decorations(state) {
-        return commentTooltip(state, onAction)
+        return commentTooltip(state, options)
       }
     }
   })
 }
 
-function commentTooltip(state, onAction) {
+function commentTooltip(state, options) {
   let sel = state.selection
   if (!sel.empty) return null
   let comments = commentPlugin.getState(state).commentsAt(sel.from)
   if (!comments.length) return null
-  return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, onAction))])
+  return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, options))])
 }
 
-function renderComment(comment, onAction) {
+function renderComment(comment, options) {
   let btn = crel("button", {class: "commentDelete", title: "Delete annotation"}, "×")
-  btn.addEventListener("click", () => onAction({type: "deleteComment", comment}))
+  btn.addEventListener("click", () => {
+    options.dispatch(options.getState().tr.set(commentPlugin, {type: "deleteComment", comment}))
+  })
   return crel("li", {class: "commentText"}, comment.text, btn)
 }
 
-function renderComments(comments, onAction) {
+function renderComments(comments, options) {
   return crel("div", {class: "tooltip-wrapper"},
               crel("ul", {class: "commentList"},
-                   comments.map(c => renderComment(c.options.comment, onAction))))
+                   comments.map(c => renderComment(c.options.comment, options))))
 }

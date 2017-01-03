@@ -20,7 +20,6 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
     doc: DOMParser.fromSchema(schema).parse(content),
     plugins: exampleSetup({schema})
   }),
-  onAction(action) { view.updateState(view.editor.state.applyAction(action)) },
   onFocus() {
     if (tip) {
       tip.innerHTML = "<a href='#demos' style='text-decoration: none; pointer-events: auto; color: inherit'>Find more demos below ↓</a>"

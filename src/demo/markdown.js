@@ -19,8 +19,7 @@ function toProseMirror(content) {
     state: EditorState.create({
       doc: defaultMarkdownParser.parse(content),
       plugins: exampleSetup({schema})
-    }),
-    onAction: action => view.updateState(view.editor.state.applyAction(action))
+    })
   })
   window.view = view.editor
   view.editor.focus()

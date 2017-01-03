@@ -12,8 +12,7 @@ import {EditorView} from "prosemirror-view"
 import {schema} from "prosemirror-schema-basic"
 
 let view = new EditorView(document.body, {
-  state: EditorState.create({schema}),
-  onAction: action => view.updateState(view.state.applyAction(action))
+  state: EditorState.create({schema})
 })
 </pre>
 
