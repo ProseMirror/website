@@ -102,8 +102,8 @@ var collab = require("prosemirror-collab")
 function collabEditor(authority, place) {
   var view = new EditorView(place, {
     state: EditorState.create({schema: schema, plugins: [collab.collab()]}),
-    onAction: function(action) {
-      var newState = view.state.applyAction(action)
+    dispatchTransaction: function(transaction) {
+      var newState = view.state.apply(transaction)
       view.updateState(newState)
       var sendable = collab.sendableSteps(newState)
       if (sendable)
@@ -114,8 +114,8 @@ function collabEditor(authority, place) {
 
   authority.onNewSteps.push(function() {
     var newData = authority.stepsSince(collab.getVersion(view.state))
-    view.props.onAction(
-      collab.receiveAction(view.state, newData.steps, newData.clientIDs))
+    view.dispatch(
+      collab.receiveTransaction(view.state, newData.steps, newData.clientIDs))
   })
 
   return view
@@ -128,13 +128,14 @@ whether there is anything to send to the authority. If so, it sends
 it.
 
 It also registers a function that the authority should call when new
-steps are available, and which creates an [action](##state.Action)
+steps are available, and which creates a [transaction](##state.Transaction)
 that updates our local editor state to reflect those steps.
 
 When a set of steps gets rejected by the authority, they will remain
 unconfirmed until, supposedly soon after, we receive new steps from
 the authority. After that happens, because the `onNewSteps` callback
-calls `onAction`, the code will try to submit its changes again.
+calls `dispatch`, which will call our `dispatchTransaction` function,
+the code will try to submit its changes again.
 
 That's all there is to it. Of course, with asynchronous data channels
 (such as long polling in

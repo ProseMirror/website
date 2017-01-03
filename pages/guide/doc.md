@@ -42,11 +42,11 @@ paragraph using a character offset rather than a path in a tree, and
 makes it easier to perform operations like splitting or changing the
 style of the content without performing awkward tree manipulation.
 
-A full document is just a node, usually of type [`Doc`](##model.Doc).
-The content is represented as the top-level node's child nodes. Often,
-it'll contain a series of block nodes, some of which may be textblocks
-that contain inline content. But the top-level node may also be a
-textblock itself, so that the document contains only inline content.
+A full document is just a node. The document content is represented as
+the top-level node's child nodes. Often, it'll contain a series of
+block nodes, some of which may be textblocks that contain inline
+content. But the top-level node may also be a textblock itself, so
+that the document contains only inline content.
 
 What kind of node is allowed where is determined by the document's
 [schema](schema.html).
@@ -63,16 +63,16 @@ that indicate its role ([`isBlock`](##model.NodeType.isBlock),
 Each type may have [attributes](##model.NodeType.attrs) associated
 with it, which are values [stored](##model.Node.attrs) in every node
 of that type that provide more information about the node. For
-example, an [image](##model.Image) node stores its image URL in an
-attribute named `src`.
+example, an [image](##model.Image) node might store its image URL in
+an attribute named `src`.
 
 In addition, nodes come with an array of [marks](##model.Mark), which
-add information like [emphasis](##model.EmMark) or being a
+can add information like [emphasis](##model.EmMark) or being a
 [link](##model.LinkMark).
 
-Even nodes that don't allow content have a `content` property
-containing a [fragment object](##model.Fragment), a collection of
-child nodes. It will simply be empty for empty nodes.
+All nodes have a `content` property containing a [fragment
+object](##model.Fragment), a collection of child nodes. For nodes that
+don't allow content, it will simply be empty.
 
 Type, attributes, marks, and content are the data that make up a
 normal node obect. Text nodes also have a [`text`](##model.Node.text)
@@ -136,11 +136,11 @@ have a handle to a document (or node, or fragment) that object will
 stay the same.
 
 This has a bunch of advantages. It makes it impossible to have an
-editor in an invalid intermediate state, for example, since a new
-document can be swapped in instantaneously. It also makes it easier to
-reason about documents in a mathematical-like way, which is really
-hard if your values keep changing underneath you. For example, it
-allows ProseMirror to run a very efficient DOM
+editor in an invalid intermediate state, since a new document can be
+swapped in instantaneously. It also makes it easier to reason about
+documents in a mathematical-like way, which is really hard if your
+values keep changing underneath you. For example, it allows
+ProseMirror to run a very efficient DOM
 [update](##view.EditorView.update) algorithm by comparing the last
 document it drew to the screen to the current document.
 
@@ -148,7 +148,7 @@ To create an updated version of a whole document, you'll usually want
 to use [`Node.replace`](##model.Node.replace), which replaces a given
 range of the document with a [“slice”](##model.Slice) of new content.
 
-To update a node shallowly, you'll usually want to use its
+To update a node shallowly, you can use its
 [`copy`](##model.Node.copy) method, which creates a similar node with
 new content. Fragments also have various updating methods, such as
 [`replaceChild`](##model.Fragment.replaceChild) or

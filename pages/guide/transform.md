@@ -59,11 +59,13 @@ wraps a document, and provides a number of methods that allow you to
 make changes to that document, accumulating steps and position maps in
 the process. For each step, it will immediately compute the document.
 
-When working with an editor, you'll usually want to create an
-[`EditorTransform`](##state.EditorTransform), which adds some
-selection-related [methods](##state.EditorTransform.replaceSelection),
-and an [`action`](##state.EditorTransform.action) method to apply the
-transform to a [state](##state.EditorState).
+When working with an editor, you'll usually want to create a
+[`Transaction`](##state.Transaction), which is a subclass of
+`Transform` that also knows about other [editor
+state](##state.EditorState) fields, adds some convenient
+selection-aware [methods](##state.Transaction.replaceSelection),
+and can be used to [create](##state.EditorState.apply) a new editor
+state.
 
 ## Rebasing
 
@@ -108,10 +110,9 @@ mapped over the following chain of maps:
 
     rebase(stepB2, [invert(mapB1), mapA1, mapA2, mapB1'])
 
-I.e. first the inverse of the map that was produced by applying
-`stepB1` to `doc0`, then through the pipeline of maps produced by
-applying `stepA1` and `stepA2`, and finally through the map produced
-by applying `stepB1'` to `docA`.
+I.e. first the inverse of the map for `stepB1` to `doc0`, then through
+the pipeline of maps produced by applying `stepA1` and `stepA2`, and
+finally through the map produced by applying `stepB1'` to `docA`.
 
 If there was a `stepB3`, we'd get the pipeline for that one by taking
 the one above, prefixing it with `invert(mapB2)` and adding `mapB2'`
