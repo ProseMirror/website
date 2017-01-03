@@ -23,7 +23,11 @@ function toProseMirror(content) {
   })
   window.view = view.editor
   view.editor.focus()
-  getContent = () => defaultMarkdownSerializer.serialize(view.editor.state.doc)
+  getContent = () => {
+    let content = defaultMarkdownSerializer.serialize(view.editor.state.doc)
+    view.destroy()
+    return content
+  }
 }
 toTextArea(document.querySelector("#markdown_content").textContent, false)
 
