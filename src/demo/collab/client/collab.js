@@ -136,7 +136,7 @@ class EditorConnection {
       this.backOff = 0
       if (data.steps && (data.steps.length || data.comment.length)) {
         let tr = receiveTransaction(this.state.edit, data.steps.map(j => Step.fromJSON(schema, j)), data.clientIDs)
-        tr.set(commentPlugin, {type: "receive", version: data.commentVersion, events: data.comment, sent: 0})
+        tr.setMeta(commentPlugin, {type: "receive", version: data.commentVersion, events: data.comment, sent: 0})
         this.dispatch({type: "transaction", transaction: tr, requestDone: true})
       } else {
         this.poll()
@@ -171,7 +171,7 @@ class EditorConnection {
       let tr = steps
           ? receiveTransaction(this.state.edit, steps.steps, repeat(steps.clientID, steps.steps.length))
           : this.state.edit.tr
-      tr.set(commentPlugin, {type: "receive", version: JSON.parse(data).commentVersion, events: [], sent: comments.length})
+      tr.setMeta(commentPlugin, {type: "receive", version: JSON.parse(data).commentVersion, events: [], sent: comments.length})
       this.dispatch({type: "transaction", transaction: tr, requestDone: true})
     }, err => {
       if (err.status == 409) {

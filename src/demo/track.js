@@ -13,7 +13,7 @@ const trackPlugin = new Plugin({
     },
     apply(tr, tracked) {
       if (tr.docChanged) tracked = tracked.applyTransform(tr)
-      let commitMessage = tr.get(this)
+      let commitMessage = tr.getMeta(this)
       if (commitMessage) tracked = tracked.applyCommit(commitMessage, new Date(tr.time))
       return tracked
     }
@@ -24,7 +24,7 @@ const highlightPlugin = new Plugin({
   state: {
     init() { return {deco: DecorationSet.empty, commit: null} },
     apply(tr, prev, oldState, state) {
-      let highlight = tr.get(this)
+      let highlight = tr.getMeta(this)
       if (highlight && highlight.add != null && prev.commit != highlight.add) {
         let tState = trackPlugin.getState(oldState)
         let decos = tState.blameMap
@@ -157,7 +157,7 @@ view = new MenuBarEditorView(document.querySelector("#editor"), {state, dispatch
 window.view = view.editor
 
 dispatch(state.tr.insertText("Type something, and then commit it."))
-dispatch(state.tr.set(trackPlugin, "Initial commit"))
+dispatch(state.tr.setMeta(trackPlugin, "Initial commit"))
 
 function setDisabled(state) {
   let input = document.querySelector("#message")
@@ -166,7 +166,7 @@ function setDisabled(state) {
 }
 
 function doCommit(message) {
-  dispatch(state.tr.set(trackPlugin, message))
+  dispatch(state.tr.setMeta(trackPlugin, message))
 }
 
 function renderCommits(state, dispatch) {
@@ -187,11 +187,11 @@ function renderCommits(state, dispatch) {
     node.lastChild.addEventListener("click", () => revertCommit(commit))
     node.addEventListener("mouseover", e => {
       if (!node.contains(e.relatedTarget))
-        dispatch(state.tr.set(highlightPlugin, {add: commit}))
+        dispatch(state.tr.setMeta(highlightPlugin, {add: commit}))
     })
     node.addEventListener("mouseout", e => {
       if (!node.contains(e.relatedTarget))
-        dispatch(state.tr.set(highlightPlugin, {clear: commit}))
+        dispatch(state.tr.setMeta(highlightPlugin, {clear: commit}))
     })
     out.appendChild(node)
   })
@@ -212,7 +212,7 @@ function revertCommit(commit) {
     if (result && result.doc) remap.appendMap(remapped.getMap(), i)
   }
   if (tr.docChanged) {
-    dispatch(tr.set(trackPlugin, `Revert '${commit.message}'`))
+    dispatch(tr.setMeta(trackPlugin, `Revert '${commit.message}'`))
   }
 }
 

@@ -12,7 +12,7 @@ let showProbPlugin = new Plugin({
   state: {
     init: () => ({prob: null, deco: DecorationSet.empty}),
     apply: (tr, prev, state) => {
-      let show = tr.get(showProbPlugin)
+      let show = tr.getMeta(showProbPlugin)
       if (show !== undefined)
         return {prob: show, deco: show ? decoForProb(state.doc, show) : DecorationSet.empty}
       if (tr.docChanged)
@@ -82,12 +82,12 @@ function runLint(view) {
 }
 
 function showProb(view, prob) {
-  view.dispatch(view.state.tr.set(showProbPlugin, prob))
+  view.dispatch(view.state.tr.setMeta(showProbPlugin, prob))
 }
 function clearProb(view, prob) {
   let cur = showProbPlugin.getState(view.state).prob
   if (prob ? cur == prob : cur)
-    view.dispatch(view.state.tr.set(showProbPlugin, null))
+    view.dispatch(view.state.tr.setMeta(showProbPlugin, null))
 }
 
 let badWords = /obviously|clearly|evidently|actually/ig

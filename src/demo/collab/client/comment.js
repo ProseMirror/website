@@ -31,7 +31,7 @@ class CommentState {
   }
 
   apply(tr) {
-    let action = tr.get(commentPlugin), actionType = action && action.type
+    let action = tr.getMeta(commentPlugin), actionType = action && action.type
     if (!action && !tr.docChanged) return this
     let base = this
     if (actionType == "receive") base = base.receive(action, tr.doc)
@@ -107,7 +107,7 @@ exports.addAnnotation = function(state, dispatch) {
   if (dispatch) {
     let text = prompt("Annotation text", "")
     if (text)
-      dispatch(state.tr.set(commentPlugin, {type: "newComment", from: sel.from, to: sel.to, comment: new Comment(text, randomID())}))
+      dispatch(state.tr.setMeta(commentPlugin, {type: "newComment", from: sel.from, to: sel.to, comment: new Comment(text, randomID())}))
   }
   return true
 }
@@ -140,7 +140,7 @@ function commentTooltip(state, options) {
 function renderComment(comment, options) {
   let btn = crel("button", {class: "commentDelete", title: "Delete annotation"}, "×")
   btn.addEventListener("click", () => {
-    options.dispatch(options.getState().tr.set(commentPlugin, {type: "deleteComment", comment}))
+    options.dispatch(options.getState().tr.setMeta(commentPlugin, {type: "deleteComment", comment}))
   })
   return crel("li", {class: "commentText"}, comment.text, btn)
 }
