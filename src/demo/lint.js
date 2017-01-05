@@ -15,7 +15,7 @@ let showProbPlugin = new Plugin({
       let show = tr.get(showProbPlugin)
       if (show !== undefined)
         return {prob: show, deco: show ? decoForProb(state.doc, show) : DecorationSet.empty}
-      if (tr.steps.length)
+      if (tr.docChanged)
         return {prob: prev.prob, deco: prev.deco.map(tr.mapping, tr.doc)}
       return prev
     }
@@ -42,7 +42,7 @@ let view = new MenuBarEditorView(document.querySelector("#editor"), {
   }),
   dispatchTransaction: tr => {
     view.updateState(view.editor.state.apply(tr))
-    if (tr.steps.length) {
+    if (tr.docChanged) {
       clearTimeout(delay)
       delay = setTimeout(() => runLint(view.editor), 500)
     }

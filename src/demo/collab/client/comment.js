@@ -32,11 +32,11 @@ class CommentState {
 
   apply(tr) {
     let action = tr.get(commentPlugin), actionType = action && action.type
-    if (!action && tr.steps.length == 0) return this
+    if (!action && !tr.docChanged) return this
     let base = this
     if (actionType == "receive") base = base.receive(action, tr.doc)
     let decos = base.decos, unsent = base.unsent
-    if (tr.steps.length) decos = decos.map(tr.mapping, tr.doc)
+    decos = decos.map(tr.mapping, tr.doc)
     if (actionType == "newComment") {
       decos = decos.add(tr.doc, [deco(action.from, action.to, action.comment)])
       unsent = unsent.concat(action)

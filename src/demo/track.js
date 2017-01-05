@@ -12,7 +12,7 @@ const trackPlugin = new Plugin({
       return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
     },
     apply(tr, tracked) {
-      if (tr.steps.length) tracked = tracked.applyTransform(tr)
+      if (tr.docChanged) tracked = tracked.applyTransform(tr)
       let commitMessage = tr.get(this)
       if (commitMessage) tracked = tracked.applyCommit(commitMessage, new Date(tr.time))
       return tracked
@@ -33,7 +33,7 @@ const highlightPlugin = new Plugin({
         return {deco: DecorationSet.create(state.doc, decos), commit: highlight.add}
       } else if (highlight && highlight.clear != null && prev.commit == highlight.clear) {
         return {deco: DecorationSet.empty, commit: null}
-      } else if (tr.steps.length && prev.commit) {
+      } else if (tr.docChanged && prev.commit) {
         return {deco: prev.deco.map(tr.mapping, tr.doc), commit: prev.commit}
       } else {
         return prev
@@ -211,7 +211,7 @@ function revertCommit(commit) {
     let result = remapped && tr.maybeStep(remapped)
     if (result && result.doc) remap.appendMap(remapped.getMap(), i)
   }
-  if (tr.steps.length) {
+  if (tr.docChanged) {
     dispatch(tr.set(trackPlugin, `Revert '${commit.message}'`))
   }
 }
