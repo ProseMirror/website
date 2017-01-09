@@ -104,7 +104,7 @@ Let's go over the example code again:
       state: EditorState.create({schema: schema})
     })
 
-The view constructor expects a place in the DOM as first argument
+The view constructor expects a place in the DOM as the first argument
 (either a node to append to a or a function that will place a DOM
 node), and a set of _props_ as the second. 'Props' is used in the
 [React sense](https://facebook.github.io/react/docs/tutorial.html#using-props),

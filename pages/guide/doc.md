@@ -81,7 +81,7 @@ property containing their text value.
 ## Traversing
 
 There are various ways in which you can run over the content of a
-node. For single-level traversal, the easies way is to use the
+node. For single-level traversal, the easiest way is to use the
 [`forEach`](##model.Node.forEach) method, which, much like
 `Array.forEach`, will call your function for each child node.
 
