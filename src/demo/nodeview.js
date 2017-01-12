@@ -1,4 +1,4 @@
-const {EditorState, Selection} = require("prosemirror-state")
+const {EditorState, Selection, NodeSelection} = require("prosemirror-state")
 const {MenuBarEditorView} = require("prosemirror-menu")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
@@ -40,6 +40,9 @@ class CodeBlockView {
       })
     })
     setTimeout(() => this.cm.refresh(), 20)
+    this.cm.on("focus", () => {
+      this.view.dispatch(this.view.state.tr.setSelection(NodeSelection.create(this.view.state.doc, this.getPos())))
+    })
 
     this.dom = this.cm.getWrapperElement()
 
