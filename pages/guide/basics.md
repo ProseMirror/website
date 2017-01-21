@@ -87,7 +87,7 @@ editor's current state—what the document is, where the selection or
 cursor is, and so on.
 
 When the user interacts with the document, for example by typing
-something, the view generates [`Transaction`s](##state.Transactions),
+something, the view generates [`Transaction`s](##state.Transaction),
 which can be [applied](##state.EditorState.apply) to the state to
 produce a new, updated state.
 
