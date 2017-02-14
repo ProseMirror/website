@@ -28,8 +28,8 @@ const dino = {
 }
 
 const dinoSchema = new Schema({
-  nodes: schema.nodeSpec.addBefore("image", "dino", dino),
-  marks: schema.markSpec
+  nodes: schema.spec.nodes.addBefore("image", "dino", dino),
+  marks: schema.spec.marks
 })
 const dinoType = dinoSchema.nodes.dino
 

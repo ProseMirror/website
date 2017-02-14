@@ -6,8 +6,8 @@ const {addListNodes} = require("prosemirror-schema-list")
 const {exampleSetup} = require("prosemirror-example-setup")
 
 const schema = new Schema({
-  nodes: addListNodes(baseSchema.nodeSpec, "paragraph block*", "block"),
-  marks: baseSchema.markSpec
+  nodes: addListNodes(baseSchema.spec.nodes, "paragraph block*", "block"),
+  marks: baseSchema.spec.marks
 })
 
 let content = document.querySelector("#content")
