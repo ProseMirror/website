@@ -1,48 +1,50 @@
-<<in {title, meta, nav, editor}>>
+<<in {type, title, meta, toc}>>
+
 <!doctype html>
-
-<meta charset="utf-8">
-<link rel=stylesheet href=/css/site.css>
-<<if editor>>
-  <link rel=stylesheet href=/css/prosemirror.css>
-  <link rel=stylesheet href=/css/menu.css>
-  <link rel=stylesheet href=/css/example-setup.css>
-<</if>>
+<meta charset=utf8>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title><<t title>></title>
 
 <<for name, value in meta || {}>>
   <meta property="<<t name>>" content="<<t value>>">
 <</for>>
 
-<nav>
-  <div class=menubutton>☰</div>
-  <a href="http://prosemirror.net">
-    <h1>ProseMirror</h1>
-    <img id=logo src="/img/logo.png">
-  </a>
-  <<if nav>>
+<title><<t title || "ProseMirror">></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel=stylesheet href=/css/site.css>
+
+<header <<if type == "frontpage">>class=frontpage<</if>>>
+  <nav>
+    <a class=logo href=".">ProseMirror</a>
+    <div class=navlinks>
+      <a href="/examples" <<if type == "examples">>class=active<</if>>>Examples</a>
+      <a href="/docs" <<if type == "docs">>class=active<</if>>>Documentation</a>
+      <a href="https://discuss.prosemirror.net/">Discuss</a>
+      <a href="https://github.com/prosemirror">GitHub</a>
+    </div>
+  </nav>
+  <<if type == "frontpage">>
+    <h1>A toolkit for building rich-text editors on the web</h1>
+    <div id=editor></div>
+  <</if>>
+</header>
+
+<<if toc>>
+  <nav id=toc>
     <ul>
-      <<for title, target in nav>>
-        <li>
-          <a href="<<t typeof target == "string" ? target : target.href>>"><<t title>></a>
-          <<if typeof target != "string" && target.sub>>
+      <<for item toc>>
+        <li><a href="<<t item.href>>"><<t item.name>></a>
+          <<if item.sub>>
             <ul>
-              <<for title_, href in target.sub>>
-                <li><a href="<<t href>>"><<t title_>></a></li>
+              <<for sub item.sub>>
+                <li><a href="<<t sub.href>>"><<t sub.name>></a></li>
               <</for>>
             </ul>
           <</if>>
         </li>
       <</for>>
     </ul>
-  <</if>>
-  <ul>
-    <li><a href="/docs.html">docs</a>
-    <li><a href="http://discuss.prosemirror.net/">discuss</a>
-    <li><a href="https://github.com/prosemirror">github</a>
-  </ul>
-</nav>
+    <input id=search placeholder="Type to search">
+  </nav>
+<</if>>
 
 <article>

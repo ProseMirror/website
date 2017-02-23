@@ -28,3 +28,8 @@ public/demo/bundle_collab.js: src/demo/collab/client/*.js
 
 public/demo/bundle_%.js: src/demo/%.js
 	node_modules/.bin/$(BUILD) --outfile $@ -t bubleify $<
+
+public/css/editor.css: node_modules/prosemirror-view/style/prosemirror.css \
+                       node_modules/prosemirror-menu/style/menu.css \
+                       node_modules/prosemirror-example-setup/style/style.css
+	cat $^ > $@

@@ -23,7 +23,7 @@ class CommentState {
   findComment(id) {
     let current = this.decos.find()
     for (let i = 0; i < current.length; i++)
-      if (current[i].options.comment.id == id) return current[i]
+      if (current[i].spec.comment.id == id) return current[i]
   }
 
   commentsAt(pos) {
@@ -148,5 +148,5 @@ function renderComment(comment, options) {
 function renderComments(comments, options) {
   return crel("div", {class: "tooltip-wrapper"},
               crel("ul", {class: "commentList"},
-                   comments.map(c => renderComment(c.options.comment, options))))
+                   comments.map(c => renderComment(c.spec.comment, options))))
 }

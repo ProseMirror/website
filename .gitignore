@@ -1,6 +1,7 @@
 /node_modules
 /public/**/*.html
 /public/demo/bundle_*.js
+/public/css/editor.css
 .tern-port
 /src/demo/collab/demo-instances.json
 /CHANGELOG.md

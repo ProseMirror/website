@@ -1,144 +1,90 @@
 <<head {
+  type: "frontpage",
   title: "ProseMirror",
   meta: {"og:title": "ProseMirror",
          "og:type": "website",
          "og:url": "http://prosemirror.net/",
          "og:image": "http://prosemirror.net/img/picture.png",
          "og:description": "In-browser structured text editing component"},
-  nav: {features: "#features",
-        project: "#project",
-        demos: "#demos"},
-  editor: true
 }>>
 
-<p>ProseMirror is an in-browser semantic rich text editor component.
-This is what it might look like:</p>
-
 <style>
-.demoblocks {
-  margin: 0 -20px;
-}
-
-.demoblock {
-  display: inline-block;
-  vertical-align: top;
-  padding: 5px;
-  text-indent: 5px;
-  border: 1px solid white;
-}
-
-.demoblock:hover {
-  border-radius: 5px;
-  border: 1px solid #7cf;
-}
-
-.demoblock a {
-  text-decoration: none;
-  color: #777;
-}
-
-.demotip {
-  z-index: 6;
-  background: #ff7;
-  border: 1px solid #ee5;
-  color: #440;
-  position: absolute;
-  right: -20px;
-  bottom: 2px;
-  transform: rotate(-3deg);
-  padding: 4px 15px;
-  border-radius: 4px;
-  pointer-events: none;
-}
-
-.ProseMirror-menubar-wrapper {
-  margin: 4px -15px 1em;
-  border-radius: 10px;
-  background: white;
-  border-color: #5ad;
-}
-
-.ProseMirror {
-  outline: none;
-}
+  .ProseMirror { padding: 2px 20px; min-height: 180px; outline: none; }
+  p.callout {
+    padding: 0 30px 0 15px;
+    font-weight: 600;
+  }
+  .fund-button {
+    padding: 5px 15px;
+    margin: 3px 30px 3px 10px;
+    border: none;
+    border-radius: 4px;
+    float: right;
+    background: #0095ff;
+    color: white !important;
+    font-weight: 600;
+  }
+  .fund-button:hover {
+    background: #0af;
+  }
 </style>
 
 <div id="content">
-  <h3>Control your Content</h3>
-
-  <p>There is something of a gap between <a href="http://commonmark.org">MarkDown</a> textareas
-  (limited, hard to use) and classical HTML WYSIWYG editors (content
-  becomes a non-semantic blob). ProseMirror aims to fill this gap.</p>
-
-  <p>It does this by decoupling its content model from HTML. Documents
-  are represented with a JavaScript data structure, and their
-  structure is described by a <a href="guide/schema.html">schema</a>
-  that you can provide yourself. This gives you full control over the
-  kind of <a href="demo/dino.html">elements</a> that may appear in
-  your document, and the way they nest and relate to each other.</p>
-
-  <ul>
-    <li>Users get a clean, consistent interface that allows them to enter
-    only documents that fit the schema.
-    <li>You get clean, consistent content that you can format
-    or <a href="demo_lint.html">analyze</a>.
-  </ul>
-
-  <p>ProseMirror is open-source under
-  an <a href="https://github.com/ProseMirror/prosemirror/blob/master/LICENSE">MIT</a>
-  license.</p>
+  <p>Like this one!</p>
+  <p>Try it out by typing in here or see more <a href="examples">examples</a>.</p>
 </div>
 
-<div id=editor menustyle=tooltip style="position: relative">
-  <div class=demotip>↖ You can edit this</div>
-</div>
+<p>An ideal content editor produces structured, semantically
+meaningful documents, but does so in a way that is easy for users to
+understand. ProseMirror tries to bridge the gap
+between <a href="http://commonmark.org/">Markdown</a> text editing and
+classical <a href="https://en.wikipedia.org/wiki/WYSIWYG">WYSIWYG</a>
+editors.</p>
 
-<h3 id=features>Features</h3>
+<p>It does this by implementing a WYSIWYG-style editing interface for
+document data structures more constrained and structured than plain
+HTML. You can customize the shape and structure of the documents your
+editor creates, and tailor them to your application's needs.</p>
 
-<p>ProseMirror is designed to allow customization and extension
-throughout.</p>
+<h2 class=hr id=features>Features</h2>
 
-<ul>
-  <li>Support for <a href="demo/collab.html">collaborative editing</a>
-  (<a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">details</a>)
-
-  <li>Export and import from ProseMirror's document format to HTML (or
-  <a href="demo/markdown.html">Markdown</a>)
-
-  <li>A clean, immutable document data structure (not the DOM) to
-  program against
-
-  <li>Document schemas that can be modified
-  and <a href="demo/dino.html">extended</a> without having to rewrite
-  the whole editor
-
-  <li>A rich set of
-  editing <a href="ref.html#commands">commands</a> that can
-  appear in the menu or be bound to keys, and the ability to define
-  your own
-
-  <li>An API that easily integrates with React-style or linear
-  dataflow based architectures
-
-  <li>Menus and other UI elements live outside of the core library,
-  and can be implemented according to your own preference (and the
-  frameworks you may use)
-
-  <li>"<a href="ref.html#view.Decoration">Decorations</a>" can be used
-  to influence the way the document is drawn, to add widgets or style
-  pieces of text
-
-  <li>A modular architecture to make sure you only load the code you
-  need
-
-  <li>A plugin system that allows you to easily enable additional
-  functionality and package up your extensions in a convenient format
-
-  <li>Changes are first-class values and can be stored, inspected,
-  and <a href="demo_track.html">manipulated</a>
+<ul class=grid-list>
+  <li>
+    <h3>Collaborative editing</h3>
+    <p>ProseMirror has built-in, ground-up, rock solid support for
+    collaborative editing, where multiple people work on the same
+    document in real time.</p>
+  </li>
+  <li>
+    <h3>Extensible schemas</h3>
+    <p>Document schemas allow editing documents with a custom
+    structure without writing your own editor from scratch.</p>
+  </li>
+  <li>
+    <h3>Modular</h3>
+    <p>A modular architecture makes sure you only load the code you
+    need, and can replace parts of the system as needed.</p>
+  </li>
+  <li>
+    <h3>Pluggable</h3>
+    <p>A plugin system allows you to easily enable additional
+    functionality, and package your own extensions in a convenient
+    format.</p>
+  </li>
+  <li>
+    <h3>Functional</h3>
+    <p>A largely functional and immutable architecture makes it easy
+    to integrate ProseMirror into modern web apps, and to reason about
+    the way data flows.</p>
+  </li>
+  <li>
+    <h3>Unopinionated</h3>
+    <p>The core library is small and generic, providing a base onto
+    which very different types of editors can be built.</p>
+  </li>
 </ul>
 
-<h3 id=project>Project</h3>
+<h2 class=hr id=about>About</h2>
 
 <p>ProseMirror
 is <a href="https://github.com/ProseMirror/prosemirror/blob/master/LICENSE">open
@@ -146,10 +92,11 @@ source</a>, and you are legally free to use it commercially. Yet,
 writing, maintaining, supporting, and setting up infrastructure for
 such a project takes a lot of work and energy. Therefore...</p>
 
+<a class=fund-button href="http://marijnhaverbeke.nl/fund/">Fund ProseMirror</a>
+
 <p class=callout>If you are using ProseMirror to make profit, there is
-a <u>social</u> expectation that you
-help <a href="http://marijnhaverbeke.nl/fund/">fund</a> its
-maintenance.</p>
+a <u>social</u> expectation that you help
+fund its maintenance.</p>
 
 <p>ProseMirror is being developed
 on <a href="https://github.com/prosemirror/">GitHub</a>. Contributions
@@ -176,31 +123,7 @@ was <a href="https://www.indiegogo.com/projects/prosemirror/">crowd-funded</a>
 by these 414 excellent <a href="backers.html">individuals and
 organizations</a>.</p>
 
-<h3 id="demos">Demos</h3>
-
-<p>Get a feel for the editor's possibilities by playing with these:</p>
-
-<div class=demoblocks>
-  <div class=demoblock>
-    <a href="demo/basic.html">Basics<br><img src="img/demo/basic.png"></a>
-  </div>
-  <div class=demoblock>
-    <a href="demo/markdown.html">User-friendly Markdown input<br><img src="img/demo/markdown.png"></a>
-  </div>
-  <div class=demoblock>
-    <a href="demo/dino.html">Extending the document model<br><img src="img/demo/dino.png"></a>
-  </div>
-  <div class=demoblock>
-    <a href="demo/lint.html">Document inspection and manipulation<br><img src="img/demo/lint.png"></a>
-  </div>
-  <div class=demoblock>
-    <a href="demo/track.html">Change tracking<br><img src="img/demo/track.png"></a>
-  </div>
-  <div class=demoblock>
-    <a href="demo/collab.html">Collaborative editing<br><img src="img/demo/collab.png"></a>
-  </div>
-</div>
-
+<link rel=stylesheet href="css/editor.css">
 <script src="demo/bundle_basic.js"></script>
 
 <<foot>>
