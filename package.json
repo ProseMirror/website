@@ -10,6 +10,7 @@
     }
   ],
   "dependencies": {
+    "bubleify": "^0.7.0",
     "codemirror": "^5.21.0",
     "crel": "^3.0.0",
     "prosemirror-collab": "^0.18.0",
@@ -26,7 +27,8 @@
     "prosemirror-schema-table": "^0.18.0",
     "prosemirror-state": "^0.18.0",
     "prosemirror-transform": "^0.18.0",
-    "prosemirror-view": "^0.18.0"
+    "prosemirror-view": "^0.18.0",
+    "uglifyify": "^3.0.4"
   },
   "devDependencies": {
     "bubleify": "^0.7.0",
