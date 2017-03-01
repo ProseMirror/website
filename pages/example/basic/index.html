@@ -1,0 +1,61 @@
+<<head {
+  type: "examples",
+  title: "ProseMirror basic example",
+}>>
+
+<h2>Editing with ProseMirror</h2>
+
+Using
+the <a href="https://github.com/prosemirror/prosemirror-example-setup">example
+setup</a>, <a href="https://github.com/prosemirror/prosemirror-menu">example
+menu</a>,
+and <a href="https://github.com/prosemirror/prosemirror-schema-basic">basic
+schema</a> modules, setting up an editor can be done in a few lines.
+
+<pre>
+let view = new MenuBarEditorView(document.body, {
+  state: EditorState.create({
+    schema,
+    plugins: exampleSetup({schema})
+  })
+})
+</pre>
+
+<p>(In a more demanding situation, where you want to configure your
+editor and wire it into your own UI style, you'll probably want to
+swap out the example setup and menu modules with something custom, and
+adjust the schema to your needs.)</p>
+
+<div id=editor></div>
+
+<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/example/basic/example.js">on github</a>.</p>
+
+<div style="display: none" id="content">
+  <h2>Using ProseMirror</h2>
+
+  <p>This is editable text. You can focus it and start typing.</p>
+
+  <p>To apply styling, you can select a piece of text and manipulate
+  its styling from the menu. The basic schema
+  supports <em>emphasis</em>, <strong>strong
+  text</strong>, <a href="http://marijnhaverbeke.nl/blog">links</a>, <code>code
+  font</code>, and <img src="/img/smiley.png"> images.</p>
+
+  <p>Block-level structure is manipulated, depending on the current
+  menu style, either through the top menubar, or through the
+  “hamburger” menu to the right of the selected paragraph. This allows
+  you to change paragraphs into headers or code blocks, to wrap them
+  in lists or blockquotes, to unwrap them, and to insert things like
+  horizontal rules.</p>
+
+  <p>Try using the "indent” item in the menu to wrap this paragraph in
+  a numbered list.</p>
+
+  <p>And turn this paragraph into a code block.</p>
+</div>
+
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="bundle.js"></script>
+
+<<foot>>
