@@ -1,19 +1,21 @@
-<<head {title: "ProseMirror Document Checking Demo",
-        nav: {demos: "/index.html#demos"},
-        editor: true}>>
-
-<h2>Working with content</h2>
+<<head {
+  type: "examples",
+  title: "ProseMirror lint example",
+}>>
 
 <style>
   .markprob { background: #fdd; border-bottom: 1px solid #f22; margin-bottom: -1px; }
   .problem { padding: 2px; cursor: pointer }
   .problem:hover { background: #fdd; border-radius: 5px }
-  .problem:before { border-radius: 100px; background: #f22; color: white; content: "!"; font-weight: bold; width: 1.1em; height: 1.1em;
+  .problem:before { border-radius: 100px; background: #f22; color: white; content: "!"; font-family: times, georgia, serif;
+                    font-weight: bold; width: 1.1em; height: 1.1em;
                     display: inline-block; text-align: center; margin: 0 10px 0 5px; padding-left: .5px; line-height: 1.1em }
   .probarrow { width: 0; display: inline-block; position: relative; overflow: visible }
   .probarrow img { width: 55px; height: 33px; position: absolute; right: 0; bottom: -10px; }
   .fixbutton { background: #0ae; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px }
 </style>
+
+<h3>Linter</h3>
 
 <p>The browser DOM serves its purpose—representing complex
 webpages—very well. But its huge scope and loose structure makes it
@@ -24,28 +26,25 @@ a smaller set of documents can be easier to reason about.</p>
 href="https://en.wikipedia.org/wiki/Lint_(software)">linter</a> that
 finds problems in your document, and makes it easy to fix them.</p>
 
-<h3>Demo</h3>
-
-<p>The full source code for this demo
-is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/lint.js">here</a>.</p>
-
 <div id=editor></div>
 <div id=lint_output></div>
 
-<p>Next demo: <a href="track.html">change tracking</a>.</p>
+<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/example/lint/example.js">on github</a>.</p>
 
 <div id=content style="display: none">
-<h2>Linting demo</h2>
+<h3>Linting demo</h3>
 
 <p>This is a sentence ,but the comma isn't in the right place.</p>
 
-<h4>Too-minor header</h4>
+<h5>Too-minor header</h5>
 
 <p>This is an image <img src="/img/smiley.png"> without alt text. You
 should <em>obviously</em> hover over the messages below to see where they
 occur.</p>
 </div>
 
-<script src="bundle_lint.js"></script>
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="bundle.js"></script>
 
 <<foot>>

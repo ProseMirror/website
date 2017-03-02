@@ -1,8 +1,8 @@
 /node_modules
 /public/**/*.html
-/public/example/*/bundle.js
-/public/example/prosemirror.js
+/public/examples/*/bundle.js
+/public/examples/prosemirror.js
 /public/css/editor.css
 .tern-port
-/src/demo/collab/demo-instances.json
+/src/collab/demo-instances.json
 /CHANGELOG.md

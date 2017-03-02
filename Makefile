@@ -2,12 +2,12 @@ PAGES:=$(wildcard pages/*.html) $(wildcard pages/**/*.html) $(wildcard pages/*.m
 
 EXAMPLES:=basic markdown dino nodeview lint track collab
 
-UGLIFY:=-g [ uglifyify -m -c ]
-ifdef NO_UGLIFY
-UGLIFY =
+UGLIFY:=
+ifdef UGLIFY
+UGLIFY=-g [ uglifyify -m -c ]
 endif
 
-all: $(subst .md,.html,$(PAGES:pages/%=public/%)) $(foreach EX,$(EXAMPLES), public/example/$(EX)/bundle.js)
+all: $(subst .md,.html,$(PAGES:pages/%=public/%)) $(foreach EX,$(EXAMPLES), public/examples/$(EX)/bundle.js)
 
 public/ref.html: pages/ref.html node_modules/prosemirror-*/src/* templates/* src/build/*.js
 	node src/build/build.js --ref $<
@@ -26,15 +26,17 @@ CORE:=prosemirror-model prosemirror-transform prosemirror-state prosemirror-view
       prosemirror-schema-basic prosemirror-schema-list \
       prosemirror-dropcursor prosemirror-menu prosemirror-example-setup
 
-public/example/prosemirror.js: $(foreach LIB,$(CORE),$(wildcard node_modules/$(LIB)/src/*.js))
+public/examples/prosemirror.js: $(foreach LIB,$(CORE),$(wildcard node_modules/$(LIB)/src/*.js))
+	mkdir -p $(dir $@)
 	node_modules/.bin/browserify -t bubleify $(UGLIFY) $(foreach LIB,$(CORE), -r $(LIB)) --outfile $@
 
-public/example/%/bundle.js: pages/example/%/example.js public/example/prosemirror.js
+public/examples/collab/bundle.js: src/collab/client/*.js
+	mkdir -p $(dir $@)
+	node_modules/.bin/browserify --outfile $@ -t bubleify $(foreach LIB,$(CORE), -x $(LIB)) src/collab/client/collab.js
+
+public/examples/%/bundle.js: pages/examples/%/example.js public/examples/prosemirror.js
 	mkdir -p $(dir $@)
 	node_modules/.bin/browserify --outfile $@ -t bubleify $(foreach LIB,$(CORE), -x $(LIB)) $<
-
-public/demo/bundle_collab.js: src/demo/collab/client/*.js
-	node_modules/.bin/browserify --outfile $@ -t bubleify src/demo/collab/client/collab.js
 
 public/css/editor.css: node_modules/prosemirror-view/style/prosemirror.css \
                        node_modules/prosemirror-menu/style/menu.css \

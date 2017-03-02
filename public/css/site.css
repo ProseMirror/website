@@ -231,12 +231,11 @@ hr, h2.hr:after {
 ul.grid-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 36px 0 -36px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   position: relative;
-  margin-bottom: -36px;
 }
 
 ul.grid-list > li {
@@ -316,4 +315,5 @@ dt {
 .ProseMirror {
   padding: 4px 8px 4px 14px;
   line-height: 1.2;
+  outline: none;
 }

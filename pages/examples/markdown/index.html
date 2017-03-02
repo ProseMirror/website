@@ -1,15 +1,16 @@
-<<head {title: "ProseMirror Markdown Demo",
-        nav: {demos: "/index.html#demos"},
-        editor: true}>>
-
-<h2>Friendly Markdown</h2>
+<<head {
+  type: "examples",
+  title: "ProseMirror markdown example",
+}>>
 
 <style>
   .ProseMirror { height: 120px; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
   textarea { width: 100%; height: 123px; border: 1px solid silver; box-sizing: border-box; -moz-box-sizing: border-box; padding: 3px 10px;
-             border-radius: 3px; border: 1px solid #38a }
+             border: none; outline: none }
   .ProseMirror-menubar-wrapper, #markdown textarea { display: block; margin-bottom: 4px }
 </style>
+
+<h3>Friendly Markdown</h3>
 
 <p>Say you have a site that allows users to enter comments, and you've
 decided to use Markdown for the comment input. Your target group
@@ -25,8 +26,6 @@ between both views as they are editing!</p>
 contains things that can be expressed in Markdown, we can be sure that
 the edited document can meaningfully be serialized in that format.</p>
 
-<h3>Demo</h3>
-
 <p>The full source code for this demo
 is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/markdown.js">here</a>.</p>
 
@@ -35,13 +34,15 @@ is <a href="https://github.com/ProseMirror/website/blob/master/src/demo/markdown
   <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
 </div>
 
-<p>Next demo: <a href="dino.html">extending the document model</a>.</p>
+<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/markdown/example.js">on github</a>.</p>
 
 <div style="display: none" id="markdown_content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?
 
 So we've given people the **choice** to use a more familiar, discoverable interface.
 </div>
 
-<script src="bundle_markdown.js"></script>
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="bundle.js"></script>
 
 <<foot>>

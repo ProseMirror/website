@@ -1,9 +1,7 @@
-<<head {title: "ProseMirror Collaborative Demo",
-        nav: {demos: "/index.html#demos",
-              "blog post": "http://marijnhaverbeke.nl/blog/collaborative-editing.html"},
-        editor: true}>>
-
-<h2>Collaborate</h2>
+<<head {
+  type: "examples",
+  title: "ProseMirror collab example",
+}>>
 
 <style>
 .subtle { color: #777 }
@@ -134,6 +132,8 @@ li.commentText + li.commentText {
 }
 </style>
 
+<h3>Collaborate</h3>
+
 <p>The editor below talks to a simple server-side service to allow
 real-time <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">collaborative
 editing</a>. Everybody connected to a given document sees the same
@@ -146,8 +146,6 @@ and click the speech bubble icon in the menu, you'll be prompted to
 enter an annotation. These are synced to other users and show up as
 text with yellow background. Put the cursor in an annotation to see
 what it says.</p>
-
-<h3>Demo</h3>
 
 <p><strong>Disclaimer:</strong> Since this demo is open for everybody,
 you might run into people typing stupid, mean, and disgusting things.
@@ -163,8 +161,10 @@ Try not to be such a person.</p>
   </span>
 </div>
 
-<p>Next demo: <a href="basic.html">basic use</a>.</p>
+<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/src/collab/">on github</a>.</p>
 
-<script src="bundle_collab.js"></script>
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="bundle.js"></script>
 
 <<foot>>

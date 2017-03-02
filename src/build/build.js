@@ -36,5 +36,6 @@ files.forEach(function(file) {
     result = mold.bake(file, text)()
   }
   var outfile = outDir + path.resolve(file).slice(pageDir.length).replace(/\.\w+$/, ".html")
+  if (!fs.existsSync(path.dirname(outfile))) fs.mkdirSync(path.dirname(outfile))
   fs.writeFileSync(outfile, result, "utf8")
 })
