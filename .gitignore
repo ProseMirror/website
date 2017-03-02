@@ -1,6 +1,6 @@
 /node_modules
 /public/**/*.html
-/public/examples/*/bundle.js
+/public/examples/*/example.js
 /public/examples/prosemirror.js
 /public/css/editor.css
 .tern-port

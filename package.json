@@ -45,8 +45,8 @@
     "ecstatic": "^1.4.0"
   },
   "scripts": {
-    "start": "node src/demo/collab/server/start.js",
-    "devserver": "node src/demo/demoserver.js"
+    "start": "node src/collab/server/start.js",
+    "devserver": "node src/devserver.js"
   },
   "license": "MIT",
   "repository": {

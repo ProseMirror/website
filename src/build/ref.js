@@ -101,8 +101,6 @@ let toc = {Intro: "#top.intro"}, output = modules.map(module => {
 })
 
 module.exports = {
-  env: {
-    modules: output,
-    nav: toc
-  }
+  modules: output,
+  nav: toc
 }

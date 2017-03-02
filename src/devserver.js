@@ -6,9 +6,10 @@ const fs = require("fs")
 const ModuleServer = require("moduleserve/moduleserver")
 const {handleCollabRequest} = require("./collab/server/server")
 const ecstatic = require("ecstatic")
+const {buildFile} = require("./build/buildfile")
 
 let port = 8000
-const root = path.resolve(__dirname, "../../public/")
+const root = path.resolve(__dirname, "../public/")
 
 function usage(status) {
   console.log("Usage: demoserver [--port PORT] [--help]")
@@ -25,35 +26,30 @@ for (let i = 2; i < process.argv.length; i++) {
 let moduleServer = new ModuleServer({root: root})
 let fileServer = ecstatic({root: root})
 
-let demos = {
-  "/index.html": "../src/demo/basic",
-  "/demo/basic.html": "../../src/demo/basic",
-  "/demo/markdown.html": "../../src/demo/markdown",
-  "/demo/dino.html": "../../src/demo/dino",
-  "/demo/nodeview.html": "../../src/demo/nodeview",
-  "/demo/lint.html": "../../src/demo/lint",
-  "/demo/track.html": "../../src/demo/track",
-  "/demo/collab.html": "../../src/demo/collab/client/collab"
-}
-
-function transformDemoPage(req, resp) {
+function transformPage(req, resp) {
   let path = parseURL(req.url).pathname
-  if (path == "/") path = "/index.html"
-  let match = demos.hasOwnProperty(path) && demos[path]
-  if (!match) return false
+  let dir = /\/([^\.\/]+)?$/.exec(path)
+  if (dir) path = (dir[1] ? path : path.slice(0, -1)) + "/index.html"
 
-  let file = fs.readFileSync(root + path, "utf8")
-      .replace(/<script src="(demo\/)?bundle_[^"]+"><\/script>/,
-               '<script src="/moduleserve/load.js" data-module="' + demos[path] + '" data-require></script>')
+  if (!/\.html$/.test(path)) return false
+
+  let text = buildFile(__dirname + "/../pages" + path).replace(
+    /<script src="[^"]*prosemirror\.js"><\/script>\s+<script src="([^"]*\.js)"><\/script>/,
+    function(_, script) {
+      let base = path.replace(/\/[^\/]+$|^\//g, ""), full = /^\//.test(script) ? script : base + "/" + script
+      let up = base ? base.replace(/[^\/]+/g, "..") + "/" : ""
+      return `<script src="/moduleserve/load.js" data-module="./${up}../pages/${full}" data-require></script>`
+    }
+  )
   resp.writeHead(200, {"Content-Type": "text/html"})
-  resp.end(file)
+  resp.end(text)
   return true
 }
 
 createServer((req, resp) => {
   handleCollabRequest(req, resp) ||
     moduleServer.handleRequest(req, resp) ||
-    transformDemoPage(req, resp) ||
+    transformPage(req, resp) ||
     fileServer(req, resp)
 }).listen(port)
 

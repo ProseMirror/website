@@ -1,5 +1,5 @@
 <<head {title: "ProseMirror Reference Guide",
-        nav: nav}>>
+        nav: ref().nav}>>
 
 <script>document.body.className = "scripted"</script>
 
@@ -60,7 +60,7 @@ code a, h2 a, h3 a, h4 a, h5 a, code a:visited, h2 a:visited, h3 a:visited {
   <<markdownFile "ref_intro">>
 </section>
 
-<<for module modules>>
+<<for module ref().modules>>
   <section class=doc_part id=part_<<t module.name>>>
     <<h module.text>>
   </section>
