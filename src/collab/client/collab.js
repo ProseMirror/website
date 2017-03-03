@@ -103,6 +103,7 @@ class EditorConnection {
         window.view = this.view.editor
     } else if (this.view) {
       this.view.destroy()
+      this.view.wrapper.parentNode.removeChild(this.view.wrapper)
       this.view = null
       window.view = undefined
     }
@@ -194,7 +195,7 @@ class EditorConnection {
     if (newBackOff > 1000 && this.backOff < 1000) this.report.delay(err)
     this.backOff = newBackOff
     setTimeout(() => {
-      if (this.state.comm == "recover") this.dispatch({type: "retry", requestDone: true})
+      if (this.state.comm == "recover") this.dispatch({type: "poll"})
     }, this.backOff)
   }
 
@@ -239,8 +240,8 @@ let info = {
   users: document.querySelector("#users")
 }
 document.querySelector("#changedoc").addEventListener("click", e => {
-  GET("/docs/").then(data => showDocList(e.target, JSON.parse(data)),
-                     err => report.failure(err))
+  GET("/collab-backend/docs/").then(data => showDocList(e.target, JSON.parse(data)),
+                                    err => report.failure(err))
 })
 
 function userString(n) {
@@ -295,7 +296,7 @@ function connectFromHash() {
   if (isID) {
     if (connection) connection.close()
     info.name.textContent = decodeURIComponent(isID[1])
-    connection = window.connection = new EditorConnection(report, "/docs/" + isID[1])
+    connection = window.connection = new EditorConnection(report, "/collab-backend/docs/" + isID[1])
     connection.request.then(() => connection.view.editor.focus())
     return true
   }

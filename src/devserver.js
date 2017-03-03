@@ -46,8 +46,18 @@ function transformPage(req, resp) {
   return true
 }
 
+function maybeCollab(req, resp) {
+  let url = req.url, backend = url.replace(/\/collab-backend\b/, "")
+  if (backend != url) {
+    req.url = backend
+    if (handleCollabRequest(req, resp)) return true
+    req.url = url
+  }
+  return false
+}
+
 createServer((req, resp) => {
-  handleCollabRequest(req, resp) ||
+  maybeCollab(req, resp) ||
     moduleServer.handleRequest(req, resp) ||
     transformPage(req, resp) ||
     fileServer(req, resp)
