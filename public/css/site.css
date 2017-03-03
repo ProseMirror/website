@@ -153,6 +153,7 @@ nav#toc {
   top: 140px;
   right: calc(50% + 360px);
   color: #888;
+  min-width: 150px;
   max-width: 200px;
   width: fit-content;
   width: -moz-fit-content;
