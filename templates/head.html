@@ -30,6 +30,7 @@
 
 <<if toc>>
   <nav id=toc>
+    <div class=toc-toggle></div>
     <ul>
       <<for item toc>>
         <li><a href="<<t item.href>>"><<t item.name>></a>
@@ -46,11 +47,11 @@
   </nav>
   <script>
 addEventListener("load", function() {
-  let toc = document.querySelector("nav#toc")
-  let state = "top"
-  let footer = document.querySelector("footer"), header = document.querySelector("header")
+  var toc = document.querySelector("nav#toc")
+  var state = "top"
+  var footer = document.querySelector("footer"), header = document.querySelector("header")
   function align() {
-    let tocRect = toc.getBoundingClientRect(),
+    var tocRect = toc.getBoundingClientRect(),
         headRect = header.getBoundingClientRect(),
         footRect = footer.getBoundingClientRect()
     if (state == "top" && headRect.bottom <= -40 ||
@@ -74,6 +75,9 @@ addEventListener("load", function() {
     align()
     addEventListener("scroll", align)
   }
+  toc.querySelector(".toc-toggle").addEventListener("click", function() {
+    toc.classList.toggle("open")
+  })
 })
   </script>
 <</if>>

@@ -129,6 +129,7 @@ footer a.logo, header.frontpage a.logo {
 }
 
 .navlinks {
+  flex-grow: 1;
   font-size: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -298,7 +299,29 @@ ul.grid-list h3 {
 }
 
 @media screen and (max-width: 1130px) {
-  nav#toc { display: none; }
+  nav#toc {
+    position: static;
+    max-width: 720px;
+    box-sizing: border-box;
+    padding: 0 3px;
+    width: auto;
+    margin: 0 auto;
+    direction: ltr;
+    color: black;
+  }
+  nav#toc ul { display: none }
+  .toc-toggle {
+    text-align: right;
+  }
+  .toc-toggle:before {
+    content: "Contents ▿";
+    cursor: pointer;
+  }
+  nav#toc.open ul { display: block }
+  nav#toc.open .toc-toggle:before {
+    content: "Contents ▵";
+  }
+  nav#toc.fixed { position: static; }
 }
 
 dd p { margin: 0 }
