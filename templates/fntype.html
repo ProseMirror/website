@@ -1,7 +1,0 @@
-(<<for param $in.params || []>>
-  <<if $i>>, <</if>><<if param.rest>>...<</if>>
-  <<if param.name>><<t param.name>>: <</if>>
-  <<type param>>
-  <<if param.default>> = <<t param.default>><</if>>
- <</for>>)
-<<if $in.returns>> → <<type $in.returns>><</if>>

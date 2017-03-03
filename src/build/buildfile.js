@@ -6,7 +6,7 @@ var config = {
   markdownDir: __dirname + "/../../markdown/",
   markdownFilter: function(text) {
     return text.replace(/\(##([^)]+)\)/g, function(_, anchor) {
-      return "(../ref.html#" + anchor + ")"
+      return "(/docs/ref/#" + anchor + ")"
     })
   },
   env: {

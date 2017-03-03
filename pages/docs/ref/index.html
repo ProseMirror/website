@@ -1,0 +1,20 @@
+<<head {title: "ProseMirror Reference manual",
+        type: "docs",
+        toc: ref().nav}>>
+
+<section id="part_top">
+  <h2 id="top.intro">Reference manual</h2>
+
+  <<markdownFile "ref_intro">>
+</section>
+
+<<for module ref().modules>>
+  <section id=part_<<t module.name>>>
+    <h2 class=module id=<<t module.name>>>
+      <a href="#<<t module.name>>"><<t module.name>> <span class=kind>module</span></a>
+    </h2>
+    <<h module.text>>
+  </section>
+<</for>>
+
+<<foot>>

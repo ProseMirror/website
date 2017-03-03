@@ -74,13 +74,10 @@ function importsFor(mod) {
   return result
 }
 
-function moduleHead(name) {
-  return `<h2 id=${name}><a href="#${name}"><span class=kind>module</span> ${name}</a></h2>`
-}
-
-let toc = {Intro: "#top.intro"}, output = modules.map(module => {
-  let tocPart = toc[module.name] = {href: "#" + module.name, sub: null}
-  let text = moduleHead(module.name) + builddocs.build({
+let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => {
+  let tocPart = {name: module.name, href: "#" + module.name}
+  toc.push(tocPart)
+  let text = builddocs.build({
     name: module.name,
     main: baseDir + "prosemirror-" + module.name + "/src/README.md",
     imports: [{
@@ -90,11 +87,12 @@ let toc = {Intro: "#top.intro"}, output = modules.map(module => {
     }, ...importsFor(module)],
     qualifiedImports: {
       dom: builddocs.browserImports
-    }
+    },
+    templates: __dirname + "/../../templates/"
   }, read[module.name]).replace(/<h3>(.*?)<\/h3>/g, function(full, text) {
     let id = module.name + "." + text.replace(/\W+/g, "_")
-    if (!tocPart.sub) tocPart.sub = {}
-    tocPart.sub[text] = "#" + id
+    if (!tocPart.sub) tocPart.sub = []
+    tocPart.sub.push({name: text, href: "#" + id})
     return `<h3 id="${id}"><a href="#${id}">${text}</a></h3>`
   })
   return {name: module.name, text}

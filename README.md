@@ -7,7 +7,7 @@ This currently contains a [front-page](http://prosemirror.net), the
 support the
 [collaborative demo](http://prosemirror.net/demo/collab.html)), the
 [guides](http://prosemirror.net/docs.html), and the scripts to build
-the [reference docs](http://prosemirror.net/ref.html).
+the [reference docs](http://prosemirror.net/docs/ref/).
 
 ## Installation
 

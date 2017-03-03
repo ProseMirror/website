@@ -97,7 +97,7 @@ header nav, footer nav {
 strong { font-weight: 600; }
 
 nav a:link, nav a:visited, a.blocklink:link, a.blocklink:visited, code a:link, code a:visited,
-h3 a:link, h3 a:visited, h4 a:link, h4 a:visited {
+h2 a:link, h2 a:visited, h3 a:link, h3 a:visited, h4 a:link, h4 a:visited {
   color: inherit;
 }
 
@@ -228,6 +228,25 @@ hr, h2.hr:after {
   margin-top: 2px;
 }
 
+hr {
+  margin: 45px 0 39px;
+}
+
+h2.above-list {
+  font-size: 12px;
+  line-height: 15px;
+  margin-bottom: 37px;
+  margin-top: 42px;
+}
+
+h2.module {
+  margin-top: 250px;
+  font-size: 28px;
+  line-height: 30px;
+  padding-top: 10px;
+  border-bottom: 1px solid black;
+}
+
 ul.grid-list {
   list-style: none;
   padding: 0;
@@ -251,6 +270,10 @@ ul.grid-list > li {
 ul.grid-list p {
   margin: 0;
 }
+
+p, dl, dd { margin-bottom: 23px }
+
+p, dl { margin-top: 1em; }
 
 ul.grid-list h3 {
   margin: 0 0 9px;
@@ -279,24 +302,17 @@ ul.grid-list h3 {
 }
 
 dd p { margin: 0 }
-dl { margin: 1em 0 }
 dd { margin-left: 20px }
 dt {
-  margin-top: 1em;
   padding-left: 20px;
   text-indent: -20px;
 }
 
-.kind {
+.kind, .extends {
   font-weight: 600;
   font-family: "Source Sans Pro";
   font-size: 14px;
   margin-bottom: -4px;
-}
-
-.extends {
-  font-weight: normal;
-  font-size: 12px;
 }
 .extends code {
   color: black;

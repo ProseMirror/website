@@ -1,46 +1,24 @@
-<<in {name, item}>>
+<<in {item, name}>>
 
-<h3 <<if !item.$noAnchor>>id="<<t name>>"<</if>>><a href="#<<t name>>">
-  <span class=kind><<t item.kind>></span> <<t name>></a>
-  <<codelink item>>
-</h3>
-
-<<if item.extends>><p>Extends <code><<type item.extends>></code>.</p><</if>>
+<h4 id="<<t prefix + item.id>>">
+  <a href="#<<t prefix + item.id>>"><<t name>></a> <span class=kind><<t item.type>></span>
+  <<if item.extends>> <span class=extends>extends <code><<type item.extends>></code></span><</if>>
+</h4>
 
 <<markdown item.description>>
 
+<dl>
+
 <<if item.constructor>>
-  <h4 id="<<t name>>_constructor">Constructor</h4>
-
-  <dl>
-    <<define {name: name, item: item.constructor, id: name + ".constructor"}>>
-  </dl>
-
-<</if>>
-
-<<if item.members>>
-  <h4 id="<<t name>>_properties">Properties</h4>
-  <dl>
-    <<for pname, prop in item.members>>
-      <<define {name: pname, item: prop, id: propID(name, pname, false)}>>
-    <</for>>
-  </dl>
-<</if>>
-
-<<if item.methods>>
-  <h4 id="<<t name>>_methods">Methods</h4>
-  <dl>
-    <<for pname, prop in item.methods>>
-      <<define {name: pname, item: prop, id: propID(name, pname, false)}>>
-    <</for>>
-  </dl>
+  <<define {item: item.constructor, name: name}>>
 <</if>>
 
 <<if item.properties>>
-  <h4 id="<<t name>>_static">Static properties</h4>
-  <dl>
-    <<for pname, prop in item.properties>>
-      <<define {name: pname, item: prop, id: propID(name, pname, true)}>>
-    <</for>>
-  </dl>
+  <<for name, prop in item.properties>><<define {item: prop, name: name}>><</for>>
 <</if>>
+
+<<if item.staticProperties>>
+  <<for name, prop in item.staticProperties>><<define {item: prop, name: name, static: true}>><</for>>
+<</if>>
+
+</dl>
