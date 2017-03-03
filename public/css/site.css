@@ -101,9 +101,9 @@ h2 a:link, h2 a:visited, h3 a:link, h3 a:visited, h4 a:link, h4 a:visited {
   color: inherit;
 }
 
-code {
-  font-size: 14px;
-}
+code, pre { font-size: 14px; }
+h2 code, h3 code { font-size: inherit; }
+pre { line-height: 22px; padding-left: 20px; }
 
 a.blocklink:hover {
   color: #0075ff;
@@ -325,7 +325,7 @@ dt {
 .ProseMirror h4:first-child,
 .ProseMirror h5:first-child,
 .ProseMirror h6:first-child {
-  margin-top: .3em;
+  margin-top: 10px;
 }
 
 .ProseMirror {

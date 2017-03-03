@@ -7,18 +7,23 @@ ifdef UGLIFY
 UGLIFY=-g [ uglifyify -m -c ]
 endif
 
-all: $(subst .md,.html,$(PAGES:pages/%=public/%)) $(foreach EX,$(EXAMPLES), public/examples/$(EX)/example.js)
+all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
+     $(foreach EX,$(EXAMPLES), public/examples/$(EX)/example.js) \
+     public/css/editor.css
 
 public/docs/ref/index.html: pages/docs/ref/index.html node_modules/prosemirror-*/src/* templates/* src/build/*.js
+	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
 CHANGELOG.md:
 	curl https://raw.githubusercontent.com/ProseMirror/prosemirror/master/CHANGELOG.md > CHANGELOG.md
 
 public/docs/changelog/index.html: pages/docs/changelog/index.html CHANGELOG.md templates/* src/build/*.js
+	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
 public/%.html: pages/%.* templates/* src/build/*.js
+	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
 CORE:=prosemirror-model prosemirror-transform prosemirror-state prosemirror-view \

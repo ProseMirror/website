@@ -11,9 +11,9 @@ module.exports = function loadTemplates(config) {
   })
   mold.defs.markdown = function(options) {
     if (typeof options == "string") options = {text: options}
-    let text = options.text
-    if (options.shiftHeadings) text = text.replace(/<h(\d)\b/g, (_, d) => "<" + (d + options.shiftHeadings))
-    return markdown.render(config.markdownFilter ? config.markdownFilter(text) : text)
+    let text = markdown.render(config.markdownFilter ? config.markdownFilter(options.text) : options.text)
+    if (options.shiftHeadings) text = text.replace(/<h(\d)\b/ig, (_, d) => "<h" + (+d + options.shiftHeadings))
+    return text
   }
   mold.defs.markdownFile = function(options) {
     if (typeof options == "string") options = {file: options}
