@@ -16,6 +16,7 @@
   <nav>
     <a class=logo href="/">ProseMirror</a>
     <div class=navlinks>
+      <<if toc>><a class=toc-toggle>Contents</a><</if>>
       <a href="/examples/" <<if type == "examples">>class=active<</if>>>Examples</a>
       <a href="/docs/" <<if type == "docs">>class=active<</if>>>Documentation</a>
       <a href="https://discuss.prosemirror.net/">Discuss</a>
@@ -30,7 +31,6 @@
 
 <<if toc>>
   <nav id=toc>
-    <div class=toc-toggle></div>
     <ul>
       <<for item toc>>
         <li><a href="<<t item.href>>"><<t item.name>></a>
@@ -75,7 +75,7 @@ addEventListener("load", function() {
     align()
     addEventListener("scroll", align)
   }
-  toc.querySelector(".toc-toggle").addEventListener("click", function() {
+  document.querySelector(".toc-toggle").addEventListener("click", function() {
     toc.classList.toggle("open")
   })
 })
