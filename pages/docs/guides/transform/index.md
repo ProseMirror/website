@@ -4,7 +4,7 @@
 # Document Transform Guide
 
 This guide explains how document transforms work in ProseMirror. If
-you haven't already, be sure to read the [document guide](./doc.html)
+you haven't already, be sure to read the [document guide](../doc/)
 first.
 
 ## Why?
@@ -20,7 +20,7 @@ that represent the individual steps taken to go from an old version of
 the document to a new one. This is used to implement the undo history,
 [collaborative editing](http://marijnhaverbeke.nl/blog/collaborative-editing.html),
 and other potentially useful things, such as
-[change tracking](../demo/track.html).
+[change tracking](/examples/track/).
 
 In short, if you create a fresh [state](##state.EditorState) to update
 the document in your editor, you will reset the undo history and make
@@ -48,7 +48,7 @@ You can also [get](##transform.Step.getMap) a
 [change map](##transform.StepMap) from a step. This is a data
 structure that describes the parts of the document it replaces, which
 can be used, among other things, to map
-[positions](./doc.html#indexing) in the old document to positions in
+[positions](../doc/#indexing) in the old document to positions in
 the new one (or [vice-versa](##transform.StepMap.invert)).
 
 ## Transforms

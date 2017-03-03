@@ -132,7 +132,7 @@ To clean up an editor view, call its
 To get at the content of your editor, you can access the state's
 [`doc`](##state.EditorState.doc) property. This holds an object of the
 [`Node`](##model.Node) type, which is further described in the
-[document guide](doc.html).
+[document guide](../doc/).
 
 When initializing a state, you can of course give it an initial
 document to use. In that case, the `schema` field is optional, since
@@ -156,7 +156,7 @@ console.log(state.doc.toJSON())
 ```
 
 To make programmatic changes to the editor content, you can use
-transforms, as described in the [transform guide](transform.html).
+transforms, as described in the [transform guide](../transform/).
 
 ## Plugins and Commands
 
