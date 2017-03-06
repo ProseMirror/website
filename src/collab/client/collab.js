@@ -1,7 +1,7 @@
 const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
 const {Step} = require("prosemirror-transform")
-const {MenuBarEditorView} = require("prosemirror-menu")
 const {EditorState} = require("prosemirror-state")
+const {EditorView} = require("prosemirror-view")
 const {history} = require("prosemirror-history")
 const {collab, receiveTransaction, sendableSteps, getVersion} = require("prosemirror-collab")
 const {MenuItem} = require("prosemirror-menu")
@@ -44,7 +44,7 @@ class EditorConnection {
       info.users.textContent = userString(action.users) // FIXME ewww
       let editState = EditorState.create({
         doc: action.doc,
-        plugins: exampleSetup({schema, history: false}).concat([
+        plugins: exampleSetup({schema, history: false, menuContent: menu.fullMenu}).concat([
           history({preserveItems: true}),
           collab({version: action.version}),
           commentPlugin,
@@ -95,12 +95,10 @@ class EditorConnection {
       if (this.view)
         this.view.updateState(this.state.edit)
       else
-        this.view = new MenuBarEditorView(document.querySelector("#editor"), {
+        this.view = window.view = new EditorView(document.querySelector("#editor"), {
           state: this.state.edit,
-          dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction}),
-          menuContent: menu.fullMenu
+          dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction})
         })
-        window.view = this.view.editor
     } else if (this.view) {
       this.view.destroy()
       this.view.wrapper.parentNode.removeChild(this.view.wrapper)
@@ -297,7 +295,7 @@ function connectFromHash() {
     if (connection) connection.close()
     info.name.textContent = decodeURIComponent(isID[1])
     connection = window.connection = new EditorConnection(report, "/collab-backend/docs/" + isID[1])
-    connection.request.then(() => connection.view.editor.focus())
+    connection.request.then(() => connection.view.focus())
     return true
   }
 }

@@ -1,4 +1,4 @@
-const {MenuBarEditorView} = require("prosemirror-menu")
+const {EditorView} = require("prosemirror-view")
 const {EditorState} = require("prosemirror-state")
 const {schema, defaultMarkdownParser, defaultMarkdownSerializer} = require("prosemirror-markdown")
 const {exampleSetup} = require("prosemirror-example-setup")
@@ -15,16 +15,15 @@ function toTextArea(content, focus) {
   getContent = () => te.value
 }
 function toProseMirror(content) {
-  let view = new MenuBarEditorView(place, {
+  let view = window.view = new EditorView(place, {
     state: EditorState.create({
       doc: defaultMarkdownParser.parse(content),
       plugins: exampleSetup({schema})
     })
   })
-  window.view = view.editor
-  view.editor.focus()
+  view.focus()
   getContent = () => {
-    let content = defaultMarkdownSerializer.serialize(view.editor.state.doc)
+    let content = defaultMarkdownSerializer.serialize(view.state.doc)
     view.destroy()
     return content
   }

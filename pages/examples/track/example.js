@@ -1,6 +1,5 @@
 const {EditorState, Plugin} = require("prosemirror-state")
-const {Decoration, DecorationSet} = require("prosemirror-view")
-const {MenuBarEditorView} = require("prosemirror-menu")
+const {Decoration, DecorationSet, EditorView} = require("prosemirror-view")
 const {Mapping} = require("prosemirror-transform")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
@@ -153,8 +152,7 @@ function dispatch(tr) {
   renderCommits(state, dispatch)
 }
 
-view = new MenuBarEditorView(document.querySelector("#editor"), {state, dispatchTransaction: dispatch})
-window.view = view.editor
+view = window.view = new EditorView(document.querySelector("#editor"), {state, dispatchTransaction: dispatch})
 
 dispatch(state.tr.insertText("Type something, and then commit it."))
 dispatch(state.tr.setMeta(trackPlugin, "Initial commit"))
@@ -220,7 +218,7 @@ document.querySelector("#commit").addEventListener("submit", e => {
   e.preventDefault()
   doCommit(e.target.elements.message.value || "Unnamed")
   e.target.elements.message.value = ""
-  view.editor.focus()
+  view.focus()
 })
 
 function findInBlameMap(pos, state) {

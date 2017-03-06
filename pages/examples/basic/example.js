@@ -1,13 +1,12 @@
 const {EditorState} = require("prosemirror-state")
-const {MenuBarEditorView} = require("prosemirror-menu")
+const {EditorView} = require("prosemirror-view")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
 
-let view = new MenuBarEditorView(document.querySelector("#editor"), {
+let view = window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema})
   })
 })
-window.view = view.editor

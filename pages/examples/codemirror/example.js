@@ -1,5 +1,5 @@
 const {EditorState, Selection, TextSelection} = require("prosemirror-state")
-const {MenuBarEditorView} = require("prosemirror-menu")
+const {EditorView} = require("prosemirror-view")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
@@ -9,7 +9,7 @@ const {exitCode} = require("prosemirror-commands")
 const CodeMirror = require("codemirror")
 require("codemirror/mode/javascript/javascript")
 
-let view, menuView
+let view
 
 function computeChange(oldVal, newVal) {
   let start = 0, oldEnd = oldVal.length, newEnd = newVal.length
@@ -152,7 +152,7 @@ const arrowHandlers = keymap({
   ArrowDown: arrowHandler("down")
 })
 
-menuView = new MenuBarEditorView(document.querySelector("#editor"), {
+view = window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema}).concat(arrowHandlers)
@@ -160,4 +160,3 @@ menuView = new MenuBarEditorView(document.querySelector("#editor"), {
   handleClickOn(_view, _pos, node) { return node.type.name == "code_block" },
   nodeViews: {code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos)}
 })
-view = window.view = menuView.editor

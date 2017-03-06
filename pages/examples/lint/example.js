@@ -1,6 +1,6 @@
 const {EditorState, Plugin, TextSelection} = require("prosemirror-state")
 const {Decoration, DecorationSet} = require("prosemirror-view")
-const {MenuBarEditorView} = require("prosemirror-menu")
+const {EditorView} = require("prosemirror-view")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
@@ -35,20 +35,19 @@ function decoForProb(doc, prob) {
   return DecorationSet.create(doc, decos)
 }
 
-let view = new MenuBarEditorView(document.querySelector("#editor"), {
+let view = window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema}).concat(showProbPlugin)
   }),
   dispatchTransaction: tr => {
-    view.updateState(view.editor.state.apply(tr))
+    view.updateState(view.state.apply(tr))
     if (tr.docChanged) {
       clearTimeout(delay)
-      delay = setTimeout(() => runLint(view.editor), 500)
+      delay = setTimeout(() => runLint(view), 500)
     }
   }
 })
-window.view = view.editor
 
 let output = document.querySelector("#lint_output")
 
@@ -154,4 +153,4 @@ function addAlt(prob, state, dispatch) {
   }))
 }
 
-runLint(view.editor)
+runLint(view)
