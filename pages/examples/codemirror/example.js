@@ -1,4 +1,4 @@
-const {EditorState, Selection, NodeSelection} = require("prosemirror-state")
+const {EditorState, Selection, TextSelection} = require("prosemirror-state")
 const {MenuBarEditorView} = require("prosemirror-menu")
 const {DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
@@ -24,6 +24,7 @@ class CodeBlockView {
     this.view = view
     this.getPos = getPos
     this.value = node.textContent
+    this.selection = null
     let mod = /Mac/.test(navigator.platform) ? "Cmd" : "Ctrl"
     this.cm = new CodeMirror(null, {
       value: this.value,
@@ -40,14 +41,22 @@ class CodeBlockView {
       })
     })
     setTimeout(() => this.cm.refresh(), 20)
-    this.cm.on("focus", () => {
-      this.view.dispatch(this.view.state.tr.setSelection(NodeSelection.create(this.view.state.doc, this.getPos())))
-    })
 
     this.dom = this.cm.getWrapperElement()
 
     this.updating = false
     this.cm.on("changes", () => {if (!this.updating) this.valueChanged()})
+    this.cm.on("cursorActivity", () => {if (!this.updating) this.forwardSelection()})
+    this.cm.on("focus", () => {if (!this.updating) this.forwardSelection()})
+  }
+
+  findSelection() {
+    return {head: this.cm.indexFromPos(this.cm.getCursor("head")),
+            anchor: this.cm.indexFromPos(this.cm.getCursor("anchor"))}
+  }
+
+  selectionChanged(selection) {
+    return !this.selection || selection.head != this.selection.head || selection.anchor != this.selection.anchor
   }
 
   valueChanged() {
@@ -58,8 +67,29 @@ class CodeBlockView {
       let start = this.getPos() + 1
       let tr = this.view.state.tr.replaceWith(start + change.from, start + change.to,
                                               change.text ? schema.text(change.text) : null)
+      if (this.cm.hasFocus()) {
+        let selection = this.findSelection()
+        if (this.selectionChanged(selection)) {
+          tr.setSelection(TextSelection.create(tr.doc, start + selection.anchor, start + selection.head))
+          this.selecion = selection
+        }
+      }
       this.view.dispatch(tr)
     }
+  }
+
+  forwardSelection() {
+    if (!this.cm.hasFocus()) {
+      this.selection = null
+      return
+    }
+    let selection = this.findSelection()
+    if (!this.selectionChanged(selection)) return
+    this.selection = selection
+    let base = this.getPos() + 1
+    this.view.dispatch(
+      this.view.state.tr.setSelection(TextSelection.create(this.view.state.doc, base + selection.anchor,
+                                                           base + selection.head)))
   }
 
   maybeEscape(unit, dir) {
