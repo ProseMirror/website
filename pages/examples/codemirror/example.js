@@ -5,6 +5,7 @@ const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup} = require("prosemirror-example-setup")
 const {undo, redo} = require("prosemirror-history")
 const {keymap} = require("prosemirror-keymap")
+const {exitCode} = require("prosemirror-commands")
 const CodeMirror = require("codemirror")
 require("codemirror/mode/javascript/javascript")
 
@@ -37,7 +38,8 @@ class CodeBlockView {
         Right: () => this.maybeEscape("char", 1),
         [`${mod}-Z`]: () => undo(this.view.state, this.view.dispatch),
         [`Shift-${mod}-Z`]: () => redo(this.view.state, this.view.dispatch),
-        [`${mod}-Y`]: () => redo(this.view.state, this.view.dispatch)
+        [`${mod}-Y`]: () => redo(this.view.state, this.view.dispatch),
+        "Ctrl-Enter": () => { if (exitCode(view.state, view.dispatch)) view.focus() }
       })
     })
     setTimeout(() => this.cm.refresh(), 20)
