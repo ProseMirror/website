@@ -1,0 +1,72 @@
+<<head {
+  type: "examples",
+  title: "ProseMirror footnote example",
+}>>
+
+<style>
+  .ProseMirror {
+    counter-reset: prosemirror-footnote;
+  }
+  footnote {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+  }
+  footnote::after {
+    content: counter(prosemirror-footnote);
+    vertical-align: super;
+    font-size: 75%;
+    counter-increment: prosemirror-footnote;
+  }
+  .ProseMirror-hideselection .footnote-tooltip *::selection { background-color: transparent; }
+  .ProseMirror-hideselection .footnote-tooltip *::-moz-selection { background-color: transparent; }
+  .footnote-tooltip {
+    cursor: auto;
+    position: absolute;
+    left: -30px;
+    top: calc(100% + 10px);
+    background: silver;
+    padding: 3px;
+    border-radius: 2px;
+    width: 500px;
+  }
+  .footnote-tooltip::before {
+    border: 5px solid silver;
+    border-top-width: 0px;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    position: absolute;
+    top: -5px;
+    left: 27px;
+    content: " ";
+    height: 0;
+    width: 0;
+  }
+</style>
+
+<h3>Editing footnotes</h3>
+
+<p>This example demonstrates one way to implement something like
+footnotes in ProseMirror. The footnotes in this editor's schema are
+inline nodes which contain inline content. They are drawn in the
+editor as numbers, but when you node-select them, they pop up a little
+sub-editor. Changes in this sub-editor are propagated to the outer
+editor, and vice versa, so that collaborative editing would work even
+for the footnote text.</p>
+
+<div id="editor"></div>
+
+<div id="footnote_editor"></div>
+
+<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/footnote/example.js">on github</a>.</p>
+
+<div id="content" style="display: none">
+  <p>This paragraph has a footnote<footnote>Which is a piece of text placed at the bottom of a page or chapter, providing additional <em>comments</em> or <em>citations</em>.</footnote> in it. And another<footnote>Some more footnote text.</footnote> one.</p>
+  <p>Move onto or click on a footnote number to edit it.</p>
+</div>
+
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="example.js"></script>
+
+<<foot>>
