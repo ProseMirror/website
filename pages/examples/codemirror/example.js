@@ -9,8 +9,6 @@ const {exitCode} = require("prosemirror-commands")
 const CodeMirror = require("codemirror")
 require("codemirror/mode/javascript/javascript")
 
-let view
-
 function computeChange(oldVal, newVal) {
   let start = 0, oldEnd = oldVal.length, newEnd = newVal.length
   while (start < oldEnd && oldVal.charCodeAt(start) == newVal.charCodeAt(start)) ++start
@@ -152,7 +150,7 @@ const arrowHandlers = keymap({
   ArrowDown: arrowHandler("down")
 })
 
-view = window.view = new EditorView(document.querySelector("#editor"), {
+window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema}).concat(arrowHandlers)

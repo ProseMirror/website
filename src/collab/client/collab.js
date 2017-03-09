@@ -63,7 +63,7 @@ class EditorConnection {
       this.poll()
     } else if (action.type == "recover") {
       if (action.error.status && action.error.status < 500) {
-        this.report.failure(err)
+        this.report.failure(action.error)
         this.state = new State(null, null)
       } else {
         this.state = new State(this.state.edit, "recover")

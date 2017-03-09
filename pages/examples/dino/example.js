@@ -47,7 +47,7 @@ menu.insertMenu.content = dinos.map(name => new MenuItem({
   run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(dinoType.create({type: name}))) }
 })).concat(menu.insertMenu.content)
 
-let view = window.view = new EditorView(document.querySelector("#editor"), {
+window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(dinoSchema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema: dinoSchema, menuContent: menu.fullMenu}).concat(inputRules({rules: [dinoInputRule]}))

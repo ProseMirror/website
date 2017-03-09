@@ -5,7 +5,6 @@ const {Schema, DOMParser, Fragment} = require("prosemirror-model")
 const {EditorView} = require("prosemirror-view")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
-const {InputRule, inputRules} = require("prosemirror-inputrules")
 
 const footnote = {
   group: "inline",
@@ -13,7 +12,7 @@ const footnote = {
   inline: true,
   draggable: true,
   atom: true,
-  toDOM: node => ["footnote", 0],
+  toDOM: () => ["footnote", 0],
   parseDOM: [{tag: "footnote"}]
 }
 
@@ -59,7 +58,7 @@ class FootnoteView {
         state: EditorState.create({doc: this.node}),
         dispatchTransaction: this.dispatchInner.bind(this),
         handleDOMEvents: {
-          mousedown: (_, e) => {
+          mousedown: () => {
             // Necessary to prevent strangeness due to the fact that
             // the whole footnote is node-selected (and thus
             // DOM-selected) when the parent editor is focused.
@@ -123,7 +122,7 @@ class FootnoteView {
   ignoreMutation() { return true }
 }
 
-let view = window.view = new EditorView(document.querySelector("#editor"), {
+window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(footnoteSchema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema: footnoteSchema, menuContent: menu.fullMenu})

@@ -1,7 +1,6 @@
 const {createServer} = require("http")
 const path = require("path")
 const {parse: parseURL} = require("url")
-const fs = require("fs")
 
 const ModuleServer = require("moduleserve/moduleserver")
 const {handleCollabRequest} = require("./collab/server/server")

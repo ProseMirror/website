@@ -1,6 +1,3 @@
-var fs = require("fs")
-var glob = require("glob")
-var getdocs = require("getdocs")
 var builddocs = require("builddocs")
 
 var modules = [{
@@ -89,7 +86,7 @@ let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => 
       dom: builddocs.browserImports
     },
     templates: __dirname + "/../../templates/"
-  }, read[module.name]).replace(/<h3>(.*?)<\/h3>/g, function(full, text) {
+  }, read[module.name]).replace(/<h3>(.*?)<\/h3>/g, function(_, text) {
     let id = module.name + "." + text.replace(/\W+/g, "_")
     if (!tocPart.sub) tocPart.sub = []
     tocPart.sub.push({name: text, href: "#" + id})
