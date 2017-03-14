@@ -1,10 +1,9 @@
 const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
 const {Step} = require("prosemirror-transform")
 const {EditorState} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
 const {history} = require("prosemirror-history")
 const {collab, receiveTransaction, sendableSteps, getVersion} = require("prosemirror-collab")
-const {MenuItem} = require("prosemirror-menu")
+const {MenuBarEditorView, MenuItem} = require("prosemirror-menu")
 const crel = require("crel")
 
 const {schema} = require("../schema")
@@ -42,9 +41,11 @@ class EditorConnection {
     let newEditState = null
     if (action.type == "loaded") {
       info.users.textContent = userString(action.users) // FIXME ewww
+      let examplePlugins = exampleSetup({schema, history: false})
+      examplePlugins[examplePlugins.length - 1].props.menuContent[0].push(annotationMenuItem)
       let editState = EditorState.create({
         doc: action.doc,
-        plugins: exampleSetup({schema, history: false, menuContent: menu.fullMenu}).concat([
+        plugins: examplePlugins.concat([
           history({preserveItems: true}),
           collab({version: action.version}),
           commentPlugin,
@@ -95,7 +96,7 @@ class EditorConnection {
       if (this.view)
         this.view.updateState(this.state.edit)
       else
-        this.view = window.view = new EditorView(document.querySelector("#editor"), {
+        this.view = window.view = new MenuBarEditorView(document.querySelector("#editor"), {
           state: this.state.edit,
           dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction})
         })
@@ -295,7 +296,7 @@ function connectFromHash() {
     if (connection) connection.close()
     info.name.textContent = decodeURIComponent(isID[1])
     connection = window.connection = new EditorConnection(report, "/collab-backend/docs/" + isID[1])
-    connection.request.then(() => connection.view.focus())
+    connection.request.then(() => connection.view.editor.focus())
     return true
   }
 }
