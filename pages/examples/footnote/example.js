@@ -29,8 +29,8 @@ menu.insertMenu.content.push(new MenuItem({
     return insertPoint(state.doc, state.selection.from, footnoteSchema.nodes.footnote) != null
   },
   run(state, dispatch) {
-    let {$head, empty, $from, $to} = state.selection, content = Fragment.empty
-    if (!empty && $head && $from.sameParent($to))
+    let {empty, $from, $to} = state.selection, content = Fragment.empty
+    if (!empty && $from.sameParent($to) && $from.parent.inlineContent)
       content = $from.parent.content.cut($from.parentOffset, $to.parentOffset)
     dispatch(state.tr.replaceSelectionWith(footnoteSchema.nodes.footnote.create(null, content)))
   }
