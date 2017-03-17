@@ -1,6 +1,7 @@
 const {EditorState} = require("prosemirror-state")
 const {insertPoint} = require("prosemirror-transform")
-const {EditorView, MenuItem} = require("prosemirror-view")
+const {EditorView} = require("prosemirror-view")
+const {MenuItem} = require("prosemirror-menu")
 const {Schema, DOMParser} = require("prosemirror-model")
 const {schema} = require("prosemirror-schema-basic")
 const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
