@@ -1,4 +1,4 @@
-PAGES:=$(shell find pages/ -name "*.html") $(shell find pages/ -name "*.md")
+PAGES:=$(shell find pages -name "*.html") $(shell find pages -name "*.md")
 
 EXAMPLES:=basic markdown dino codemirror lint track collab footnote
 
