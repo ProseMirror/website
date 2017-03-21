@@ -18,9 +18,7 @@ public/docs/ref/index.html: pages/docs/ref/index.html node_modules/prosemirror-*
 CHANGELOG.md:
 	curl https://raw.githubusercontent.com/ProseMirror/prosemirror/master/CHANGELOG.md > CHANGELOG.md
 
-public/docs/changelog/index.html: pages/docs/changelog/index.html CHANGELOG.md templates/* src/build/*.js
-	mkdir -p $(dir $@)
-	node src/build/build.js $<
+public/docs/changelog/index.html: CHANGELOG.md
 
 public/%.html: pages/%.* templates/* src/build/*.js
 	mkdir -p $(dir $@)
