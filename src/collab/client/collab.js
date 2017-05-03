@@ -101,7 +101,6 @@ class EditorConnection {
         })
     } else if (this.view) {
       this.view.destroy()
-      this.view.wrapper.parentNode.removeChild(this.view.wrapper)
       this.view = null
       window.view = undefined
     }
@@ -211,7 +210,7 @@ class EditorConnection {
   close() {
     this.closeRequest()
     if (this.view) {
-      document.querySelector("#editor").removeChild(this.view.wrapper)
+      this.view.destroy()
       this.view = null
       window.view = undefined
     }
