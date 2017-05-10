@@ -148,10 +148,9 @@ const markSchema = new Schema({
 
 The `nodes` and `marks` options passed to the
 [`Schema` constructor](##model.Schema) take
-[`OrderedMap` objects](##model.OrderedMap) as well as plain JavaScript
-objects. The schema's [`nodeSpec`](##model.Schema.nodeSpec) and
-[`markSpec`](##model.Schema.markSpec) properties are always
-`OrderedMap`s.
+[`OrderedMap` objects](https://github.com/marijnh/orderedmap#readme) as well
+as plain JavaScript objects. The schema's  [`nodeSpec`](##model.Schema.nodeSpec)
+and [`markSpec`](##model.Schema.markSpec) properties are always `OrderedMap`s.
 
 These support a number of methods to conveniently update them when
 building a new schema. For example you could say
