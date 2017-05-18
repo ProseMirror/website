@@ -156,7 +156,7 @@ new content. Fragments also have various updating methods, such as
 
 Or, if you need to leave a record of your changes (which is necessary
 when the document is in an editor), you'll go through the
-[transform](./transform.html) interface instead, which provides
+[transform](../transform/) interface instead, which provides
 convenience methods for common types of transformations, and will
 immediately create a new document for every step.
 
