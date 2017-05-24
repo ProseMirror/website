@@ -36,6 +36,22 @@
       if (current) current.className = ""
       val.className = "active"
       current = val
+      var currentSection = document.querySelector("nav .toc_open")
+      var sections = document.querySelectorAll("nav > ul > li")
+      for (var i = 0; i < sections.length; i++) {
+        var node = val
+        while (node = node.parentElement) {
+          if (node === sections[i]) {
+            if (currentSection !== node) {
+              if (currentSection) {
+                currentSection.className = ""
+              }
+              sections[i].className = "toc_open"
+            }
+            break
+          }
+        }
+      }
     }
   }
 
