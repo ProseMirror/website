@@ -21,7 +21,7 @@ make changes concurrently, they will both go to this authority with
 their changes. The authority will accept the changes from one of them,
 and broadcast these changes to all editors. The other's changes will
 not be accepted, and when that editor receives new changes from the
-server, it'll have to [rebase](transform.html#rebasing) its local
+server, it'll have to [rebase](../transform/#rebasing) its local
 changes on top of those from the other editor, and try to submit them
 again.
 
