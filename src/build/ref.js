@@ -80,6 +80,7 @@ let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => 
     imports: [{
       constructor: false,
       T: false,
+      this: false,
       OrderedMap: "https://github.com/marijnh/orderedmap#readme"
     }, ...importsFor(module)],
     qualifiedImports: {
