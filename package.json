@@ -34,7 +34,7 @@
     "bubleify": "^0.7.0",
     "browserify": "^13.0.0",
     "punycode": "^1.4.0",
-    "getdocs": "^0.5.0",
+    "getdocs": "^0.6.0",
     "builddocs": "^0.1.1",
     "glob": "^6.0.1",
     "markdown-it": "^5.0.2",
