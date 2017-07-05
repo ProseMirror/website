@@ -55,19 +55,21 @@ h4 { font-size: 18px; line-height: 22px; margin: 25px 0 12px; }
 
 a { text-decoration: none }
 
-header.frontpage:before {
+header.frontpage h1 { z-index: 0; }
+
+header.frontpage h1:before {
   content: "";
   position: absolute;
   left: -1000px;
   right: -1000px;
-  top: -500px;
+  bottom: -213px;
   height: calc(100% + 440px);
   background-size: 100px 100px;
   background-image: linear-gradient(to right, #1a1a1a 2px, transparent 1px), linear-gradient(to bottom, #1a1a1a 2px, black 1px);
   background-position: left 40px bottom 60px;
   transform: rotate(-5deg);
   transform-origin: 50% 50%;
-  z-index: 0;
+  z-index: -1;
 }
 
 header > * { z-index: 2; position: relative; }
