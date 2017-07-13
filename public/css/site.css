@@ -55,9 +55,9 @@ h4 { font-size: 18px; line-height: 22px; margin: 25px 0 12px; }
 
 a { text-decoration: none }
 
-header.frontpage h1 { z-index: 0; }
+header.frontpage > h1 { z-index: 0; }
 
-header.frontpage h1:before {
+header.frontpage > h1:before {
   content: "";
   position: absolute;
   left: -1000px;
@@ -84,7 +84,7 @@ header.frontpage {
   margin-bottom: 40px;
 }
 
-header h1 {
+header > h1 {
   text-align: center;
   margin: 63px 0 50px;
 }
@@ -351,4 +351,10 @@ dt {
   padding: 4px 8px 4px 14px;
   line-height: 1.2;
   outline: none;
+}
+
+div.figure { margin: 1em; }
+.figure img {
+  width: 400px;
+  max-width: 90%;
 }
