@@ -67,7 +67,7 @@ Running browserify on a big codebase takes a while, so during
 development, this is a bit of a pain. One solution is to use
 [`watchify`](https://github.com/substack/watchify), which is like `browserify`, but a persistent process that
 immediately updates the bundle file whenever one of the files it
-depends on change. This is faster, and doesn't require you to explitly
+depends on change. This is faster, and doesn't require you to explicitly
 run any commands every time you want to test your code.
 
 Other approaches to bundling are
