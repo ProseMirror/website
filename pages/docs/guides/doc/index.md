@@ -49,7 +49,7 @@ content. But the top-level node may also be a textblock itself, so
 that the document contains only inline content.
 
 What kind of node is allowed where is determined by the document's
-[schema](schema.html).
+[schema](../schema/index.md).
 
 ## Nodes
 
