@@ -230,7 +230,7 @@ will execute those commands when the corresponding key is pressed.
 
 The keymap plugin will interpret `Mod` to mean the Command key on Mac,
 and Control on other platforms, so that now our binding works as
-intended. We've also added one for undo.
+intended. We've also added one for redo.
 
 Note that the order in which the plugins are given is significant—if
 you provide multiple keymaps, the one that comes firsts in the array
