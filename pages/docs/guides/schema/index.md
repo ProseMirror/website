@@ -113,7 +113,7 @@ atom (string, number, bool, null) or a reference to an attribute in
 the parent node, written with a prefixed dot, for example
 `"table_row[width=.width]"`.
 
-By default, nodes do not support [marks][##model.Mark]. When desired,
+By default, nodes do not support [marks](##model.Mark). When desired,
 you have to explicitly allow them using angle bracket syntax. So
 `"text*"` means “text without marks”, whereas `"text<em>*"` means
 “text with optional emphasis mark”, `"text<em strong>*"` text with
