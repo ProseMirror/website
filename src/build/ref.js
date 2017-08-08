@@ -38,6 +38,8 @@ var modules = [{
 }]
 
 var baseDir = __dirname + "/../../node_modules/"
+if (!require("fs").existsSync(baseDir + "prosemirror-model"))
+  baseDir = __dirname + "/../../../node_modules/"
 
 let read = Object.create(null)
 modules.forEach(config => read[config.name] = builddocs.read({
