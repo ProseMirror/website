@@ -27,6 +27,9 @@ var modules = [{
   name: "inputrules",
   deps: ["state"]
 }, {
+  name: "gapcursor",
+  deps: ["state"]
+}, {
   name: "schema-basic",
   deps: ["model"]
 }, {
