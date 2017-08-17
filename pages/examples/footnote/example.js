@@ -1,10 +1,11 @@
-const {EditorState} = require("prosemirror-state")
-const {insertPoint} = require("prosemirror-transform")
-const {MenuItem} = require("prosemirror-menu")
-const {Schema, DOMParser, Fragment} = require("prosemirror-model")
-const {EditorView} = require("prosemirror-view")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
+const { EditorState, TextSelection } = require("prosemirror-state")
+const { insertPoint } = require("prosemirror-transform")
+const { MenuItem } = require("prosemirror-menu")
+const { Schema, DOMParser, Fragment } = require("prosemirror-model")
+const { EditorView } = require("prosemirror-view")
+const { schema } = require("prosemirror-schema-basic")
+const { exampleSetup, buildMenuItems } = require("prosemirror-example-setup")
+const { keymap } = require("prosemirror-keymap");
 
 const footnote = {
   group: "inline",
@@ -13,7 +14,7 @@ const footnote = {
   draggable: true,
   atom: true,
   toDOM: () => ["footnote", 0],
-  parseDOM: [{tag: "footnote"}]
+  parseDOM: [{ tag: "footnote" }]
 }
 
 const footnoteSchema = new Schema({
@@ -29,7 +30,7 @@ menu.insertMenu.content.push(new MenuItem({
     return insertPoint(state.doc, state.selection.from, footnoteSchema.nodes.footnote) != null
   },
   run(state, dispatch) {
-    let {empty, $from, $to} = state.selection, content = Fragment.empty
+    let { empty, $from, $to } = state.selection, content = Fragment.empty
     if (!empty && $from.sameParent($to) && $from.parent.inlineContent)
       content = $from.parent.content.cut($from.parentOffset, $to.parentOffset)
     dispatch(state.tr.replaceSelectionWith(footnoteSchema.nodes.footnote.create(null, content)))
@@ -55,7 +56,20 @@ class FootnoteView {
       this.tooltip = this.dom.appendChild(document.createElement("div"))
       this.tooltip.className = "footnote-tooltip"
       this.innerView = new EditorView(this.tooltip, {
-        state: EditorState.create({doc: this.node}),
+        state: EditorState.create({
+          doc: this.node,
+          plugins: [
+            keymap({
+              "Delete": this.closeIfAtEnd.bind(this),
+              "Ctrl-Backspace": this.closeIfAtEnd.bind(this),
+              "Escape": (editorState, dispatch, editorView) => {
+                this.deselectNode()
+                return false
+              },
+              Backspace: this.closeIfAtStart.bind(this)
+            })
+          ]
+        }),
         dispatchTransaction: this.dispatchInner.bind(this),
         handleDOMEvents: {
           mousedown: () => {
@@ -70,7 +84,7 @@ class FootnoteView {
   }
 
   dispatchInner(tr) {
-    let {state, transactions} = this.innerView.state.applyTransaction(tr)
+    let { state, transactions } = this.innerView.state.applyTransaction(tr)
     this.innerView.updateState(state)
 
     if (!tr.getMeta("fromOutside")) {
@@ -91,7 +105,7 @@ class FootnoteView {
       let state = this.innerView.state
       let start = node.content.findDiffStart(state.doc.content)
       if (start != null) {
-        let {a: endA, b: endB} = node.content.findDiffEnd(state.doc.content)
+        let { a: endA, b: endB } = node.content.findDiffEnd(state.doc.content)
         let overlap = start - Math.min(endA, endB)
         if (overlap > 0) { endA += overlap; endB += overlap }
         this.innerView.dispatch(
@@ -120,12 +134,36 @@ class FootnoteView {
   }
 
   ignoreMutation() { return true }
+
+  // Deselects the node if the current selection is at the end.
+  closeIfAtEnd(editorState, dispatch, editorView) {
+    const { from, empty } = editorState.selection;
+    // see if the cursor is at the end of the footnote
+    if (empty && from === editorState.doc.resolve(from).end()) {
+      this.deselectNode()
+      this.outerView.focus()
+      return true
+    }
+    return false
+  };
+
+  // Deselects the node if the current selection is at the beginning.
+  closeIfAtStart(editorState, dispatch, editorView) {
+    // see if the cursor is at the start of the footnote
+    if (editorState.selection.from === 0) {
+      this.deselectNode()
+      // make sure the cursor makes it back into the document
+      this.outerView.focus()
+      return true
+    }
+    return false
+  };
 }
 
 window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(footnoteSchema).parse(document.querySelector("#content")),
-    plugins: exampleSetup({schema: footnoteSchema, menuContent: menu.fullMenu})
+    plugins: exampleSetup({ schema: footnoteSchema, menuContent: menu.fullMenu })
   }),
   nodeViews: {
     footnote(node, view, getPos) { return new FootnoteView(node, view, getPos) }
