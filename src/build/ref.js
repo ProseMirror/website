@@ -35,9 +35,6 @@ var modules = [{
 }, {
   name: "schema-list",
   deps: ["state"]
-}, {
-  name: "schema-table",
-  deps: ["state"]
 }]
 
 var baseDir = __dirname + "/../../node_modules/"
