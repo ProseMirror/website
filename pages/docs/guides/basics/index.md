@@ -1,278 +1,242 @@
-!{"title": "ProseMirror Editing Guide",
+!{"title": "ProseMirror Guide",
   "template": "guide"}
 
-# Basic Editor Guide
+# ProseMirror Guide
 
-This guide describes the steps you must take to put a simple
-ProseMirror editor in your page.
+ProseMirror provides a set of tools and concepts for building rich
+text editors, using user interface inspired by
+what-you-see-is-what-you-get, but trying to avoid the pitfalls of that
+style of editing.
 
-## Bundling
+The main principle of ProseMirror is that your code gets full control
+over the document and what happens to it. This document isn't a blob
+of HTML, but a custom data structure that only contains elements that
+you explicitly allow it to contain, in relations that you specified.
+All updates go through a single point, where you can inspect them and
+react to them.
 
-ProseMirror consists of a number of different modules. The upside of
-this is that you might not need to load all those modules, and you can
-swap out pieces of the system as you see fit. Doing your own bundling
-gives you a clean way to pull in exactly the code you need. The
-downside is that you have to mess around with a bundler before you can
-get anything running.
+The core library is not an easy drop-in component—we are prioritizing
+modularity and customizeability over simplicity, with the hope that,
+in the future, people will distribute drop-in editors based on
+ProseMirror. As such, this is more of a lego set than a matchbox car.
 
-“Bundling” JavaScript means taking a bunch of small modules that use
-one of JavaScript's module conventions (such as
-[CommonJS](http://wiki.commonjs.org/wiki/Modules/1.1), which the files
-in the ProseMirror distribution use) and bundling them up in a way
-that makes it possible (and quick) to run them in a browser. It is an
-unfortunate artefact of the current state of the JavaScript ecosystem.
+There are four core modules, which are required to do any editing at
+all, and a number of extension modules maintained by the core team,
+which have a status similar to that of 3rd party modules—they provide
+useful functionality, but you may omit them or replace them with other
+modules that implement similar functionality.
 
-The easiest way to bundle ProseMirror is to use
-[NPM](https://www.npmjs.com/) and
-[browserify](http://browserify.org/). Install Browserify and the
-ProseMirror modules you need through NPM.
+The core modules are:
 
-    npm install prosemirror-state
-    npm install prosemirror-view
-    npm install prosemirror-schema-basic
-    npm install browserify
+ - [`prosemirror-model`](##model) defines the editor's [document
+   model](#../doc/), the data structure used to describe the content
+   of the editor.
 
-Next, create a file that uses ProseMirror, for example:
+ - [`prosemirror-state`](##state) provides the data structure that
+   describes the editor's whole state, including the selection, and a
+   transaction system for moving from one state to the next.
 
-    var EditorState = require("prosemirror-state").EditorState
-    var EditorView = require("prosemirror-view").EditorView
-    var schema = require("prosemirror-schema-basic").schema
+ - [`prosemirror-view`](##view) implements a user interface component
+   that shows a given editor state as an editable element in the
+   browser, and handles user interaction with that element.
 
-    var view = new EditorView(document.body, {
-      state: EditorState.create({schema: schema}),
-    })
+ - [`prosemirror-transform`](##transform) contains functionality for
+   modifying documents in a way that can be recorded and replayed,
+   which is the basis for the transactions in the `state` module, and
+   which makes the undo history and collaborative editing possible.
 
-We'll go over what that code does in a moment. To create a bundle for
-your file, you can run something like this:
+In addition, there are modules for [basic editing
+commands](##commands), [binding keys](##keymap), [undo
+history](##history), [input macros](##inputrule), [collaborative
+editing](##collab), a [simple document schema](##schema-basic), and
+more under the [GitHub prosemirror
+organization](https://github.com/prosemirror/).
 
-    browserify main.js --outfile main_bundle.js
+The fact that ProseMirror isn't distributed as a single,
+browser-loadable script means that you'll probably want to use some
+kind of bundler when using it. A bundler is a tool that automatically
+finds your script's dependencies, and combines them into a single big
+file that you can easily load from a web page. You can read more about
+bundling on the web, for example
+[here](https://medium.freecodecamp.org/javascript-modules-part-2-module-bundling-5020383cf306).
 
-This will find all dependencies declared in your script file, and
-the dependencies of those modules, and put them together in a big file
-called `main_bundle.js`.
+## My first editor
 
-If you include that in a webpage, and also add a link tag to load the
-editor's style sheet, you should have a working editor.
+The lego pieces fit together like this to create a very minimal
+editor:
 
-    <!doctype html>
-    <meta charset=utf8>
-    <link rel=stylesheet
-      href="path/to/node_modules/prosemirror-view/style/prosemirror.css">
-    <style>.ProseMirror { background: silver }</style>
-    <body>
-      <script src="main_bundle.js"></script>
-    </body>
+```javascript
+import {schema} from "prosemirror-schema-basic"
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
 
-Running browserify on a big codebase takes a while, so during
-development, this is a bit of a pain. One solution is to use
-[`watchify`](https://github.com/substack/watchify), which is like `browserify`, but a persistent process that
-immediately updates the bundle file whenever one of the files it
-depends on change. This is faster, and doesn't require you to explicitly
-run any commands every time you want to test your code.
+let state = EditorState.create({schema})
+let view = new EditorView(document.body, {state})
+```
 
-Other approaches to bundling are
-[webpack](https://webpack.github.io/), [rollup](http://rollupjs.org/),
-and [jspm](http://jspm.io/). You should be able to use any of them to
-run ProseMirror.
+ProseMirror requires you to specify a schema that your document
+conforms to, so the first thing this does is import a module with a
+basic schema in it.
 
-## Structure of an Editor
+That schema is then used to create a state, which will generate an
+empty document conforming to the schema, and a default selection at
+the start of that document. Finally, a view is created for the state,
+and appended to `document.body`. This will render the state's document
+as an editable DOM node, and generate state transactions whenever the
+user types into it.
 
-A ProseMirror _view_ (the `EditorView` class) is a component
-responsible for showing the editable document in the browser, and
-handling user interaction with that document.
+The editor isn't very usable yet. If you press enter, for example,
+nothing happens, because the core library has no opinion on what enter
+should do. We'll get to that in a moment.
 
-It is not, however, responsible for tracking state. There is a
-separate type of object, of the `EditorState` class, that holds the
-editor's current state—what the document is, where the selection or
-cursor is, and so on.
+## Transactions
 
-When the user interacts with the document, for example by typing
-something, the view generates [`Transaction`s](##state.Transaction),
-which can be [applied](##state.EditorState.apply) to the state to
-produce a new, updated state.
+I said that the view ‘generates state transactions’ when the user
+types. What that means is that it does not just modify the document
+in-place and implicitly update its state in that way. Instead every
+change causes a _transaction_ to be created, which describes the
+changes that are made to state, and can be applied to create a _new_
+state, which is then used to update the view.
 
-If you don't do anything special, the view will automatically move to
-a new state whenever it dispatches a transaction. But you can provide
-the view with a custom
-[`dispatchTransaction`](##view.EditorProps.dispatchTransaction)
-function, which puts you in full control of its update cycle—it'll
-only update when you tell it to.
+By default this all happens under the cover, but you can hook into by
+writing plugins or configuring your view. For example, this code adds
+a
+[`dispatchTransaction`](##view.DirectEditorProps.dispatchTransaction)
+[prop](##view.EditorProps), which will be called whenever a
+transaction is created:
 
-Let's go over the example code again:
+```javascript
+// (Imports omitted)
 
-    var view = new EditorView(document.body, {
-      state: EditorState.create({schema: schema})
-    })
+let state = EditorState.create({schema})
+let view = new EditorView(document.body, {
+  state,
+  dispatchTransaction(transaction) {
+    console.log("Something happened:", transaction)
+    let newState = view.state.apply(transaction)
+    view.updateState(newState)
+  }
+})
+```
 
-The view constructor expects a place in the DOM as the first argument
-(either a node to append to a or a function that will place a DOM
-node), and a set of _props_ as the second. 'Props' is used in the
-[React sense](https://facebook.github.io/react/docs/tutorial.html#using-props),
-as a set of values that determine the entire behavior of the
-component. The editor view has no (visible) state beyond its props.
+_Every_ state update has to go through `updateState`, and every normal
+editing update will happen by dispatching a transaction.
 
-In this case, we're passing only the editor state. There are
-[others](##view.EditorProps), for example
-[`handleKeyDown`](##view.EditorProps.handleKeyDown), which allows you
-to handle key events, and
-[`attributes`](##view.EditorProps.attributes), which allows you to
-specify additional attributes for the editable DOM element.
+## Plugins
 
-The editor state is initialized with the `EditorState.create`
-function, which also takes an object that can be used to configure the
-newly created state. In the example, we only pass the single required
-field, `schema`, which determines the
-[document schema](##model.Schema) that our editor uses.
+Plugins can be used to extend the behavior of the editor and the
+editor state in various ways. Some are relatively simple, like the
+[keymap](##keymap) plugin that binds actions to keyboard input, others
+are more involved, like the [history](##history) plugin which
+implements an undo history by observing transactions and storing their
+inverse in case the user wants to undo them.
 
-To clean up an editor view, call its
-[`destroy`](##view.EditorView.destroy) method.
+Let's add those two plugins to our editor to get undo/redo
+functionality:
+
+```javascript
+// (Omitted repeated imports)
+import {undo, redo, history} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
+
+let state = EditorState.create({
+  schema,
+  plugins: [
+    history(),
+    keymap({"Mod-Z": undo, "Mod-Y": redo})
+  ]
+})
+let view = new EditorView(document.body, {state})
+```
+
+Plugins are registered when creating a state (because they get access
+to state transactions). After creating a view for this history-enabled
+state, you'll be able to press Ctrl-Z (or Cmd-Z on OS X) to undo your
+last change.
+
+## Commands
+
+The `undo` and `redo` values that the previous example bound to keys
+are a special kind of functions called ‘commands’. Most editing
+actions are written as commands which can be bound to keys, hooked up
+to menus, or otherwise exposed to the user.
+
+The `prosemirror-commands` package provides a number of basic editing
+commands, along with a minimal keymap that you'll probably want to
+enable to have things like enter and delete do the expected thing in
+your editor.
+
+```javascript
+// (Omitted repeated imports)
+import {baseKeymap} from "prosemirror-commands"
+
+let state = EditorState.create({
+  schema,
+  plugins: [
+    history(),
+    keymap({"Mod-Z": undo, "Mod-Y": redo}),
+    keymap(baseKeymap)
+  ]
+})
+let view = new EditorView(document.body, {state})
+```
+
+At this point, you have a basically working editor.
+
+To add a menu, additional keybindings for schema-specific things, and
+so on, you might want to look into the `prosemirror-example-setup`
+package. This is a module that provides you with an array of plugins
+that set up a baseline editor, but as the name suggests, it is meant
+more as an example than as a production-level library. For a
+real-world deployment, you'll probably want to replace it with custom
+code that sets things up exactly the way you want.
 
 ## Content
 
-To get at the content of your editor, you can access the state's
-[`doc`](##state.EditorState.doc) property. This holds an object of the
-[`Node`](##model.Node) type, which is further described in the
-[document guide](../doc/).
+A state's document lives under its [`doc`](##state.EditorState.doc)
+property. This is a read-only data structure, representing the
+document as a hierarchy of nodes, somewhat like the browser DOM. A
+simple document might be a `doc` node containing two `paragraph`
+nodes, each containing a single `text` node. You can read more about
+the document data structure in the [guide](../doc/) about it.
 
-When initializing a state, you can of course give it an initial
-document to use. In that case, the `schema` field is optional, since
-the schema can be derived from the document.
+When initializing a state, you can give it an initial document to use.
+In that case, the `schema` field is optional, since the schema can be
+taken from the document.
 
 Here we initialize a state by parsing the content found in the DOM
-element with the `content` ID:
-
-    var content = document.getElementById("content")
-    var state = EditorState.create({
-      doc: DOMParser.fromSchema(schema).parse(content)
-    })
-
-Documents, as well as entire states, can be serialized to JSON with
-their [`toJSON`](##model.Node.toJSON) methods, and parsed with the
-static [`fromJSON`](##model.Node^fromJSON) methods on their
-constructors.
+element with the `content` ID, using the DOM parser mechanism, which
+uses information supplied by the schema about which DOM nodes map to
+which elements in that schema:
 
 ```javascript
-console.log(state.doc.toJSON())
+import {DOMParser} from "prosemirror-model"
+import {EditorState} from "prosemirror-state"
+import {schema} from "prosemirror-schema-basic"
+
+let content = document.getElementById("content")
+let state = EditorState.create({
+  doc: DOMParser.fromSchema(schema).parse(content)
+})
 ```
-
-To make programmatic changes to the editor content, you can use
-transforms, as described in the [transform guide](../transform/).
-
-## Plugins and Commands
-
-The editor we've created so far doesn't really do a lot. Its schema
-supports strong and emphasised text, block quotes and horizontal
-rules, but there's no way to actually insert them, short of pasting in
-the corresponding HTML.
-
-The ProseMirror core is intentionally bare, since specific sites will
-often want to do things differently, and you don't want to have your
-users download functionality they don't need. To make it possible to
-add functionality to the editor in a modular way, ProseMirror supports
-plugins.
-
-Plugins are values that extend your editor. You can pass an array of
-them when you create your state, and they can add their own state and
-define props to influence the view's behavior.
-
-The maintainers of ProseMirror provide several plugins, and hopefully
-we'll see a growing number of 3rd-party plugins in the future. One
-example is the [prosemirror-history](##history) plugin, which
-implements an undo/redo history. Here's how you could use it:
-
-    /* ... same imports as before ... */
-    var history = require("prosemirror-history")
-
-    var view = new EditorView(document.body, {
-      state: EditorState.create({schema: schema,
-                                 plugins: [history.history()]}),
-      // (This'll get less ugly soon)
-      handleKeyDown: function(view, event) {
-        if (event.ctrlKey && event.keyCode == 90)
-          return history.undo(view.state, view.dispatch)
-      }
-    })
-
-The changes are that we pass `plugins: [history.history()]` when
-creating the state, to enable the history plugin, and that we add a
-`handleKeyDown` prop which, when Ctrl-Z is pressed, calls
-`history.undo`.
-
-That latter function follows ProseMirror's _command_ interface,
-meaning that it is a function that takes a state and a dispatch
-function, and returns a boolean that indicates whether it could
-perform its editing command. In this case, it'll call `dispatch` with
-a transaction that causes an undo to happen, and return true, when the
-given state has an undo event available.
-
-Of course, binding keys by manually looking at key events is awful and
-error-prone (the code above will also handle Ctrl-Alt-Z, and won't
-handle Cmd-Z on Mac platforms), so we'd rather not do that. Another
-plugin to the rescue: [prosemirror-keymap](##keymap).
-
-This one exports a function that takes a mapping from key names to
-command functions, and returns a plugin whose `handleKeyDown` prop
-will execute those commands when the corresponding key is pressed.
-
-    /* ... same imports as before ... */
-    var history = require("prosemirror-history")
-    var keymap = require("prosemirror-keymap").keymap
-
-    var view = new EditorView(document.body, {
-      state: EditorState.create({
-        schema: schema,
-        plugins: [history.history(), keymap({
-          "Mod-z": history.undo,
-          "Mod-y": history.redo
-        })]
-      })
-    })
-
-The keymap plugin will interpret `Mod` to mean the Command key on Mac,
-and Control on other platforms, so that now our binding works as
-intended. We've also added one for redo.
-
-Note that the order in which the plugins are given is significant—if
-you provide multiple keymaps, the one that comes firsts in the array
-gets to handle events first.
-
-The [prosemirror-commands](##commands) module exports a lot of other
-command functions, along with an object that can be passed to `keymap`
-to create a basic keymap with schema-agnostic key bindings (such as
-backspace and enter). Since schemas are configurable, you'll have to
-arrange appropriate key bindings that are related to your content
-elements (such as strong and emphasis marks) yourself.
-
-Another potentially useful plugin is
-[prosemirror-inputrules](##inputrules), which allows you to define
-special behavior to be executed when certain patterns of text are
-typed, such as smart quotes, or automatically creating a list when a
-paragraph starts with a dash and a space.
 
 ## Props
 
-We briefly looked at props before. Many props take the shape of
-callbacks that are called when a certain thing happens. The ones where
-the event can be prevented, such as
+[Props](##view.EditorProps) are values that can be used to configure
+how the editor behaves. They can come from plugins, or be passed
+directly to the [`EditorView`](##view.EditorView^constructor)
+constructor, as we did with the `dispatchTransaction` prop earlier.
+
+Many props take the shape of functions that are called when a certain
+thing happens. Some, such as
 [`handleKeyDown`](##view.EditorProps.handleKeyDown), can return true
 to indicate that they handled the event and no further action needs to
-be taken.
+be taken. Directly specified props take precedence, after that, the
+plugins each get a chance to respond to the event, in the order in
+which they were specified.
 
-There's a [`handleKeyPress`](##view.EditorProps.handleKeyPress) for
-key press events, and clicks on the editor get passed to
-[`handleClick`](##view.EditorProps.handleClick), but first, for each
-node around the click,
-[`handleClickOn`](##view.EditorProps.handleClickOn) is called, to
-allow node-specific handling. There are also variants of the click
-handlers for double and triple clicks.
-
-Other props merely notify you that something changed, such as
-[`onFocus`](##view.EditorProps.onFocus), and can't prevent the
-behavior.
-
-And for more advanced use cases, there is the
-[`decorations`](##view.EditorProps.decorations) prop which allows you
-to overlay styling and widgets on your document, and the
-[`nodeViews`](##view.EditorProps.nodeViews) prop which allows you to
-customize the way the DOM representation of specific document nodes
-works.
+Some props influence the way the document is rendered. You can use
+[`decorations`](##view.EditorProps.decorations) to overlay styling and
+widgets on your document, and the
+[`nodeViews`](##view.EditorProps.nodeViews) to customize the way the
+DOM representation of specific document nodes works.
