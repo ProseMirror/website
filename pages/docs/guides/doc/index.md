@@ -213,7 +213,10 @@ content. But the top-level node may also be a textblock itself, so
 that the document contains only inline content.
 
 What kind of node is allowed where is determined by the document's
-[schema](../schema/).
+[schema](../schema/). To programatically create nodes, you must go
+through the schema, for example using the
+[`node`](##model.Schema.node) and [`text`](##model.Schema.text)
+methods.
 
 ## Indexing
 
