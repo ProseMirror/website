@@ -1,7 +1,7 @@
 !{"title": "ProseMirror Schema Guide",
   "template": "guide"}
 
-# Guide to Document Schemas
+# Document Schemas
 
 Each ProseMirror [document](../doc/) has a [schema](##model.Schema)
 associated with it. The schema describes the kind of
