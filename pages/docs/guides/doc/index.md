@@ -264,6 +264,34 @@ Take good care to distinguish between child indices (as per
 node-local offsets (sometimes used in recursive functions to represent
 a position into the node that's currently being handled).
 
+## Slices
+
+To handle things like copy-paste and drag-drop, it is necessary to be
+able to talk about a slice of document, i.e. the content between two
+positions. Such a slice differs from a full node or fragment in that
+some of the nodes at its start or end may be ‘open’.
+
+For example, if you select from the middle of one paragraph to the
+middle of the next one, the slice you've selected has open paragraphs
+on both sides, whereas if you node-select a paragraph, you've selected
+a closed node. It may even be the case that the content in such open
+nodes violates the schema constraints, because some required nodes
+fell outside of the slice.
+
+The [`Slice`](##model.Slice) data structure is used to represent such
+slices. It stores a [fragment](##model.Fragment) along with an [open
+depth](##model.Slice.openStart) on both sides. You can use the
+[`slice`](##model.Node.slice) to cut a slice out of a document.
+
+```javascript
+// doc holds two paragraphs, containing text "a" and "b"
+let slice1 = doc.slice(0, 3) // The first paragraph
+console.log(slice1.openStart, slice1.openEnd) // → 0 0
+let slice2 = doc.slice(1, 5) // From start of first paragraph
+                             // to end of second
+console.log(slice2.openStart, slice2.openEnd) // → 1 1
+```
+
 ## Changing
 
 Since nodes and fragments are

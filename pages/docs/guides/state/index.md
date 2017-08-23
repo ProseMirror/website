@@ -179,3 +179,38 @@ simple counts the number of transactions that have been applied to a
 state. The helper function uses the plugin's
 [`getState`](##state.Plugin.getState) method, which can be used to
 fetch the plugin state from a full editor state object.
+
+It is often useful for plugins to add some extra information to a
+transaction. For example, the undo history, when performing an actual
+undo, will mark the resulting transaction, so that when the plugin
+sees it, instead of doing the thing it normally does with changes
+(adding them to the undo stack), it treats it specially, removing it
+from the undo stack and adding them to the redo stack instead.
+
+For this purpose, transactions allow
+[‘metadata’](##state.Transaction.getMeta) to be attached to them. We
+could update our transaction counter plugin to not count transactions
+that are marked, like this:
+
+```javascript
+let transactionCounter = new Plugin({
+  state: {
+    init() { return 0 },
+    apply(tr, value) {
+      if (tr.getMeta(transactionCounter)) return value
+      else return value + 1
+    }
+  }
+})
+
+function markAsUncounted(tr) {
+  tr.setMeta(transactionCounter, true)
+}
+```
+
+Keys for metadata properties can be strings, but to avoid name
+collisions, you are encouraged to use plugin objects. There are some
+string keys that are given a meaning by the library, for example
+`"addToHistory"` can be set to `false` to prevent a transaction from
+being undoable, and when handling a paste, the editor view will set
+the `"paste"` property on the resulting transaction to true.
