@@ -17,9 +17,9 @@ your own schemas.
 
 ## Node Types
 
-Every node in a document has a [type](##model.NodeType), which represents
-its semantic meaning and its properties, such as the way it is
-rendered in the editor.
+Every node in a document has a [type](##model.NodeType), which
+represents its semantic meaning and its properties, such as the way it
+is rendered in the editor.
 
 When you define a schema, you enumerate the node types that may occur
 within it, describing each with a [spec object](##model.NodeSpec):
@@ -60,10 +60,10 @@ You can say, for example `"paragraph"` for “one paragraph”, or
 ranges, such as `{2}` (“exactly two”) `{1, 5}` (“one to five”) or
 `{2,}` (“two or more”) after node names.
 
-Often, you'll want not just a single node type, but any of a set of
-node types, to appear in a position. You can use the pipe `|` operator
-(for “or”) to express this. For example `"(paragraph | blockquote)+"`
-means “one or more paragraphs or blockquote nodes”.
+Such expressions can be combined to create a sequence, for example
+`"heading paragraph+"` means ‘first a heading, then one or more
+paragraphs’. You can also use the pipe `|` operator to indicate a
+choice between two expressions, as in `"(paragraph | blockquote)+"`.
 
 Some groups of element types will appear multiple types in your
 schema—for example you might have a concept of “block” nodes, that may
@@ -96,9 +96,18 @@ as soon as the editor tried to create a block node—it'd create a
 `"blockquote"` node, whose content requires at least one block, so
 it'd try to create another `"blockquote"` as content, and so on.
 
-To express “first a heading and then zero or more paragraphs”, you
-write `"heading paragraph*"`. Putting expressions after each other
-indicates their content must appear in sequence.
+Not every node-manipulating function in the library checks that it is
+dealing with valid content—higher level concepts like
+[transforms](../transform/) do, but primitive node-creation methods
+usually don't and instead put the responsibility for providing sane
+input on their caller. It is perfectly possible to use, for example
+[`NodeType.create`](##model.NodeType^create), to create a node with
+invalid content. For nodes that are ‘open’ on the edge of
+[slices](../doc/#slices), this is even a perfectly reasonable thing to
+do. There is a separate [`createChecked`
+method](##model.NodeType^createChecked), as well as an after-the-fact
+[`check` method](##model.Node.check) on nodes, that can be used to
+assert that a given node's content is valid.
 
 ## Marks
 
@@ -150,14 +159,14 @@ the optional `attrs` field in a node or mark spec.
 
 In that schema, every instance of the `heading` node will have a
 `level` attribute under `.attrs.level`. When it isn't specified when
-the node is [created](##model.NodeType.create), it will default to 1.
+the node is [created](##model.NodeType^create), it will default to 1.
 
 When you don't specify a default value for an attribute, an error will
 be raised when you attempt to create such a node without specifying
 that attribute. It will also make it impossible for the library to
 generate such nodes as filler to satisfy schema constraints during a
 transform or when calling
-[`createAndFill`](##model.NodeType.createAndFill).
+[`createAndFill`](##model.NodeType^createAndFill).
 
 ## Serialization and Parsing
 
@@ -227,6 +236,13 @@ When a schema includes `parseDOM` annotations, you can create a
 [`DOMParser.fromSchema`](##model.DOMParser^fromSchema). This is done
 by the editor to create a the default clipboard parser, but you can
 also [override](##view.EditorProps.clipboardParser) that.
+
+Documents also come with a built-in JSON serialization format. You can
+call [`toJSON`](##model.Node.toJSON) on them to get an object that can
+safely be passed to
+[`JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify),
+and schema objects have a [`fromJSON` method](##model.Schema.fromJSON)
+that can parse this representation back into a document.
 
 ## Extending a schema
 

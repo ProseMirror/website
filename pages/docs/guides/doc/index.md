@@ -31,7 +31,9 @@ in the way it stores inline content.
 
 In HTML, a paragraph with markup is represented as a tree, like this:
 
-    <p>This is <strong>strong text with <em>emphasis</em></strong></p>
+```html
+<p>This is <strong>strong text with <em>emphasis</em></strong></p>
+```
 
 <div class=figure>
   <div class=box style="background: #77e">
@@ -252,6 +254,21 @@ exist as objects, they are just a counting convention.
  * Leaf nodes that do not allow content (such as images) also count as
    one token.
 
+So if you have a document that, when expressed as HTML, would look
+like this:
+
+```html
+<p>One</p>
+<blockquote><p>Two<img src="..."></p></blockquote>
+```
+
+The token sequence, with positions, looks like this:
+
+     [open p] O n e [close p]
+    0        1 2 3 4         5
+     [open blockquote] [open p] T w o [image] [close p] [close blockquote]
+    5                 6        7 8 9 10      11        12                 13
+
 Interpreting such position involves quite a lot of counting. You can
 call [`Node.resolve`](##model.Node.resolve) to get a more descriptive
 [data structure](##model.ResolvedPos) for a position. This data
@@ -310,7 +327,7 @@ and [`Fragment`](##model.Fragment) types.
 
 To create an updated version of a whole document, you'll usually want
 to use [`Node.replace`](##model.Node.replace), which replaces a given
-range of the document with a [“slice”](##model.Slice) of new content.
+range of the document with a [slice](##model.Slice) of new content.
 
 To update a node shallowly, you can use its
 [`copy`](##model.Node.copy) method, which creates a similar node with
