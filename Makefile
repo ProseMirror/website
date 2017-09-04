@@ -43,3 +43,6 @@ public/css/editor.css: $(ROOT)prosemirror-view/style/prosemirror.css \
                        $(ROOT)prosemirror-menu/style/menu.css \
                        $(ROOT)prosemirror-example-setup/style/style.css
 	cat $^ > $@
+
+clean:
+	rm public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md
