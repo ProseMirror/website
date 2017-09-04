@@ -355,3 +355,16 @@ div.figure { margin: 1em; }
   width: 400px;
   max-width: 90%;
 }
+
+/* Code highlighting styles */
+.hl-keyword {color: #708;}
+.hl-atom {color: #219;}
+.hl-number {color: #164;}
+.hl-def {color: #00f;}
+.hl-variable-2 {color: #05a;}
+.hl-comment {color: #a50;}
+.hl-string {color: #a11;}
+.hl-string-2 {color: #f50;}
+.hl-meta {color: #555;}
+.hl-tag {color: #170;}
+.hl-attribute {color: #00c;}
