@@ -11,7 +11,7 @@ For practical reasons, commands have a slightly convoluted interface.
 In their simple form, they are functions taking an [editor
 state](../state/) and a _dispatch function_
 ([`EditorView.dispatch`](##view.EditorView.dispatch) or some other
-function that handles transactions), and return a boolean. Here's a
+function that takes transactions), and return a boolean. Here's a
 very simple example:
 
 ```javascript
@@ -31,8 +31,8 @@ found to be applicable.
 To be able to query whether a command is applicable for a given state,
 without actually executing it, the `dispatch` argument is
 optional—commands should simply return true without doing anything
-when no `dispatch` argument is given. So the example command should
-actually look like this:
+when they are applicable but no `dispatch` argument is given. So the
+example command should actually look like this:
 
 ```javascript
 function deleteSelection(state, dispatch) {
@@ -45,7 +45,7 @@ function deleteSelection(state, dispatch) {
 To figure out whether a selection can currently be deleted, you'd call
 `deleteSelection(view.state, null)`, whereas to actually execute the
 command, you'd do something like `deleteSelection(view.state,
-view.dispatch)`. A menubar could, for example, use this to determine
+view.dispatch)`. A menu bar could, for example, use this to determine
 which menu items to gray out.
 
 In this form, commands do not get access to the actual editor
@@ -105,5 +105,6 @@ that toggles that mark on the current selection.
 
 Some other modules also export command functions—for example
 [`undo`](##history.undo) and [`redo`](##history.redo) from the history
-module, and to customize your editor, you'll likely need to write your
-own custom commands.
+module. To customize your editor, or to allow users to interact with
+custom document nodes, you'll likely want to write your own custom
+commands as well.

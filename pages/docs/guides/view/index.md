@@ -14,16 +14,17 @@
 
 # Editor Views
 
-A ProseMirror [editor view](##view.EditorView) is a user-interface
+A ProseMirror [editor view](##view.EditorView) is a user interface
 component that displays an [editor state](../state/) to the user, and
 allows them to perform editing actions on it.
 
-The definition of ‘editing actions’ used by the core view component is
+The definition of _editing actions_ used by the core view component is
 rather narrow—it handles direct interaction with the editing surface,
 such as typing, clicking, copying, pasting, and dragging, but not much
 beyond that. This means that things like displaying a menu, or even
 providing a full set of key bindings, lie outside of the
-responsibility of the core view component.
+responsibility of the core view component, and have to be arranged
+through plugins.
 
 ## Editable DOM
 
@@ -39,7 +40,7 @@ selection](https://developer.mozilla.org/en-US/docs/Web/API/Selection)
 corresponds to the selection in the editor state.
 
 It also registers event handlers for many DOM events, which translate
-the event into the appropriate [transactions](../state/#transactions).
+the events into the appropriate [transactions](../state/#transactions).
 For example, when pasting, the pasted content is
 [parsed](##view.EditorProps.clipboardParser) as a ProseMirror document
 slice, and then inserted into the document.
@@ -69,14 +70,14 @@ given to the view using its
 [`updateState`](##view.EditorView.updateState) method.
 
 <div style="text-align: center; font-size: 140%">
-  <div style="font-size: 90%; margin-bottom: -.5em">user interaction</div>
+  <div class=box style="background: #c33;"><strong>DOM event</strong></div>
   <div>↗<span style="width: 5em; display: inline-block;"></span>↘</div>
   <div>
     <div class=box style="margin-right: 4em; background: #55b"><strong>EditorView</strong></div>
     <div class=box style="background: #77e"><strong>Transaction</strong></div>
   </div>
   <div>↖<span style="width: 5em; display: inline-block;"></span>↙</div>
-  <div style="font-size: 90%; margin-top: -.5em">updated state</div>
+  <div class=box style="background: #446;">new <strong>EditorState</strong></div>
 </div>
 
 This creates a straightforward, cyclic data flow, as opposed to the

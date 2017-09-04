@@ -55,7 +55,7 @@ sequence, with the markup attached as metadata to the nodes:
 
 <div class=figure>
   <div class=box style="background: #77e">
-    <strong>p</strong><br>
+    <strong>paragraph</strong><br>
     <div class=box style="background: #55b">
       "This is "
     </div>
@@ -103,6 +103,16 @@ they play in the document:
   * `isTextblock` is true for block nodes with inline content.
   * `isLeaf` tells you that a node doesn't allow any content.
 
+So a typical `"paragraph"` node will be a textblock, whereas a
+blockquote might be a block element whose content consists of other
+blocks. Text, hard breaks, and inline images are inline leaf nodes,
+and a horizontal rule node would be an example of a block leaf node.
+
+The [schema](../schema/) is allowed to specify more precise
+constraints on what may appear where—i.e. even though a node allows
+block content, that doesn't mean that it allows _all_ block nodes as
+content.
+
 ## Identity and persistence
 
 Another important difference between a DOM tree and a ProseMirror
@@ -130,23 +140,25 @@ didn't change with the original document value, making it relatively
 cheap to create.
 
 This has a bunch of advantages. It makes it impossible to have an
-editor in an invalid in-between state, since a new state, with a new
-document, can be swapped in instantaneously. It also makes it easier
-to reason about documents in a mathematical-like way, which is really
-hard if your values keep changing underneath you. For example, it
-allows ProseMirror to run a very efficient DOM
-[update](##view.EditorView.update) algorithm by comparing the last
-document it drew to the screen to the current document.
+editor in an invalid in-between state during an update, since the new
+state, with a new document, can be swapped in instantaneously. It also
+makes it easier to reason about documents in a somewhat mathematical
+way, which is really hard if your values keep changing underneath you.
+This helps make collaborative editing possible and allows ProseMirror
+to run a very efficient DOM [update](##view.EditorView.update)
+algorithm by comparing the last document it drew to the screen to the
+current document.
 
 Because such nodes are represented by regular JavaScript objects, and
 explicitly
 [freezing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
-their properties hinders performance, it is actually _possible_ to
+their properties hampers performance, it is actually _possible_ to
 change them. But doing this is not supported, and will cause things to
 break, because they are almost always shared between multiple data
-structures. So be careful, and note that this also holds for the
+structures. So be careful! And note that this also holds for the
 arrays and plain objects that are _part_ of node objects, such as the
-objects used to store node attributes.
+objects used to store node attributes, or the arrays of child nodes in
+fragments.
 
 ## Data structures
 
@@ -171,7 +183,7 @@ The object structure for a document looks something like this:
     </tr>
     <tr>
       <td>attrs:</td>
-      <td><div class=classbox style="background: #99e">{<strong>Object</strong>}</div></td>
+      <td><div class=classbox style="background: #99e"><strong>Object</strong></div></td>
     </tr>
     <tr>
       <td>marks:</td>
@@ -184,7 +196,7 @@ The object structure for a document looks something like this:
           </tr>
           <tr>
            <td>attrs:</td>
-           <td><div class=classbox style="background: #99e">{<strong>Object</strong>}</div></td>
+           <td><div class=classbox style="background: #99e"><strong>Object</strong></div></td>
          </tr>
        </table></div>, ...]</td>
     </tr>
@@ -193,7 +205,9 @@ The object structure for a document looks something like this:
 
 Each node is represented by an instance of the [`Node`](##model.Node)
 class. It is tagged with a [type](##model.NodeType), which knows the
-node's name, the schema it is part of, and so on.
+node's name, the attributes that are valid for it, and so on. Node
+types (and mark types) are created once per schema, and know which
+schema they are part of.
 
 The content of a node is stored in an instance of
 [`Fragment`](##model.Fragment), which holds a sequence of nodes. Even
@@ -220,6 +234,17 @@ through the schema, for example using the
 [`node`](##model.Schema.node) and [`text`](##model.Schema.text)
 methods.
 
+```javascript
+import {schema} from "prosemirror-schema-basic"
+
+// (The null arguments are where you can specify attributes, if necessary.)
+let doc = schema.node("doc", null, [
+  schema.node("paragraph", null, [schema.text("One.")]),
+  schema.node("horizontal_rule"),
+  schema.node("paragraph", null, [schema.text("Two!")])
+])
+```
+
 ## Indexing
 
 ProseMirror nodes support two types of indexing—they can be treated as
@@ -237,7 +262,9 @@ use [`descendants`](##model.Node.descendants) or
 The second is more useful when addressing a specific position in the
 document. It allows any document position to be represented as an
 integer—the index in the token sequence. These tokens don't actually
-exist as objects, they are just a counting convention.
+exist as objects in memory—they are just a counting convention—but the
+document's tree shape, along with the fact that each node knows its
+size, is used to make by-position access cheap.
 
  * The start of the document, right before the first content, is
    position 0.
@@ -246,13 +273,13 @@ exist as objects, they are just a counting convention.
    content) counts as one token. So if the document starts with a
    paragraph, the start of that paragraph counts as position 1.
 
- * Each character counts as one token. So if the paragraph at the
-   start of the document contains the word “hi”, position 2 is after
-   the “h”, position 3 after the “i”, and position 4 after the whole
-   paragraph.
+ * Each character in text nodes counts as one token. So if the
+   paragraph at the start of the document contains the word “hi”,
+   position 2 is after the “h”, position 3 after the “i”, and position
+   4 after the whole paragraph.
 
  * Leaf nodes that do not allow content (such as images) also count as
-   one token.
+   a single token.
 
 So if you have a document that, when expressed as HTML, would look
 like this:
@@ -264,19 +291,28 @@ like this:
 
 The token sequence, with positions, looks like this:
 
-     [open p] O n e [close p]
-    0        1 2 3 4         5
-     [open blockquote] [open p] T w o [image] [close p] [close blockquote]
-    5                 6        7 8 9 10      11        12                 13
+    0   1 2 3 4    5
+     <p> O n e </p>
 
-Interpreting such position involves quite a lot of counting. You can
-call [`Node.resolve`](##model.Node.resolve) to get a more descriptive
-[data structure](##model.ResolvedPos) for a position. This data
-structure will tell you what the parent node of the position it, what
-its offset into that parent is, what ancestors the parent has, and a
-few other things.
+    5            6   7 8 9 10    11   12            13
+     <blockquote> <p> T w o <img> </p> </blockquote>
 
-Take good care to distinguish between child indices (as per
+Each node has a [`nodeSize`](##model.Node.nodeSize) property that
+gives you the size of the entire node, and you can access
+[`.content.size`](##model.Fragment.size) to get the size of the node's
+_content_. Note that for the outer document node, the open and close
+tokens are not considered part of the document (because you can't put
+your cursor outside of the document), so the size of a document is
+`doc.content.size`, **not** `doc.nodeSize`.
+
+Interpreting such position manually involves quite a lot of counting.
+You can call [`Node.resolve`](##model.Node.resolve) to get a more
+descriptive [data structure](##model.ResolvedPos) for a position. This
+data structure will tell you what the parent node of the position it,
+what its offset into that parent is, what ancestors the parent has,
+and a few other things.
+
+Take care to distinguish between child indices (as per
 [`childCount`](##model.Node.childCount)), document-wide positions, and
 node-local offsets (sometimes used in recursive functions to represent
 a position into the node that's currently being handled).
@@ -289,16 +325,18 @@ positions. Such a slice differs from a full node or fragment in that
 some of the nodes at its start or end may be ‘open’.
 
 For example, if you select from the middle of one paragraph to the
-middle of the next one, the slice you've selected has open paragraphs
-on both sides, whereas if you node-select a paragraph, you've selected
-a closed node. It may even be the case that the content in such open
-nodes violates the schema constraints, because some required nodes
-fell outside of the slice.
+middle of the next one, the slice you've selected has two paragraphs
+in it, the first one open at the start, the second open at the end,
+whereas if you node-select a paragraph, you've selected a closed node.
+It may be the case that the content in such open nodes violates the
+schema constraints, if treated like the node's full content, because
+some required nodes fell outside of the slice.
 
 The [`Slice`](##model.Slice) data structure is used to represent such
 slices. It stores a [fragment](##model.Fragment) along with an [open
 depth](##model.Slice.openStart) on both sides. You can use the
-[`slice`](##model.Node.slice) to cut a slice out of a document.
+[`slice` method](##model.Node.slice) on nodes to cut a slice out of a
+document.
 
 ```javascript
 // doc holds two paragraphs, containing text "a" and "b"
@@ -319,18 +357,16 @@ you should **never** mutate them. If you have a handle to a document
 Most of the time, you'll use [transformations](../transform/) to
 update documents, and won't have to directly touch the nodes. These
 also leave a record of the changes, which is necessary when the
-document is in an editor state.
+document is part of an editor state.
 
 In cases where you do want to 'manually' derive an updated document,
 there are some helper methods available on the [`Node`](##model.Node)
-and [`Fragment`](##model.Fragment) types.
-
-To create an updated version of a whole document, you'll usually want
-to use [`Node.replace`](##model.Node.replace), which replaces a given
-range of the document with a [slice](##model.Slice) of new content.
-
-To update a node shallowly, you can use its
-[`copy`](##model.Node.copy) method, which creates a similar node with
-new content. Fragments also have various updating methods, such as
+and [`Fragment`](##model.Fragment) types. To create an updated version
+of a whole document, you'll usually want to use
+[`Node.replace`](##model.Node.replace), which replaces a given range
+of the document with a [slice](##model.Slice) of new content. To
+update a node shallowly, you can use its [`copy`](##model.Node.copy)
+method, which creates a similar node with new content. Fragments also
+have various updating methods, such as
 [`replaceChild`](##model.Fragment.replaceChild) or
 [`append`](##model.Fragment.append).

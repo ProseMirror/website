@@ -1,10 +1,10 @@
 !{"title": "ProseMirror Document Transform Guide",
   "template": "guide"}
 
-# Document Transformations
+# Document Transformation
 
 [Transforms](##transform.Transform) are central to the way ProseMirror
-work. They form the basis for [transactions](../state/#transactions),
+works. They form the basis for [transactions](../state/#transactions),
 and are what makes history tracking and collaborative editing
 possible.
 
@@ -14,7 +14,7 @@ Why can't we just mutate the document and be done with it? Or at least
 create a new version of a document and just put that into the editor?
 
 There are several reasons. One is code clarity. Immutable data
-structures really do lead to cleaner code. But the main thing the
+structures really do lead to simpler code. But the main thing the
 transform system does is to leave a _trail_ of updates, in the form of
 values that represent the individual steps taken to go from an old
 version of the document to a new one.
@@ -47,11 +47,11 @@ A step can be [applied](##transform.Step.apply) to a document to
 produce a new document.
 
 ```javascript
-// A step that deletes the content between positions 5 and 7
-let step = new ReplaceStep(5, 7, Slice.empty)
+console.log(myDoc.toString()) // → p("hello")
+// A step that deletes the content between positions 3 and 5
+let step = new ReplaceStep(3, 5, Slice.empty)
 let result = step.apply(myDoc)
-// Output the updated document
-console.log(result.doc.toString())
+console.log(result.doc.toString()) → p("heo")
 ```
 
 Applying a step is a relatively straightforward process—it doesn't do
@@ -59,11 +59,9 @@ anything clever like inserting nodes to preserve schema constraints,
 or transforming the slice to make it fit. That means applying a step
 can fail, for example if you try to delete just the opening token of a
 node, that would leave the tokens unbalanced, which isn't a meaningful
-thing you can do.
-
-This is why [`apply`](##transform.Step.apply) returns a [result
-object](##transform.StepResult), which holds either a new document,
-_or_ an error message.
+thing you can do. This is why [`apply`](##transform.Step.apply)
+returns a [result object](##transform.StepResult), which holds either
+a new document, _or_ an error message.
 
 You'll usually want to let [helper
 functions](##transform.Transform.replace) generate your steps for you,
@@ -78,21 +76,22 @@ editor state, a [`Transaction`](##state.Transaction), which is a
 subclass of `Transform`).
 
 ```javascript
-let tr = new Transaction(myDoc)
+let tr = new Transform(myDoc)
 tr.delete(5, 7) // Delete between position 5 and 7
 tr.split(5)     // Split the parent node at position 5
 console.log(tr.doc.toString()) // The modified document
 console.log(tr.steps.length)   // → 2
 ```
 
-Most transaction methods return the transaction itself, for convenient
-chaining (`.delete(5, 7).split(5)`).
+Most transform methods return the transform itself, for convenient
+chaining (allowing you to do `tr.delete(5, 7).split(5)`).
 
 There are transform methods methods for
 [deleting](##transform.Transform.delete) and
-[replacing](##transform.Transform.replace), for manipulating
-[marks](##transform.Transform.addMark), for performing tree
-manipulating like [splitting](##transform.Transform.split),
+[replacing](##transform.Transform.replace), for
+[adding](##transform.Transform.addMark) and [removing
+marks](##transform.Transform.removeMark), for performing tree
+manipulation like [splitting](##transform.Transform.split),
 [joining](##transform.Transform.join),
 [lifting](##transform.Transform.lift), and
 [wrapping](##transform.Transform.wrap), and more.
@@ -107,29 +106,29 @@ content in a document, all positions pointing into that content are
 now invalid.
 
 We often do need to preserve positions across document changes, for
-example the selection. To help with this, steps can give you a
-[‘map’](##transform.StepMap) that can convert between positions in the
-document before the step and positions in the transformed document.
+example the selection boundaries. To help with this, steps can give
+you a [_map_](##transform.StepMap) that can convert between positions
+in the document before and after applying the step.
 
 ```javascript
-let step = new ReplaceStep(4, 5, Slice.empty) // Delete 4-5
+let step = new ReplaceStep(4, 6, Slice.empty) // Delete 4-5
 let map = step.getMap()
-console.log(map.map(7)) // → 6
-console.log(map.map(2)) // → 2 (nothing changes before the step)
+console.log(map.map(8)) // → 6
+console.log(map.map(2)) // → 2 (nothing changes before the change)
 ```
 
 Transform objects automatically
 [accumulate](##transform.Transform.mapping) a set of maps for the
-steps in them, using an abstractiong called
-[`Mapping`](##transform.Mapping), which accumulates a series of step
-maps and allows you to map through them in one go.
+steps in them, using an abstraction called
+[`Mapping`](##transform.Mapping), which collects a series of step maps
+and allows you to map through them in one go.
 
 ```javascript
 let tr = new Transaction(myDoc)
-tr.split(10) // Say we split a paragraph, which adds 2 tokens
-tr.delete(2, 5) // Delete three tokens
+tr.split(10)    // split a node, +2 tokens at 10
+tr.delete(2, 5) // -3 tokens at 2
 console.log(tr.mapping.map(15)) // → 14
-console.log(tr.mapping.map(6)) // → 3
+console.log(tr.mapping.map(6))  // → 3
 console.log(tr.mapping.map(10)) // → 9
 ```
 
@@ -148,6 +147,11 @@ position in place when content is inserted on top of it.
 ```javascript
 console.log(tr.mapping.map(10, -1)) // → 7
 ```
+
+The reason that individual steps are defined as small, straightforward
+things is that it makes this kind of mapping possible, along with
+[inverting](##transform.Step.invert) steps in a lossless way, and
+mapping steps through each other's position maps.
 
 ## Rebasing
 
@@ -192,9 +196,10 @@ mapped over the following chain of maps:
 
     rebase(stepB2, [invert(mapB1), mapA1, mapA2, mapB1'])
 
-I.e. first the inverse of the map for `stepB1` to `doc`, then through
-the pipeline of maps produced by applying `stepA1` and `stepA2`, and
-finally through the map produced by applying `stepB1'` to `docA`.
+I.e. first the inverse of the map for `stepB1` to get back to the
+original document, then through the pipeline of maps produced by
+applying `stepA1` and `stepA2`, and finally through the map produced
+by applying `stepB1'` to `docA`.
 
 If there was a `stepB3`, we'd get the pipeline for that one by taking
 the one above, prefixing it with `invert(mapB2)` and adding `mapB2'`
