@@ -11,7 +11,7 @@ endif
 
 all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      $(foreach EX,$(EXAMPLES), public/examples/$(EX)/example.js) \
-     public/css/editor.css
+     public/css/editor.css public/css/codemirror.css
 
 public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/* templates/* src/build/*.js
 	mkdir -p $(dir $@)
@@ -43,6 +43,9 @@ public/css/editor.css: $(ROOT)prosemirror-view/style/prosemirror.css \
                        $(ROOT)prosemirror-menu/style/menu.css \
                        $(ROOT)prosemirror-example-setup/style/style.css
 	cat $^ > $@
+
+public/css/codemirror.css:
+	cp $(ROOT)codemirror/lib/codemirror.css $@
 
 clean:
 	rm public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md

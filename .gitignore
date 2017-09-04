@@ -3,6 +3,7 @@
 /public/examples/*/example.js
 /public/examples/prosemirror.js
 /public/css/editor.css
+/public/css/codemirror.css
 .tern-port
 /src/collab/demo-instances.json
 /CHANGELOG.md
