@@ -37,7 +37,7 @@
     "getdocs": "^0.6.0",
     "builddocs": "^0.1.1",
     "glob": "^6.0.1",
-    "markdown-it": "^5.0.2",
+    "markdown-it": "^8.4.0",
     "markdown-it-deflist": "^2.0.0",
     "mold-template": "^2.0.0",
     "watchify": "^3.2.0",
