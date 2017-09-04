@@ -277,7 +277,7 @@ ul.grid-list p {
   margin: 0;
 }
 
-p, dl, dd { margin-bottom: 23px }
+p, dl, dd, ul, ol, pre { margin-bottom: 23px }
 
 p, dl { margin-top: 1em; }
 

@@ -3,7 +3,7 @@
 
 # Commands
 
-In ProseMirror jaron, a _command_ is a function that implements an
+In ProseMirror jargon, a _command_ is a function that implements an
 editing action, which the user can perform by pressing some key
 combination or interacting with the menu.
 
@@ -25,8 +25,8 @@ function deleteSelection(state, dispatch) {
 When a command isn't applicable, it should return false and do
 nothing. When it is, it should dispatch a transaction and return true.
 This is used, for example, by the [keymap plugin](##keymap) to stop
-further handling of key events when a command bound to that key is
-found to be applicable.
+further handling of key events when the command bound to that key has
+been applied.
 
 To be able to query whether a command is applicable for a given state,
 without actually executing it, the `dispatch` argument is
@@ -45,8 +45,8 @@ function deleteSelection(state, dispatch) {
 To figure out whether a selection can currently be deleted, you'd call
 `deleteSelection(view.state, null)`, whereas to actually execute the
 command, you'd do something like `deleteSelection(view.state,
-view.dispatch)`. A menu bar could, for example, use this to determine
-which menu items to gray out.
+view.dispatch)`. A menu bar could use this to determine which menu
+items to gray out.
 
 In this form, commands do not get access to the actual editor
 view—most commands don't need that, and in this way they can be
@@ -98,7 +98,7 @@ run its own backspace behavior, which is the appropriate thing for
 backspacing things out inside a textblock (so that native spell-check
 and such don't get confused).
 
-The commands module also exports a number of command-constructors,
+The commands module also exports a number of command constructors,
 such as [`toggleMark`](##commands.toggleMark), which takes a mark type
 and optionally a set of attributes, and returns a command function
 that toggles that mark on the current selection.

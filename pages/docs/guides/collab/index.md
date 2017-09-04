@@ -40,31 +40,32 @@ Let's implement a trivial central authority that runs in the same
 JavaScript environment as the editors.
 
 ```javascript
-function Authority(doc) {
-  this.doc = doc
-  this.steps = []
-  this.stepClientIDs = []
-  this.onNewSteps = []
-}
+class Authority {
+  constructor(doc) {
+    this.doc = doc
+    this.steps = []
+    this.stepClientIDs = []
+    this.onNewSteps = []
+  }
 
-Authority.prototype.receiveSteps = function(version, steps, clientID) {
-  if (version != this.steps.length) return
+  receiveSteps(version, steps, clientID) {
+    if (version != this.steps.length) return
 
-  var self = this
-  // Apply and accumulate new steps
-  steps.forEach(function(step) {
-    self.doc = step.apply(self.doc).doc
-    self.steps.push(step)
-    self.stepClientIDs.push(clientID)
-  })
-  // Signal listeners
-  this.onNewSteps.forEach(function(f) { f() })
-}
+    // Apply and accumulate new steps
+    steps.forEach(step => {
+      this.doc = step.apply(this.doc).doc
+      this.steps.push(step)
+      this.stepClientIDs.push(clientID)
+    })
+    // Signal listeners
+    this.onNewSteps.forEach(function(f) { f() })
+  }
 
-Authority.prototype.stepsSince = function(version) {
-  return {
-    steps: this.steps.slice(version),
-    clientIDs: this.stepClientIDs.slice(version)
+  stepsSince(version) {
+    return {
+      steps: this.steps.slice(version),
+      clientIDs: this.stepClientIDs.slice(version)
+    }
   }
 }
 ```
@@ -75,13 +76,13 @@ they received, along with the new changes they added, and their client
 ID (which is a way for them to later recognize which changes came from
 them).
 
-When the steps are accepted, they'll notice because the authority will
-notify them that new steps are available, and then pass them _their
-own_ steps. In a real implementation, you can also have `receiveSteps`
-return a status, and immediately confirm the sent steps, as an
-optimization. But the mechanism used here is necessary to guarantee
-synchronization on unreliable connections, so you should always use it
-as the base case.
+When the steps are accepted, the client will notice because the
+authority notifies them that new steps are available, and then give
+them _their own_ steps. In a real implementation, you could also have
+`receiveSteps` return a status, and immediately confirm the sent
+steps, as an optimization. But the mechanism used here is necessary to
+guarantee synchronization on unreliable connections, so you should
+always use it as the base case.
 
 This implementation of an authority keeps an endlessly growing array
 of steps, the length of which denotes its current version.
@@ -89,23 +90,23 @@ of steps, the length of which denotes its current version.
 ## The `collab` Module
 
 The [`collab`](##collab) module exports a [`collab`](##collab.collab)
-function which returns a plugin, which will take care of the tracking
-of local changes, receiving of remote changes, and indicating when
-something has to be sent to the central authority.
+function which returns a plugin that takes care of tracking local
+changes, receiving remote changes, and indicating when something has
+to be sent to the central authority.
 
 ```javascript
-var EditorState = require("prosemirror-state").EditorState
-var EditorView = require("prosemirror-view").EditorView
-var schema = require("prosemirror-schema-basic").schema
-var collab = require("prosemirror-collab")
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {schema} from "prosemirror-schema-basic"
+import {collab} from "prosemirror-collab"
 
 function collabEditor(authority, place) {
-  var view = new EditorView(place, {
-    state: EditorState.create({schema: schema, plugins: [collab.collab()]}),
-    dispatchTransaction: function(transaction) {
-      var newState = view.state.apply(transaction)
+  let view = new EditorView(place, {
+    state: EditorState.create({schema, plugins: [collab.collab()]}),
+    dispatchTransaction(transaction) {
+      let newState = view.state.apply(transaction)
       view.updateState(newState)
-      var sendable = collab.sendableSteps(newState)
+      let sendable = collab.sendableSteps(newState)
       if (sendable)
         authority.receiveSteps(sendable.version, sendable.steps,
                                sendable.clientID)
@@ -113,7 +114,7 @@ function collabEditor(authority, place) {
   })
 
   authority.onNewSteps.push(function() {
-    var newData = authority.stepsSince(collab.getVersion(view.state))
+    let newData = authority.stepsSince(collab.getVersion(view.state))
     view.dispatch(
       collab.receiveTransaction(view.state, newData.steps, newData.clientIDs))
   })
