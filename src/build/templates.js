@@ -17,9 +17,12 @@ module.exports = function loadTemplates(config) {
   })
   mold.defs.markdown = function(options) {
     if (typeof options == "string") options = {text: options}
-    let text = markdown.render(config.markdownFilter ? config.markdownFilter(options.text) : options.text)
-    if (options.shiftHeadings) text = text.replace(/<(\/?)h(\d)\b/ig, (_, cl, d) => "<" + cl + "h" + (+d + options.shiftHeadings))
-    return text
+    let md = options.text
+    if (config.markdownFilter) md = config.markdownFilter(md)
+    if (options.anchors) md = headerAnchors(md, options.anchors === true ? "" : options.anchors + ".")
+    let html = markdown.render(md)
+    if (options.shiftHeadings) html = html.replace(/<(\/?)h(\d)\b/ig, (_, cl, d) => "<" + cl + "h" + (+d + options.shiftHeadings))
+    return html
   }
   mold.defs.markdownFile = function(options) {
     if (typeof options == "string") options = {file: options}
@@ -37,4 +40,11 @@ function highlight(str, lang) {
     result += style ? `<span class="${style.replace(/^|\s+/g, "$&hl-")}">${esc}</span>` : esc
   })
   return result
+}
+
+function headerAnchors(str, prefix) {
+  return str.replace(/((?:^|\n)#+ )(.*)/g, function(_, before, title) {
+    var anchor = title.replace(/\s/g, "_").replace(/[^\w_]/g, "").toLowerCase()
+    return before + "<a id=\"" + prefix + anchor + "\"></a>" + title
+  })
 }

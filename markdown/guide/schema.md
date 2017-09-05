@@ -1,9 +1,4 @@
-!{"title": "ProseMirror Schema Guide",
-  "template": "guide"}
-
-# Document Schemas
-
-Each ProseMirror [document](../doc/) has a [schema](##model.Schema)
+Each ProseMirror [document](#doc) has a [schema](##model.Schema)
 associated with it. The schema describes the kind of
 [nodes](##model.Node) that may occur in the document, and the way they
 are nested. For example, it might say that the top-level node can
@@ -104,12 +99,12 @@ content, and so on.
 
 Not every node-manipulating function in the library checks that it is
 dealing with valid content—higher level concepts like
-[transforms](../transform/) do, but primitive node-creation methods
+[transforms](#transform) do, but primitive node-creation methods
 usually don't and instead put the responsibility for providing sane
 input on their caller. It is perfectly possible to use, for example
 [`NodeType.create`](##model.NodeType^create), to create a node with
 invalid content. For nodes that are ‘open’ on the edge of
-[slices](../doc/#slices), this is even a reasonable thing to do. There
+[slices](#doc.slices), this is even a reasonable thing to do. There
 is a separate [`createChecked`
 method](##model.NodeType^createChecked), as well as an after-the-fact
 [`check` method](##model.Node.check) that can be used to assert that a

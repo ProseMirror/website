@@ -1,8 +1,3 @@
-!{"title": "Editor State Guide",
-  "template": "guide"}
-
-# Editor State
-
 What makes up the state of an editor? You have your document, of
 course. And also the current selection. And there needs to be a way to
 store the fact that the current set of marks has changed, when you for

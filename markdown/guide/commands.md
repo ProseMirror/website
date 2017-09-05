@@ -1,15 +1,10 @@
-!{"title": "ProseMirror Command Guide",
-  "template": "guide"}
-
-# Commands
-
 In ProseMirror jargon, a _command_ is a function that implements an
 editing action, which the user can perform by pressing some key
 combination or interacting with the menu.
 
 For practical reasons, commands have a slightly convoluted interface.
 In their simple form, they are functions taking an [editor
-state](../state/) and a _dispatch function_
+state](#state) and a _dispatch function_
 ([`EditorView.dispatch`](##view.EditorView.dispatch) or some other
 function that takes transactions), and return a boolean. Here's a
 very simple example:

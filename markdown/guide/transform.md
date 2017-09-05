@@ -1,10 +1,5 @@
-!{"title": "ProseMirror Document Transform Guide",
-  "template": "guide"}
-
-# Document Transformation
-
 [Transforms](##transform.Transform) are central to the way ProseMirror
-works. They form the basis for [transactions](../state/#transactions),
+works. They form the basis for [transactions](#state.transactions),
 and are what makes history tracking and collaborative editing
 possible.
 

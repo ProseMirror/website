@@ -2,6 +2,12 @@
 
 <ul class=grid-list>
   <li>
+    <a href="guide/" class=blocklink>
+      <h3>Library guide</h3>
+      <p>An introduction to the concepts used by the ProseMirror library, with examples.</p>
+    </a>
+  </li>
+  <li>
     <a href="ref/" class=blocklink>
       <h3>Reference manual</h3>
       <p>A full listing and description of the public API exported by the library, per module.</p>
@@ -11,66 +17,6 @@
     <a href="ref/" class=blocklink>
       <h3>Examples</h3>
       <p>Code examples that show how to implement common use cases.</p>
-    </a>
-  </li>
-</ul>
-
-<hr>
-
-<h2 class=above-list>The guides explain the main concepts used in the library</h2>
-
-<style>
-  ul.guides { counter-reset: guides; }
-  ul.guides h3:before { counter-increment: guides; content: counter(guides) ". "; }
-</style>
-
-<ul class="grid-list guides">
-  <li>
-    <a href="guides/intro/" class=blocklink>
-      <h3>Introduction</h3>
-      <p>An overview of the library, walking through setting up a minimal working editor.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/doc/" class=blocklink>
-      <h3>Documents</h3>
-      <p>How ProseMirror models documents, and how to work with them.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/schema/" class=blocklink>
-      <h3>Schemas</h3>
-      <p>The structure of documents is defined and constrained by the schema you base them on.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/transform/" class=blocklink>
-      <h3>Document transformation</h3>
-      <p>To perform edits on a document, you'll want to use transformations and edit steps.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/state/" class=blocklink>
-      <h3>Editor state</h3>
-      <p>How an editor state is composed of several elements, why transactions are used to update it, and how plugins work.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/view/" class=blocklink>
-      <h3>Editor view</h3>
-      <p>The UI component shown to the user is just a shell around an editor state.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/commands/" class=blocklink>
-      <h3>Commands</h3>
-      <p>Commands are the abstraction used to implement editing actions and to bind them to keys or menu items.</p>
-    </a>
-  </li>
-  <li>
-    <a href="guides/collab/" class=blocklink>
-      <h3>Collaborative editing</h3>
-      <p>Explains how to wire up ProseMirror’s collaborative editing functionality, with a full example.</p>
     </a>
   </li>
 </ul>

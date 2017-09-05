@@ -1,6 +1,3 @@
-!{"title": "ProseMirror Document Guide",
-  "template": "guide"}
-
 <style>
   .box {
     color: white;
@@ -11,8 +8,6 @@
     vertical-align: top;
   }
 </style>
-
-# Document Basics
 
 ProseMirror defines its own [data structure](##model.Node) to
 represent content documents. Since documents are the central element
@@ -108,7 +103,7 @@ blockquote might be a block element whose content consists of other
 blocks. Text, hard breaks, and inline images are inline leaf nodes,
 and a horizontal rule node would be an example of a block leaf node.
 
-The [schema](../schema/) is allowed to specify more precise
+The [schema](#schema) is allowed to specify more precise
 constraints on what may appear where—i.e. even though a node allows
 block content, that doesn't mean that it allows _all_ block nodes as
 content.
@@ -229,7 +224,7 @@ content. But the top-level node may also be a textblock itself, so
 that the document contains only inline content.
 
 What kind of node is allowed where is determined by the document's
-[schema](../schema/). To programatically create nodes, you must go
+[schema](#schema). To programatically create nodes, you must go
 through the schema, for example using the
 [`node`](##model.Schema.node) and [`text`](##model.Schema.text)
 methods.
@@ -354,7 +349,7 @@ Since nodes and fragments are
 you should **never** mutate them. If you have a handle to a document
 (or node, or fragment) that object will stay the same.
 
-Most of the time, you'll use [transformations](../transform/) to
+Most of the time, you'll use [transformations](#transform) to
 update documents, and won't have to directly touch the nodes. These
 also leave a record of the changes, which is necessary when the
 document is part of an editor state.

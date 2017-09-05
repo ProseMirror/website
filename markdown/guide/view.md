@@ -1,6 +1,3 @@
-!{"title": "Editor View Guide",
-  "template": "guide"}
-
 <style>
   .box {
     color: white;
@@ -12,10 +9,8 @@
   }
 </style>
 
-# Editor Views
-
 A ProseMirror [editor view](##view.EditorView) is a user interface
-component that displays an [editor state](../state/) to the user, and
+component that displays an [editor state](#state) to the user, and
 allows them to perform editing actions on it.
 
 The definition of _editing actions_ used by the core view component is
@@ -40,7 +35,7 @@ selection](https://developer.mozilla.org/en-US/docs/Web/API/Selection)
 corresponds to the selection in the editor state.
 
 It also registers event handlers for many DOM events, which translate
-the events into the appropriate [transactions](../state/#transactions).
+the events into the appropriate [transactions](#state.transactions).
 For example, when pasting, the pasted content is
 [parsed](##view.EditorProps.clipboardParser) as a ProseMirror document
 slice, and then inserted into the document.

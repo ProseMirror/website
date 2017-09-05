@@ -1,0 +1,30 @@
+<<do
+  let guides = {
+    intro: "Introduction",
+    doc: "Documents",
+    schema: "Schemas",
+    transform: "Document transformations",
+    state: "The editor state",
+    view: "The view component",
+    commands: "Commands",
+    collab: "Collaborative editing"
+  }
+  let toc = []
+  for (let tag in guides) toc.push({name: guides[tag], href: "#" + tag})
+>>
+
+<<head {title: "ProseMirror Guide", type: "docs", toc}>>
+
+<h1>ProseMirror Guide</h1>
+
+<p>This guide describes the various concepts used in the library, and
+how they relate to each other. To get a complete picture of the
+system, it is recommended to go through it in the order it is
+presented in, at least up to the view component section.</p>
+
+<<for name in guides>>
+  <h2 id=<<t name>>><<t guides[name]>></h2>
+  <<markdownFile {file: "guide/" + name, shiftHeadings: 1, anchors: name}>>
+<</for>>
+
+<<foot>>
