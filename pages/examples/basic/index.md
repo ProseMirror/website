@@ -1,34 +1,22 @@
-<<head {
-  type: "examples",
-  title: "ProseMirror basic example",
-}>>
+!{"template": "example", "title": "ProseMirror basic example"}
 
-<h3>Setting up an editor</h3>
+# Setting up an editor
 
-<p>Using
-the <a href="https://github.com/prosemirror/prosemirror-example-setup">example
-setup</a>, <a href="https://github.com/prosemirror/prosemirror-menu">example
-menu</a>,
-and <a href="https://github.com/prosemirror/prosemirror-schema-basic">basic
-schema</a> modules, setting up an editor can be done in a few lines.</p>
+Using the [example
+setup](https://github.com/prosemirror/prosemirror-example-setup),
+[example menu](https://github.com/prosemirror/prosemirror-menu), and
+[basic
+schema](https://github.com/prosemirror/prosemirror-schema-basic)
+modules, setting up an editor can be done in a few lines.
 
-<pre>
-let view = new MenuBarEditorView(document.body, {
-  state: EditorState.create({
-    schema,
-    plugins: exampleSetup({schema})
-  })
-})
-</pre>
+PART(code)
 
-<p>(In a more demanding situation, where you want to configure your
+(In a more demanding situation, where you want to configure your
 editor and wire it into your own UI style, you'll probably want to
 swap out the example setup and menu modules with something custom, and
-adjust the schema to your needs.)</p>
+adjust the schema to your needs.)
 
 <div id=editor></div>
-
-<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/basic/example.js">on github</a>.</p>
 
 <div style="display: none" id="content">
   <h3>Using ProseMirror</h3>
@@ -53,9 +41,3 @@ adjust the schema to your needs.)</p>
 
   <p>And turn this paragraph into a code block.</p>
 </div>
-
-<link rel=stylesheet href="../../css/editor.css">
-<script src="../prosemirror.js"></script>
-<script src="example.js"></script>
-
-<<foot>>

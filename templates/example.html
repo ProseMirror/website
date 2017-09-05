@@ -1,0 +1,23 @@
+<<head {title: $in.title, type: "docs"}>>
+
+<<do
+  const {dirname, resolve} = require("path")
+  const {readFileSync} = require("fs")
+  let code = readFileSync(resolve(dirname($in.fileName), "./example.js"), "utf8")
+  let partRE = /\/\/ START\((.*?)\)\n([^]*?)\/\/ END/g, m
+  let parts = {}
+  while (m = partRE.exec(code)) parts[m[1]] = m[2]
+
+  let content = $in.content.replace(/\bPART\((.*?)\)/, (_, name) => {
+    if (!parts[name]) throw new Error("Unknown example code part " + name)
+    return "```javascript\n" + parts[name] + "```"
+  })
+>>
+
+<<markdown content>>
+
+<link rel=stylesheet href="../../css/editor.css">
+<script src="../prosemirror.js"></script>
+<script src="example.js"></script>
+
+<<foot>>

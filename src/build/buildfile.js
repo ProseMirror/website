@@ -10,7 +10,8 @@ var config = {
     })
   },
   env: {
-    ref: function() { return require("./ref") }
+    ref: function() { return require("./ref") },
+    require
   }
 }
 
@@ -23,6 +24,7 @@ exports.buildFile = function(file) {
     if (!meta) throw new Error("Missing or invalid metainfo on " + file)
     var data = JSON.parse(meta[1])
     data.content = text.slice(meta[0].length)
+    data.fileName = file
     result = mold.defs[data.template](data)
   } else {
     result = mold.bake(file, text)()
