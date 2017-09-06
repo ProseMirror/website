@@ -1,25 +1,30 @@
-import {EditorState} from "prosemirror-state"
-import {insertPoint, StepMap} from "prosemirror-transform"
-import {MenuItem} from "prosemirror-menu"
-import {Schema, DOMParser, Fragment} from "prosemirror-model"
-import {EditorView} from "prosemirror-view"
+// schema{
 import {schema} from "prosemirror-schema-basic"
-import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
+import {Schema} from "prosemirror-model"
 
-const footnote = {
+const footnoteSpec = {
   group: "inline",
   content: "inline*",
   inline: true,
   draggable: true,
+  // This makes the view treat the node as a leaf, even though it
+  // technically has content
   atom: true,
   toDOM: () => ["footnote", 0],
   parseDOM: [{tag: "footnote"}]
 }
 
 const footnoteSchema = new Schema({
-  nodes: schema.spec.nodes.addBefore("image", "footnote", footnote),
+  nodes: schema.spec.nodes.addBefore("image", "footnote", footnoteSpec),
   marks: schema.spec.marks
 })
+// }
+
+// menu{
+import {insertPoint} from "prosemirror-transform"
+import {MenuItem} from "prosemirror-menu"
+import {buildMenuItems} from "prosemirror-example-setup"
+import {Fragment} from "prosemirror-model"
 
 let menu = buildMenuItems(footnoteSchema)
 menu.insertMenu.content.push(new MenuItem({
@@ -35,40 +40,53 @@ menu.insertMenu.content.push(new MenuItem({
     dispatch(state.tr.replaceSelectionWith(footnoteSchema.nodes.footnote.create(null, content)))
   }
 }))
+// }
+
+// nodeview_start{
+import {StepMap} from "prosemirror-transform"
 
 class FootnoteView {
   constructor(node, view, getPos) {
+    // We'll need these later
     this.node = node
     this.outerView = view
     this.getPos = getPos
 
+    // The node's representation in the editor (empty, for now)
     this.dom = document.createElement("footnote")
+    // These are used when the footnote is selected
     this.open = false
     this.innerView = null
     this.tooltip = null
   }
-
+// }
+// nodeview_select{
   selectNode() {
     if (!this.open) {
       this.open = true
       this.dom.classList.add("ProseMirror-selectednode")
+      // Append a tooltip to the outer node
       this.tooltip = this.dom.appendChild(document.createElement("div"))
       this.tooltip.className = "footnote-tooltip"
+      // And put a sub-ProseMirror into that
       this.innerView = new EditorView(this.tooltip, {
+        // You can use any node as an editor document
         state: EditorState.create({doc: this.node}),
+        // This is the magic part
         dispatchTransaction: this.dispatchInner.bind(this),
         handleDOMEvents: {
           mousedown: () => {
-            // Necessary to prevent strangeness due to the fact that
-            // the whole footnote is node-selected (and thus
-            // DOM-selected) when the parent editor is focused.
+            // Kludge to prevent strangeness due to the fact that the
+            // whole footnote is node-selected (and thus DOM-selected)
+            // when the parent editor is focused.
             if (this.outerView.hasFocus()) this.innerView.focus()
           }
         }
       })
     }
   }
-
+// }
+// nodeview_dispatchInner{
   dispatchInner(tr) {
     let {state, transactions} = this.innerView.state.applyTransaction(tr)
     this.innerView.updateState(state)
@@ -83,7 +101,8 @@ class FootnoteView {
       if (outerTr.docChanged) this.outerView.dispatch(outerTr)
     }
   }
-
+// }
+// nodeview_update{
   update(node) {
     if (!node.sameMarkup(this.node)) return false
     this.node = node
@@ -95,12 +114,15 @@ class FootnoteView {
         let overlap = start - Math.min(endA, endB)
         if (overlap > 0) { endA += overlap; endB += overlap }
         this.innerView.dispatch(
-          state.tr.replace(start, endB, node.slice(start, endA)).setMeta("fromOutside", true))
+          state.tr
+            .replace(start, endB, node.slice(start, endA))
+            .setMeta("fromOutside", true))
       }
     }
     return true
   }
-
+// }
+// nodeview_end{
   deselectNode() {
     if (this.open) {
       this.open = false
@@ -121,6 +143,13 @@ class FootnoteView {
 
   ignoreMutation() { return true }
 }
+// }
+
+// editor{
+import {EditorState} from "prosemirror-state"
+import {DOMParser} from "prosemirror-model"
+import {EditorView} from "prosemirror-view"
+import {exampleSetup} from "prosemirror-example-setup"
 
 window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
@@ -131,3 +160,4 @@ window.view = new EditorView(document.querySelector("#editor"), {
     footnote(node, view, getPos) { return new FootnoteView(node, view, getPos) }
   }
 })
+// }

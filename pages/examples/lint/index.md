@@ -63,9 +63,7 @@ out what part of the document changed.
 
 PART(plugin)
 
-And finally, we use this plugin to create a demo editor.
-
-PART(editor)
+If you enable this plugin in an editor, you get something like this.
 
 <div id=editor></div>
 
