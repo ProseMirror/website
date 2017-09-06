@@ -1,4 +1,4 @@
-// START(code)
+// code{
 const {EditorState} = require("prosemirror-state")
 const {EditorView} = require("prosemirror-view")
 const {Schema, DOMParser} = require("prosemirror-model")
@@ -19,4 +19,4 @@ window.view = new EditorView(document.querySelector("#editor"), {
     plugins: exampleSetup({schema: mySchema})
   })
 })
-// END
+// }

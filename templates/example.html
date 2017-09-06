@@ -1,14 +1,14 @@
-<<head {title: $in.title, type: "docs"}>>
+<<head {title: $in.title, type: "example"}>>
 
 <<do
   const {dirname, resolve} = require("path")
   const {readFileSync} = require("fs")
   let code = readFileSync(resolve(dirname($in.fileName), "./example.js"), "utf8")
-  let partRE = /\/\/ START\((.*?)\)\n([^]*?)\/\/ END/g, m
+  let partRE = /\/\/ (\w+)\{\n([^]*?)\/\/ }\n/g, m
   let parts = {}
   while (m = partRE.exec(code)) parts[m[1]] = m[2]
 
-  let content = $in.content.replace(/\bPART\((.*?)\)/, (_, name) => {
+  let content = $in.content.replace(/\bPART\((.*?)\)/g, (_, name) => {
     if (!parts[name]) throw new Error("Unknown example code part " + name)
     return "```javascript\n" + parts[name] + "```"
   })

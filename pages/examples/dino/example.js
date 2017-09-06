@@ -1,56 +1,80 @@
-const {EditorState} = require("prosemirror-state")
-const {insertPoint} = require("prosemirror-transform")
-const {EditorView} = require("prosemirror-view")
-const {MenuItem} = require("prosemirror-menu")
-const {Schema, DOMParser} = require("prosemirror-model")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
-const {InputRule, inputRules} = require("prosemirror-inputrules")
+// nodespec{
+// The supported types of dinosaurs.
+const dinos = ["brontosaurus", "stegosaurus", "triceratops",
+               "tyrannosaurus", "pterodactyl"]
 
-const dinos = ["brontosaurus", "stegosaurus", "triceratops", "tyrannosaurus", "pterodactyl"]
-
-const dino = {
+const dinoNodeSpec = {
+  // Dinosaurs have one attribute, their type, which must be one of
+  // the types defined above.
+  // Brontosaurs are still the default dino.
   attrs: {type: {default: "brontosaurus"}},
+  inline: true,
+  group: "inline",
   draggable: true,
+
+  // These nodes are rendered as images with a `dino-type` attribute.
+  // There are pictures for all dino types under /img/dino/.
   toDOM: node => ["img", {"dino-type": node.attrs.type,
                           src: "/img/dino/" + node.attrs.type + ".png",
                           title: node.attrs.type,
                           class: "dinosaur"}],
+  // When parsing, such an image, if its type matches one of the known
+  // types, is converted to a dino node.
   parseDOM: [{
     tag: "img[dino-type]",
     getAttrs: dom => {
       let type = dom.getAttribute("dino-type")
       if (dinos.indexOf(type) > -1) return {type}
     }
-  }],
-
-  inline: true,
-  group: "inline"
+  }]
 }
+// }
+
+// schema{
+const {Schema, DOMParser} = require("prosemirror-model")
+const {schema} = require("prosemirror-schema-basic")
 
 const dinoSchema = new Schema({
-  nodes: schema.spec.nodes.addBefore("image", "dino", dino),
+  nodes: schema.spec.nodes.addBefore("image", "dino", dinoNodeSpec),
   marks: schema.spec.marks
 })
-const dinoType = dinoSchema.nodes.dino
 
-const dinoInputRule = new InputRule(new RegExp("\\[(" + dinos.join("|") + ")\\]$"), (state, match, start, end) => {
-  return state.tr.replaceWith(start, end, dinoType.create({type: match[1]}))
-})
+let content = document.querySelector("#content")
+let startDoc = DOMParser.fromSchema(dinoSchema).parse(content)
+// }
 
+// menu{
+const {MenuItem} = require("prosemirror-menu")
+const {buildMenuItems} = require("prosemirror-example-setup")
+const {insertPoint} = require("prosemirror-transform")
+
+// Ask example-setup to build its basic menu
 let menu = buildMenuItems(dinoSchema)
-menu.insertMenu.content = dinos.map(name => new MenuItem({
+let dinoType = dinoSchema.nodes.dino
+// Add a dino-inserting item for each type of dino
+dinos.forEach(name => menu.insertMenu.content.push(new MenuItem({
   title: "Insert " + name,
   label: name.charAt(0).toUpperCase() + name.slice(1),
   select(state) {
+    // Enable the item when a dino can be inserted at the cursor
     return insertPoint(state.doc, state.selection.from, dinoType) != null
   },
-  run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(dinoType.create({type: name}))) }
-})).concat(menu.insertMenu.content)
+  run(state, dispatch) {
+    dispatch(state.tr.replaceSelectionWith(dinoType.create({type: name})))
+  }
+})))
+// }
+
+// editor{
+const {EditorState} = require("prosemirror-state")
+const {EditorView} = require("prosemirror-view")
+const {exampleSetup} = require("prosemirror-example-setup")
 
 window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
-    doc: DOMParser.fromSchema(dinoSchema).parse(document.querySelector("#content")),
-    plugins: exampleSetup({schema: dinoSchema, menuContent: menu.fullMenu}).concat(inputRules({rules: [dinoInputRule]}))
+    doc: startDoc,
+    // Pass exampleSetup our schema and the menu we created
+    plugins: exampleSetup({schema: dinoSchema, menuContent: menu.fullMenu})
   })
 })
+// }
