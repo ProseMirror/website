@@ -65,7 +65,7 @@ function addAlt({state, dispatch}) {
 // }
 
 // deco{
-const {Decoration, DecorationSet} = require("prosemirror-view")
+import {Decoration, DecorationSet} from "prosemirror-view"
 
 function lintDeco(doc) {
   let decos = []
@@ -86,7 +86,7 @@ function lintIcon(prob) {
 // }
 
 // plugin{
-const {Plugin, TextSelection} = require("prosemirror-state")
+import {Plugin, TextSelection} from "prosemirror-state"
 
 let lintPlugin = new Plugin({
   state: {
@@ -120,11 +120,11 @@ let lintPlugin = new Plugin({
 // }
 
 // editor{
-const {EditorState} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
-const {DOMParser} = require("prosemirror-model")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup} = require("prosemirror-example-setup")
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {DOMParser} from "prosemirror-model"
+import {schema} from "prosemirror-schema-basic"
+import {exampleSetup} from "prosemirror-example-setup"
 
 let state = EditorState.create({
   doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),

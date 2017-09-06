@@ -10,7 +10,6 @@
     }
   ],
   "dependencies": {
-    "bubleify": "^0.7.0",
     "codemirror": "^5.21.0",
     "crel": "^3.0.0",
     "prosemirror-collab": "^0.22.0",
@@ -27,22 +26,23 @@
     "prosemirror-schema-table": "^0.22.0",
     "prosemirror-state": "^0.22.0",
     "prosemirror-transform": "^0.22.0",
-    "prosemirror-view": "^0.22.0",
-    "uglifyify": "^3.0.4"
+    "prosemirror-view": "^0.22.0"
   },
   "devDependencies": {
-    "bubleify": "^0.7.0",
-    "browserify": "^13.0.0",
-    "punycode": "^1.4.0",
-    "getdocs": "^0.6.0",
     "builddocs": "^0.1.1",
+    "ecstatic": "^1.4.0",
+    "getdocs": "^0.6.0",
     "glob": "^6.0.1",
     "markdown-it": "^8.4.0",
     "markdown-it-deflist": "^2.0.0",
-    "mold-template": "^2.0.0",
-    "watchify": "^3.2.0",
     "moduleserve": "^0.8.0",
-    "ecstatic": "^1.4.0"
+    "mold-template": "^2.0.0",
+    "punycode": "^1.4.0",
+    "rollup": "^0.46.0",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-commonjs": "^6.0.1",
+    "rollup-plugin-node-resolve": "^2.1.1",
+    "rollup-plugin-uglify": "^2.0.1"
   },
   "scripts": {
     "start": "node src/collab/server/start.js",

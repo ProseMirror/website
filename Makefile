@@ -31,13 +31,13 @@ CORE:=prosemirror-model prosemirror-transform prosemirror-state prosemirror-view
       prosemirror-schema-basic prosemirror-schema-list \
       prosemirror-dropcursor prosemirror-menu prosemirror-example-setup
 
-public/examples/prosemirror.js: $(foreach LIB,$(CORE),$(wildcard $(ROOT)$(LIB)/src/*.js))
+public/examples/prosemirror.js: bin/library.js $(foreach LIB,$(CORE),$(wildcard $(ROOT)$(LIB)/dist/*.js))
 	mkdir -p $(dir $@)
-	$(ROOT).bin/browserify -t bubleify $(UGLIFY) $(foreach LIB,$(CORE), -r $(LIB)) --outfile $@
+	node bin/build-library.js > $@
 
 public/examples/%/example.js: pages/examples/%/example.js public/examples/prosemirror.js
 	mkdir -p $(dir $@)
-	$(ROOT).bin/browserify --outfile $@ -t bubleify $(foreach LIB,$(CORE), -x $(LIB)) $<
+	node bin/build-example.js $< > $@
 
 public/css/editor.css: $(ROOT)prosemirror-view/style/prosemirror.css \
                        $(ROOT)prosemirror-menu/style/menu.css \

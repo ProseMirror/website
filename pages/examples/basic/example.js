@@ -1,10 +1,10 @@
 // code{
-const {EditorState} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
-const {Schema, DOMParser} = require("prosemirror-model")
-const {schema} = require("prosemirror-schema-basic")
-const {addListNodes} = require("prosemirror-schema-list")
-const {exampleSetup} = require("prosemirror-example-setup")
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {Schema, DOMParser} from "prosemirror-model"
+import {schema} from "prosemirror-schema-basic"
+import {addListNodes} from "prosemirror-schema-list"
+import {exampleSetup} from "prosemirror-example-setup"
 
 // Mix the nodes from prosemirror-schema-list into the basic schema to
 // create a schema with list support.

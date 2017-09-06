@@ -31,8 +31,8 @@ const dinoNodeSpec = {
 // }
 
 // schema{
-const {Schema, DOMParser} = require("prosemirror-model")
-const {schema} = require("prosemirror-schema-basic")
+import {Schema, DOMParser} from "prosemirror-model"
+import {schema} from "prosemirror-schema-basic"
 
 const dinoSchema = new Schema({
   nodes: schema.spec.nodes.addBefore("image", "dino", dinoNodeSpec),
@@ -44,9 +44,9 @@ let startDoc = DOMParser.fromSchema(dinoSchema).parse(content)
 // }
 
 // menu{
-const {MenuItem} = require("prosemirror-menu")
-const {buildMenuItems} = require("prosemirror-example-setup")
-const {insertPoint} = require("prosemirror-transform")
+import {MenuItem} from "prosemirror-menu"
+import {buildMenuItems} from "prosemirror-example-setup"
+import {insertPoint} from "prosemirror-transform"
 
 // Ask example-setup to build its basic menu
 let menu = buildMenuItems(dinoSchema)
@@ -66,9 +66,9 @@ dinos.forEach(name => menu.insertMenu.content.push(new MenuItem({
 // }
 
 // editor{
-const {EditorState} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
-const {exampleSetup} = require("prosemirror-example-setup")
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {exampleSetup} from "prosemirror-example-setup"
 
 window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
