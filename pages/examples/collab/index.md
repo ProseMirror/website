@@ -1,7 +1,4 @@
-<<head {
-  type: "examples",
-  title: "ProseMirror collab example",
-}>>
+!{"template": "example", "title": "ProseMirror collab example"}
 
 <style>
 .subtle { color: #777 }
@@ -132,24 +129,25 @@ li.commentText + li.commentText {
 }
 </style>
 
-<h3>Collaborate</h3>
+# Collaborate
 
-<p>The editor below talks to a simple server-side service to allow
-real-time <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">collaborative
-editing</a>. Everybody connected to a given document sees the same
-document, and has their changes sent over to other people working on
-the document.</p>
+The editor below talks to a simple server-side service to allow
+real-time [collaborative
+editing](http://marijnhaverbeke.nl/blog/collaborative-editing.html).
+Everybody connected to a given document sees the same document, and
+has their changes sent over to other people working on the
+document.
 
-<p>The demo also (crudely) shows how ProseMirror can be used to
-implement something like out-of-line annotations. If you select text
-and click the speech bubble icon in the menu, you'll be prompted to
-enter an annotation. These are synced to other users and show up as
-text with yellow background. Put the cursor in an annotation to see
-what it says.</p>
+The demo also (crudely) shows how ProseMirror can be used to implement
+something like out-of-line annotations. If you select text and click
+the speech bubble icon in the menu, you'll be prompted to enter an
+annotation. These are synced to other users and show up as text with
+yellow background. Put the cursor in an annotation to see what it
+says.
 
-<p><strong>Disclaimer:</strong> Since this demo is open for everybody,
-you might run into people typing stupid, mean, and disgusting things.
-Try not to be such a person.</p>
+**Disclaimer:** Since this demo is open for everybody, you might run
+into people typing stupid, mean, and disgusting things. Try not to be
+such a person.
 
 <div id=editor></div>
 
@@ -160,11 +158,3 @@ Try not to be such a person.</p>
     <button type=button id="changedoc">Change</button>
   </span>
 </div>
-
-<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/src/collab/">on github</a>.</p>
-
-<link rel=stylesheet href="../../css/editor.css">
-<script src="../prosemirror.js"></script>
-<script src="example.js"></script>
-
-<<foot>>

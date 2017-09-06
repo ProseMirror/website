@@ -1,7 +1,7 @@
-const {EditorView} = require("prosemirror-view")
-const {EditorState} = require("prosemirror-state")
-const {schema, defaultMarkdownParser, defaultMarkdownSerializer} = require("prosemirror-markdown")
-const {exampleSetup} = require("prosemirror-example-setup")
+import {EditorView} from "prosemirror-view"
+import {EditorState} from "prosemirror-state"
+import {schema, defaultMarkdownParser, defaultMarkdownSerializer} from "prosemirror-markdown"
+import {exampleSetup} from "prosemirror-example-setup"
 
 let place = document.querySelector("#editor")
 

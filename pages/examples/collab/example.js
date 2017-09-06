@@ -1,1 +1,1 @@
-require("../../../src/collab/client/collab.js")
+import "../../../src/collab/client/collab.js"

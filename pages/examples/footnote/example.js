@@ -1,10 +1,10 @@
-const {EditorState} = require("prosemirror-state")
-const {insertPoint, StepMap} = require("prosemirror-transform")
-const {MenuItem} = require("prosemirror-menu")
-const {Schema, DOMParser, Fragment} = require("prosemirror-model")
-const {EditorView} = require("prosemirror-view")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
+import {EditorState} from "prosemirror-state"
+import {insertPoint, StepMap} from "prosemirror-transform"
+import {MenuItem} from "prosemirror-menu"
+import {Schema, DOMParser, Fragment} from "prosemirror-model"
+import {EditorView} from "prosemirror-view"
+import {schema} from "prosemirror-schema-basic"
+import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
 
 const footnote = {
   group: "inline",

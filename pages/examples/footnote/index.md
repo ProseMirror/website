@@ -1,7 +1,4 @@
-<<head {
-  type: "examples",
-  title: "ProseMirror footnote example",
-}>>
+!{"template": "example", "title": "ProseMirror footnote example"}
 
 <style>
   .ProseMirror {
@@ -44,29 +41,19 @@
   }
 </style>
 
-<h3>Editing footnotes</h3>
+# Editing footnotes
 
-<p>This example demonstrates one way to implement something like
+This example demonstrates one way to implement something like
 footnotes in ProseMirror. The footnotes in this editor's schema are
 inline nodes which contain inline content. They are drawn in the
 editor as numbers, but when you node-select them, they pop up a little
 sub-editor. Changes in this sub-editor are propagated to the outer
 editor, and vice versa, so that collaborative editing would work even
-for the footnote text.</p>
+for the footnote text.
 
 <div id="editor"></div>
-
-<div id="footnote_editor"></div>
-
-<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/footnote/example.js">on github</a>.</p>
 
 <div id="content" style="display: none">
   <p>This paragraph has a footnote<footnote>Which is a piece of text placed at the bottom of a page or chapter, providing additional <em>comments</em> or <em>citations</em>.</footnote> in it. And another<footnote>Some more footnote text.</footnote> one.</p>
   <p>Move onto or click on a footnote number to edit it.</p>
 </div>
-
-<link rel=stylesheet href="../../css/editor.css">
-<script src="../prosemirror.js"></script>
-<script src="example.js"></script>
-
-<<foot>>

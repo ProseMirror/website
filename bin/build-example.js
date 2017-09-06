@@ -10,7 +10,8 @@ let globals = {}, external = []
 let options = {
   entry: process.argv[2],
   plugins: [
-    require("rollup-plugin-node-resolve")({main: true}),
+    require("rollup-plugin-node-resolve")({main: true, preferBuiltins: false}),
+    require("rollup-plugin-json")(),
     require("rollup-plugin-commonjs")(),
     require("rollup-plugin-buble")()
   ],

@@ -1,7 +1,4 @@
-<<head {
-  type: "examples",
-  title: "ProseMirror change tracking example",
-}>>
+!{"template": "example", "title": "ProseMirror change tracking example"}
 
 <style>
   .commit {
@@ -43,21 +40,21 @@
   }
 </style>
 
-<h3>Tracking changes</h3>
+# Tracking changes
 
-<p>Changes are first-class values in ProseMirror. You can hold on to
-them, and do things with them. Such
-as <a href="http://marijnhaverbeke.nl/blog/collaborative-editing.html">rebasing</a>
+Changes are first-class values in ProseMirror. You can hold on to
+them, and do things with them. Such as
+[rebasing](http://marijnhaverbeke.nl/blog/collaborative-editing.html)
 them across other changes, inverting them, or inspecting them to see
-what they did.</p>
+what they did.
 
-<p>This demo uses those properties to allow you to “commit” your
+This example uses those properties to allow you to “commit” your
 changes, to revert individual commits, and to find out which commit a
-piece of text originates from.</p>
+piece of text originates from.
 
-<p>Note that, due to the implicit conflict resolution when moving
-changes across each other, outcomes of complicated reverts aren't
-always optimal.</p>
+Note that, due to the implicit conflict resolution when moving changes
+across each other, outcomes of complicated reverts aren't always
+optimal.
 
 <div id="editor"></div>
 
@@ -68,12 +65,4 @@ always optimal.</p>
 
 <div id="commits"></div>
 
-<p>Hover over commits to highlight the text they introduced.</p>
-
-<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/track/example.js">on github</a>.</p>
-
-<link rel=stylesheet href="../../css/editor.css">
-<script src="../prosemirror.js"></script>
-<script src="example.js"></script>
-
-<<foot>>
+Hover over commits to highlight the text they introduced.

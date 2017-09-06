@@ -1,7 +1,4 @@
-<<head {
-  type: "examples",
-  title: "ProseMirror markdown example",
-}>>
+!{"template": "example", "title": "ProseMirror markdown example"}
 
 <style>
   .ProseMirror { height: 120px; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
@@ -10,36 +7,28 @@
   .ProseMirror-menubar-wrapper, #markdown textarea { display: block; margin-bottom: 4px }
 </style>
 
-<h3>Friendly Markdown</h3>
+# Friendly Markdown
 
-<p>Say you have a site that allows users to enter comments, and you've
+Say you have a site that allows users to enter comments, and you've
 decided to use Markdown for the comment input. Your target group
 mostly knows how to use Markdown, and finds it convenient to type. But
 you also have some non-technical users, for whom learning arcane
-syntactic rules does not come naturally.</p>
+syntactic rules does not come naturally.
 
-<p>Without changing anything in your backend, you can drop in
+Without changing anything in your backend, you can drop in
 ProseMirror as an alternative input editor. People can even switch
-between both views as they are editing!</p>
+between both views as they are editing!
 
-<p>Because we've set ProseMirror up with a document model that only
+Because we've set ProseMirror up with a document model that only
 contains things that can be expressed in Markdown, we can be sure that
-the edited document can meaningfully be serialized in that format.</p>
+the edited document can meaningfully be serialized in that format.
 
 <div id="editor"></div>
 <div style="text-align: center">
   <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
 </div>
 
-<p>The source code for this example can be found <a href="https://github.com/ProseMirror/website/blob/master/pages/examples/markdown/example.js">on github</a>.</p>
-
 <div style="display: none" id="markdown_content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?
 
 So we've given people the **choice** to use a more familiar, discoverable interface.
 </div>
-
-<link rel=stylesheet href="../../css/editor.css">
-<script src="../prosemirror.js"></script>
-<script src="example.js"></script>
-
-<<foot>>

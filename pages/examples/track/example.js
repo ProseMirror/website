@@ -1,9 +1,9 @@
-const {EditorState, Plugin} = require("prosemirror-state")
-const {Decoration, DecorationSet, EditorView} = require("prosemirror-view")
-const {Mapping} = require("prosemirror-transform")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup} = require("prosemirror-example-setup")
-const crel = require("crel")
+import {EditorState, Plugin} from "prosemirror-state"
+import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
+import {Mapping} from "prosemirror-transform"
+import {schema} from "prosemirror-schema-basic"
+import {exampleSetup} from "prosemirror-example-setup"
+import crel from "crel"
 
 const trackPlugin = new Plugin({
   state: {

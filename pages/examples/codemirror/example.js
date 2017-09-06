@@ -1,13 +1,13 @@
-const {EditorState, Selection, TextSelection} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
-const {DOMParser} = require("prosemirror-model")
-const {schema} = require("prosemirror-schema-basic")
-const {exampleSetup} = require("prosemirror-example-setup")
-const {undo, redo} = require("prosemirror-history")
-const {keymap} = require("prosemirror-keymap")
-const {exitCode} = require("prosemirror-commands")
-const CodeMirror = require("codemirror")
-require("codemirror/mode/javascript/javascript")
+import {EditorState, Selection, TextSelection} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {DOMParser} from "prosemirror-model"
+import {schema} from "prosemirror-schema-basic"
+import {exampleSetup} from "prosemirror-example-setup"
+import {undo, redo} from "prosemirror-history"
+import {keymap} from "prosemirror-keymap"
+import {exitCode} from "prosemirror-commands"
+import CodeMirror from "codemirror"
+import "codemirror/mode/javascript/javascript"
 
 function computeChange(oldVal, newVal) {
   let start = 0, oldEnd = oldVal.length, newEnd = newVal.length
