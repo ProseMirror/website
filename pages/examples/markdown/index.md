@@ -9,26 +9,30 @@
 
 # Friendly Markdown
 
-Say you have a site that allows users to enter comments, and you've
-decided to use Markdown for the comment input. Your target group
-mostly knows how to use Markdown, and finds it convenient to type. But
-you also have some non-technical users, for whom learning arcane
+Imagine you have a site that allows users to enter comments, and
+you've decided to use Markdown for the comment input. Your target
+group mostly knows how to use Markdown, and finds it convenient. But
+you may also have some non-technical users, for whom learning arcane
 syntactic rules does not come naturally.
 
 Without changing anything in your backend, you can drop in
 ProseMirror as an alternative input editor. People can even switch
 between both views as they are editing!
 
-Because we've set ProseMirror up with a document model that only
-contains things that can be expressed in Markdown, we can be sure that
-the edited document can meaningfully be serialized in that format.
+The
+[`prosemirror-markdown`](https://github.com/prosemirror/prosemirror-markdown)
+package defines a ProseMirror [schema](/doc/guide/#schema) that can
+express exactly the things that can be expressed in Markdown. It also
+comes with a parser and serializer that convert documents in this
+schema to and from Markdown text.
+
 
 <div id="editor"></div>
 <div style="text-align: center">
-  <label style="border-right: 1px solid silver">Markdown <input type=radio name=inputformat id=inputformat checked>&nbsp;</label><label>&nbsp;<input type=radio name=inputformat id=inputformat> WYSIWYM</label>
+  <label style="border-right: 1px solid silver">
+    Markdown <input type=radio name=inputformat id=radio_markdown checked>&nbsp;</label>
+  <label>&nbsp;<input type=radio name=inputformat id=radio_prosemirror> WYSIWYM</label>
 </div>
 
-<div style="display: none" id="markdown_content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?
-
-So we've given people the **choice** to use a more familiar, discoverable interface.
+<div style="display: none" id="content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?&#13;&#13;So we've given people the **choice** to use a more familiar, discoverable interface.
 </div>

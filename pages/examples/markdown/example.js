@@ -1,40 +1,53 @@
+function asTextArea(target, content) {
+  window.view = undefined
+  let textarea = target.appendChild(document.createElement("textarea"))
+  textarea.style.cssText = "font-family: inherit; font-size: inherit"
+  textarea.value = content
+  return {
+    type: "textarea",
+    get content() { return textarea.value },
+    focus() { textarea.focus() },
+    destroy() {}
+  }
+}
+
 import {EditorView} from "prosemirror-view"
 import {EditorState} from "prosemirror-state"
-import {schema, defaultMarkdownParser, defaultMarkdownSerializer} from "prosemirror-markdown"
 import {exampleSetup} from "prosemirror-example-setup"
+import {schema, defaultMarkdownParser,
+        defaultMarkdownSerializer} from "prosemirror-markdown"
 
-let place = document.querySelector("#editor")
-
-let getContent
-function toTextArea(content, focus) {
-  window.view = undefined
-  let te = place.appendChild(document.createElement("textarea"))
-  te.style.cssText = "font-family: inherit; font-size: inherit"
-  te.value = content
-  if (focus !== false) te.focus()
-  getContent = () => te.value
-}
-function toProseMirror(content) {
-  let view = window.view = new EditorView(place, {
+function asProseMirror(target, content) {
+  let view = new EditorView(place, {
     state: EditorState.create({
       doc: defaultMarkdownParser.parse(content),
       plugins: exampleSetup({schema})
     })
   })
-  view.focus()
-  getContent = () => {
-    let content = defaultMarkdownSerializer.serialize(view.state.doc)
-    view.destroy()
-    return content
+  return {
+    type: "prosemirror",
+    get content() { return defaultMarkdownSerializer.serialize(view.state.doc) },
+    focus() { view.focus() },
+    destroy() { view.destroy() }
   }
 }
-toTextArea(document.querySelector("#markdown_content").textContent, false)
 
-function change() {
-  let content = getContent()
+let place = document.querySelector("#editor")
+let editor = asTextArea(place, document.querySelector("#content").textContent)
+
+function changeTo(type) {
+  if (editor.type == type) return
+  let content = editor.content
+  editor.destroy()
   place.textContent = ""
-  if (document.querySelector("#inputformat").checked) toTextArea(content)
-  else toProseMirror(content)
+  if (type == "prosemirror") editor = asProseMirror(place, content)
+  else editor = asTextArea(place, content)
+  editor.focus()
 }
-let radios = document.querySelectorAll("[name=inputformat]")
-for (let i = 0; i < radios.length; i++) radios[i].addEventListener("change", change)
+
+document.querySelector("#radio_markdown").addEventListener("change", e => {
+  if (e.target.checked) changeTo("textarea")
+})
+document.querySelector("#radio_prosemirror").addEventListener("change", e => {
+  if (e.target.checked) changeTo("prosemirror")
+})

@@ -104,9 +104,10 @@ provides syntax highlighting, auto-indentation, and similar.</p>
 function max(a, b) {
   return a > b ? a : b
 }</pre>
-<p>Any changes made inside the editor are directly propagated to the
-surrounding ProseMirror document, so that you can for example apply
-ProseMirror's undo/redo to them.</p>
+<p>The content of the code editor is kept in sync with the content of
+the code block in the rich text editor, so that it is as if you're
+directly editing the outer document, using a more convenient
+interface.</p>
 </div>
 
 <link rel=stylesheet href="../../css/codemirror.css">
