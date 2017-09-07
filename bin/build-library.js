@@ -1,13 +1,18 @@
 const {rollup} = require("rollup")
 
+let plugins = [
+  require("rollup-plugin-node-resolve")({main: true}),
+  require("rollup-plugin-commonjs")(),
+  require("rollup-plugin-buble")()
+]
+
+if (process.env.NODE_ENV != "development")
+  plugins.push(require("rollup-plugin-uglify")())
+
+
 let options = {
-  entry: "bin/library.js",
-  plugins: [
-    require("rollup-plugin-node-resolve")({main: true}),
-    require("rollup-plugin-commonjs")(),
-    require("rollup-plugin-buble")(),
-    require("rollup-plugin-uglify")()
-  ],
+  input: "bin/library.js",
+  plugins,
   format: "iife"
 }
 
