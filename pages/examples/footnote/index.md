@@ -105,10 +105,8 @@ in place whenever possible.
 
 PART(nodeview_update)
 
-Finally, the nodeview has to handle deselection (where it closes the
-sub-editor), destruction (which just calls `deselectNode` to make sure
-the sub-editor has been destroyed), and queries about which events and
-mutations should be handled by the outer editor.
+Finally, the nodeview has to handle destruction and queries about
+which events and mutations should be handled by the outer editor.
 
 PART(nodeview_end)
 
