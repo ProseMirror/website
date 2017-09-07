@@ -157,7 +157,7 @@ that the component gets completely defines its behavior.
 let view = new EditorView({
   state: myState,
   editable() { return false }, // Enables read-only behavior
-  onFocus() { console.log("Focusing!") }
+  handleDoubleClick() { console.log("Double click!") }
 })
 ```
 
