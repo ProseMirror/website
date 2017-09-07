@@ -166,6 +166,12 @@ state. The helper function uses the plugin's
 [`getState`](##state.Plugin.getState) method, which can be used to
 fetch the plugin state from a full editor state object.
 
+Because the editor state is a persistent (immutable) object, and
+plugin state is part of that object, plugin state values must be
+immutable. I.e. their `apply` method must return a new value, rather
+than changing the old, if they need to change, and no other code
+should change them.
+
 It is often useful for plugins to add some extra information to a
 transaction. For example, the undo history, when performing an actual
 undo, will mark the resulting transaction, so that when the plugin

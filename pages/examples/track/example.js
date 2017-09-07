@@ -1,49 +1,3 @@
-import {EditorState, Plugin} from "prosemirror-state"
-import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
-import {Mapping} from "prosemirror-transform"
-import {schema} from "prosemirror-schema-basic"
-import {exampleSetup} from "prosemirror-example-setup"
-import crel from "crel"
-
-const trackPlugin = new Plugin({
-  state: {
-    init(_, instance) {
-      return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
-    },
-    apply(tr, tracked) {
-      if (tr.docChanged) tracked = tracked.applyTransform(tr)
-      let commitMessage = tr.getMeta(this)
-      if (commitMessage) tracked = tracked.applyCommit(commitMessage, new Date(tr.time))
-      return tracked
-    }
-  }
-})
-
-const highlightPlugin = new Plugin({
-  state: {
-    init() { return {deco: DecorationSet.empty, commit: null} },
-    apply(tr, prev, oldState, state) {
-      let highlight = tr.getMeta(this)
-      if (highlight && highlight.add != null && prev.commit != highlight.add) {
-        let tState = trackPlugin.getState(oldState)
-        let decos = tState.blameMap
-            .filter(span => tState.commits[span.commit] == highlight.add)
-            .map(span => Decoration.inline(span.from, span.to, {class: "blame-marker"}))
-        return {deco: DecorationSet.create(state.doc, decos), commit: highlight.add}
-      } else if (highlight && highlight.clear != null && prev.commit == highlight.clear) {
-        return {deco: DecorationSet.empty, commit: null}
-      } else if (tr.docChanged && prev.commit) {
-        return {deco: prev.deco.map(tr.mapping, tr.doc), commit: prev.commit}
-      } else {
-        return prev
-      }
-    }
-  },
-  props: {
-    decorations(state) { return this.getState(state).deco }
-  }
-})
-
 class Span {
   constructor(from, to, commit) {
     this.from = from; this.to = to; this.commit = commit
@@ -60,28 +14,46 @@ class Commit {
   }
 }
 
+// TrackState{
 class TrackState {
   constructor(blameMap, commits, uncommittedSteps, uncommittedMaps) {
+    // The blame map is a data structure that lists a sequence of
+    // document ranges, along with the commit that inserted them. This
+    // can be used to, for example, highlight the part of the document
+    // that was inserted by a commit.
     this.blameMap = blameMap
+    // The commit history, as an array of objects.
     this.commits = commits
+    // Inverted steps and their maps corresponding to the changes that
+    // have been made since the last commit.
     this.uncommittedSteps = uncommittedSteps
     this.uncommittedMaps = uncommittedMaps
   }
 
+  // Apply a transform to this state
   applyTransform(transform) {
-    let inverted = transform.steps.map((step, i) => step.invert(transform.docs[i]))
-    return new TrackState(updateBlameMap(this.blameMap, transform, this.commits.length),
-                          this.commits,
+    // Invert the steps in the transaction, to be able to save them in
+    // the next commit
+    let inverted =
+      transform.steps.map((step, i) => step.invert(transform.docs[i]))
+    let newBlame = updateBlameMap(this.blameMap, transform, this.commits.length)
+    // Create a new state—since these are part of the editor state, a
+    // persistent data structure, they must not be mutated.
+    return new TrackState(newBlame, this.commits,
                           this.uncommittedSteps.concat(inverted),
                           this.uncommittedMaps.concat(transform.mapping.maps))
   }
 
+  // When a transaction is marked as a commit, this is used to put any
+  // uncommitted steps into a new commit.
   applyCommit(message, time) {
     if (this.uncommittedSteps.length == 0) return this
-    let commit = new Commit(message, time, this.uncommittedSteps, this.uncommittedMaps)
+    let commit = new Commit(message, time, this.uncommittedSteps,
+                            this.uncommittedMaps)
     return new TrackState(this.blameMap, this.commits.concat(commit), [], [])
   }
 }
+// }
 
 function updateBlameMap(map, transform, id) {
   let result = [], mapping = transform.mapping
@@ -137,6 +109,55 @@ function insertIntoBlameMap(map, from, to, commit) {
 
   map.splice(pos, 0, new Span(from, to, commit))
 }
+
+// trackPlugin{
+import {Plugin} from "prosemirror-state"
+
+const trackPlugin = new Plugin({
+  state: {
+    init(_, instance) {
+      return new TrackState([new Span(0, instance.doc.content.size, null)], [], [], [])
+    },
+    apply(tr, tracked) {
+      if (tr.docChanged) tracked = tracked.applyTransform(tr)
+      let commitMessage = tr.getMeta(this)
+      if (commitMessage) tracked = tracked.applyCommit(commitMessage, new Date(tr.time))
+      return tracked
+    }
+  }
+})
+// }
+
+import {EditorState} from "prosemirror-state"
+import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
+import {schema} from "prosemirror-schema-basic"
+import {exampleSetup} from "prosemirror-example-setup"
+import crel from "crel"
+
+const highlightPlugin = new Plugin({
+  state: {
+    init() { return {deco: DecorationSet.empty, commit: null} },
+    apply(tr, prev, oldState, state) {
+      let highlight = tr.getMeta(this)
+      if (highlight && highlight.add != null && prev.commit != highlight.add) {
+        let tState = trackPlugin.getState(oldState)
+        let decos = tState.blameMap
+            .filter(span => tState.commits[span.commit] == highlight.add)
+            .map(span => Decoration.inline(span.from, span.to, {class: "blame-marker"}))
+        return {deco: DecorationSet.create(state.doc, decos), commit: highlight.add}
+      } else if (highlight && highlight.clear != null && prev.commit == highlight.clear) {
+        return {deco: DecorationSet.empty, commit: null}
+      } else if (tr.docChanged && prev.commit) {
+        return {deco: prev.deco.map(tr.mapping, tr.doc), commit: prev.commit}
+      } else {
+        return prev
+      }
+    }
+  },
+  props: {
+    decorations(state) { return this.getState(state).deco }
+  }
+})
 
 let state = EditorState.create({
   schema,
@@ -195,24 +216,42 @@ function renderCommits(state, dispatch) {
   })
 }
 
+// revertCommit{
+import {Mapping} from "prosemirror-transform"
+
 function revertCommit(commit) {
-  let tState = trackPlugin.getState(state)
-  let found = tState.commits.indexOf(commit)
-  if (found == -1) return
+  let trackState = trackPlugin.getState(state)
+  let index = trackState.commits.indexOf(commit)
+  // If this commit is not in the history, we can't revert it
+  if (index == -1) return
 
-  if (tState.uncommittedSteps.length) return alert("Commit your changes first!")
+  // Reverting is only possible if there are no uncommitted changes
+  if (trackState.uncommittedSteps.length)
+    return alert("Commit your changes first!")
 
-  let remap = new Mapping(tState.commits.slice(found).reduce((maps, c) => maps.concat(c.maps), []))
+  // This is the mapping from the document as it was at the start of
+  // the commit to the current document.
+  let remap = new Mapping(trackState.commits.slice(index)
+                          .reduce((maps, c) => maps.concat(c.maps), []))
   let tr = state.tr
+  // Build up a transaction that includes all (inverted) steps in this
+  // commit, rebased to the current document. They have to be applied
+  // in reverse order.
   for (let i = commit.steps.length - 1; i >= 0; i--) {
+    // The mapping is sliced to not include maps for this step and the
+    // ones before it.
     let remapped = commit.steps[i].map(remap.slice(i + 1))
-    let result = remapped && tr.maybeStep(remapped)
-    if (result && result.doc) remap.appendMap(remapped.getMap(), i)
+    if (!remapped) continue
+    let result = tr.maybeStep(remapped)
+    // If the step can be applied, add its map to our mapping
+    // pipeline, so that subsequent steps are mapped over it.
+    if (result.doc) remap.appendMap(remapped.getMap(), i)
   }
-  if (tr.docChanged) {
+  // Add a commit message and dispatch.
+  if (tr.docChanged)
     dispatch(tr.setMeta(trackPlugin, `Revert '${commit.message}'`))
-  }
 }
+// }
 
 document.querySelector("#commit").addEventListener("submit", e => {
   e.preventDefault()
