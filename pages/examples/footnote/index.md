@@ -62,13 +62,22 @@ CSS to add the numbers.
 
 PART(nodeview_start)
 
-Only when the node view is selected (it'll be selected when the user
-‘arrows’ onto it, because we set the [`atom`](##model.NodeSpec.atom)
-property on the node spec) does the user get to see and interact with
-its content. In fact, what we'll do is pop up a little sub-editor,
-which is itself a ProseMirror view, with the node's content.
+Only when the node view is selected does the user get to see and
+interact with its content (it'll be selected when the user ‘arrows’
+onto it, because we set the [`atom`](##model.NodeSpec.atom) property
+on the node spec). These two methods handle node selection and
+deselection the node view.
 
 PART(nodeview_select)
+
+What we'll do is pop up a little sub-editor, which is itself a
+ProseMirror view, with the node's content. Transactions in this
+sub-editor are handled specially, in the `dispatchInner` method.
+
+Mod-z and y are bound to run undo and redo on the _outer_ editor.
+We'll see in a moment why that works.
+
+PART(nodeview_open)
 
 What should happen when the content of the sub-editor changes? We
 could just take its content and reset the content of the footnote in

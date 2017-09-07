@@ -44,6 +44,8 @@ menu.insertMenu.content.push(new MenuItem({
 
 // nodeview_start{
 import {StepMap} from "prosemirror-transform"
+import {keymap} from "prosemirror-keymap"
+import {undo, redo} from "prosemirror-history"
 
 class FootnoteView {
   constructor(node, view, getPos) {
@@ -55,35 +57,52 @@ class FootnoteView {
     // The node's representation in the editor (empty, for now)
     this.dom = document.createElement("footnote")
     // These are used when the footnote is selected
-    this.open = false
     this.innerView = null
-    this.tooltip = null
   }
 // }
 // nodeview_select{
   selectNode() {
-    if (!this.open) {
-      this.open = true
-      this.dom.classList.add("ProseMirror-selectednode")
-      // Append a tooltip to the outer node
-      this.tooltip = this.dom.appendChild(document.createElement("div"))
-      this.tooltip.className = "footnote-tooltip"
-      // And put a sub-ProseMirror into that
-      this.innerView = new EditorView(this.tooltip, {
-        // You can use any node as an editor document
-        state: EditorState.create({doc: this.node}),
-        // This is the magic part
-        dispatchTransaction: this.dispatchInner.bind(this),
-        handleDOMEvents: {
-          mousedown: () => {
-            // Kludge to prevent strangeness due to the fact that the
-            // whole footnote is node-selected (and thus DOM-selected)
-            // when the parent editor is focused.
-            if (this.outerView.hasFocus()) this.innerView.focus()
-          }
+    this.dom.classList.add("ProseMirror-selectednode")
+    if (!this.innerView) this.open()
+  }
+
+  deselectNode() {
+    this.dom.classList.remove("ProseMirror-selectednode")
+    if (this.innerView) this.close()
+  }
+// }
+// nodeview_open{
+  open() {
+    // Append a tooltip to the outer node
+    let tooltip = this.dom.appendChild(document.createElement("div"))
+    tooltip.className = "footnote-tooltip"
+    // And put a sub-ProseMirror into that
+    this.innerView = new EditorView(tooltip, {
+      // You can use any node as an editor document
+      state: EditorState.create({
+        doc: this.node,
+        plugins: [keymap({
+          "Mod-z": () => undo(this.outerView.state, this.outerView.dispatch),
+          "Mod-y": () => redo(this.outerView.state, this.outerView.dispatch)
+        })]
+      }),
+      // This is the magic part
+      dispatchTransaction: this.dispatchInner.bind(this),
+      handleDOMEvents: {
+        mousedown: () => {
+          // Kludge to prevent issues due to the fact that the whole
+          // footnote is node-selected (and thus DOM-selected) when
+          // the parent editor is focused.
+          if (this.outerView.hasFocus()) this.innerView.focus()
         }
-      })
-    }
+      }
+    })
+  }
+
+  close() {
+    this.innerView.destroy()
+    this.innerView = null
+    this.dom.textContent = ""
   }
 // }
 // nodeview_dispatchInner{
@@ -123,18 +142,8 @@ class FootnoteView {
   }
 // }
 // nodeview_end{
-  deselectNode() {
-    if (this.open) {
-      this.open = false
-      this.dom.classList.remove("ProseMirror-selectednode")
-      this.innerView.destroy()
-      this.dom.removeChild(this.tooltip)
-      this.tooltip = this.innerView = null
-    }
-  }
-
   destroy() {
-    this.deselectNode()
+    if (this.innerView) this.close()
   }
 
   stopEvent(event) {
