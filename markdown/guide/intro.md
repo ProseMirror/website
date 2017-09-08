@@ -142,7 +142,7 @@ let state = EditorState.create({
   schema,
   plugins: [
     history(),
-    keymap({"Mod-Z": undo, "Mod-Y": redo})
+    keymap({"Mod-z": undo, "Mod-y": redo})
   ]
 })
 let view = new EditorView(document.body, {state})
@@ -173,7 +173,7 @@ let state = EditorState.create({
   schema,
   plugins: [
     history(),
-    keymap({"Mod-Z": undo, "Mod-Y": redo}),
+    keymap({"Mod-z": undo, "Mod-y": redo}),
     keymap(baseKeymap)
   ]
 })
