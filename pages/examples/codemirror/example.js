@@ -53,10 +53,10 @@ class CodeBlockView {
 // nodeview_setSelection{
   setSelection(anchor, head) {
     this.cm.focus()
-    updating = true
+    this.updating = true
     this.cm.setSelection(this.cm.posFromIndex(anchor),
                          this.cm.posFromIndex(head))
-    updating = false
+    this.updating = false
     console.log("set sel", anchor, head, this.cm.getCursor())
   }
 // }

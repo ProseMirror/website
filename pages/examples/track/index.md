@@ -51,6 +51,17 @@ This example uses those properties to allow you to “commit” your
 changes, to revert individual commits, and to find out which commit a
 piece of text originates from.
 
+<div id="editor"></div>
+
+<form id="commit">
+  Commit message: <input type=text id=message name=message> <button id=commitbutton type="submit">commit</button>
+    <div class=blame-wrap><button type=button id=blame>blame at cursor</button></div>
+</form>
+
+<div id="commits" style="margin-bottom: 23px"></div>
+
+Hover over commits to highlight the text they introduced.
+
 This page won't list the [whole source
 code](https://github.com/ProseMirror/website/blob/master/pages/examples/track/example.js)
 for the example, only the most interesting parts.
@@ -83,14 +94,3 @@ each other, outcomes of complicated reverts, where later changes touch
 the same content, can sometimes be unintuitive. In a production
 application, it may be desirable to detect such conflicts and provide
 the user with an interface to resolve them.
-
-<div id="editor"></div>
-
-<form id="commit">
-  Commit message: <input type=text id=message name=message> <button id=commitbutton type="submit">commit</button>
-    <div class=blame-wrap><button type=button id=blame>blame at cursor</button></div>
-</form>
-
-<div id="commits"></div>
-
-Hover over commits to highlight the text they introduced.

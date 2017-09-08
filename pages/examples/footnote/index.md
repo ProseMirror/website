@@ -44,10 +44,13 @@
 # Editing footnotes
 
 This example demonstrates one way to implement something like
-footnotes in ProseMirror. Footnotes seem like they should be inline
-nodes with content—they appear in between other inline content, but
-their content isn't really part of the textblock around them. Let's
-define them like this:
+footnotes in ProseMirror.
+
+<div id="editor"></div>
+
+Footnotes seem like they should be inline nodes with content—they
+appear in between other inline content, but their content isn't really
+part of the textblock around them. Let's define them like this:
 
 PART(schema)
 
@@ -114,8 +117,6 @@ We can enable our schema and node view like this, to create an actual
 editor.
 
 PART(editor)
-
-<div id="editor"></div>
 
 <div id="content" style="display: none">
   <p>This paragraph has a footnote<footnote>Which is a piece of text placed at the bottom of a page or chapter, providing additional <em>comments</em> or <em>citations</em>.</footnote> in it. And another<footnote>Some more footnote text.</footnote> one.</p>

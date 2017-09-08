@@ -24,8 +24,10 @@ This example implements a simple document
 [linter](https://en.wikipedia.org/wiki/Lint_(software)) that finds
 problems in your document, and makes it easy to fix them.
 
-The first part is a function that, given a document, produces an array
-of problems found in that document. We'll use the
+<div id=editor></div>
+
+The first part of this example is a function that, given a document,
+produces an array of problems found in that document. We'll use the
 [`descendants`](##model.Node.descendants) method to easily iterate
 over all nodes in a document. Depending on the type of node, different
 types of problems are checked for.
@@ -63,12 +65,8 @@ out what part of the document changed.
 
 PART(plugin)
 
-If you enable this plugin in an editor, you get something like this.
-
-<div id=editor></div>
-
 <div id=content style="display: none">
-  <h3>Linting demo</h3>
+  <h3>Lint example</h3>
   <p>This is a sentence ,but the comma isn't in the right place.</p>
   <h5>Too-minor header</h5>
   <p>This is an image <img src="/img/smiley.png"> without alt text.

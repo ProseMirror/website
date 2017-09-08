@@ -8,7 +8,12 @@ editor control specifically for such content. [Node
 views](##view.NodeView) are a ProseMirror feature that make this
 possible.
 
-In this example, we'll set up code blocks, as they exist in the [basic
+Wiring this node view and keymap into an editor gives us something
+like this:
+
+<div id="editor"></div>
+
+In this example, we set up code blocks, as they exist in the [basic
 schema](##schema-basic), to be rendered as instances of
 [CodeMirror](http://codemirror.net), a code editor component. The
 general idea is quite similar to the [footnote example](../footnote/),
@@ -89,11 +94,6 @@ of a given textblock. If it is, and the next block is a code block,
 the selection is moved into it.
 
 PART(arrowHandlers)
-
-Wiring this node view and keymap into an editor gives us something
-like this:
-
-<div id="editor"></div>
 
 <div id=content style="display: none">
 <h3>The code block is a code editor</h3>
