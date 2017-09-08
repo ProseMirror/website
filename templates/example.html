@@ -3,14 +3,19 @@
 <<do
   const {dirname, resolve} = require("path")
   const {readFileSync} = require("fs")
-  let code = readFileSync(resolve(dirname($in.fileName), "./example.js"), "utf8")
-  let partRE = /\/\/ (\w+)\{\n([^]*?)\/\/ }\n/g, m
-  let parts = {}
-  while (m = partRE.exec(code)) parts[m[1]] = m[2]
+  const baseFile = resolve(dirname($in.fileName), "./example.js")
 
-  let content = $in.content.replace(/\bPART\((.*?)\)/g, (_, name) => {
-    if (!parts[name]) throw new Error("Unknown example code part " + name)
-    return "```javascript\n" + parts[name] + "```"
+  function getPart(id) {
+    let parts = id.split(":")
+    let [file, tag] = parts.length == 2 ? parts : [baseFile, id]
+    let code = readFileSync(file, "utf8")
+    let found = new RegExp("// " + tag + "\\{\n([^]*?)// }\n").exec(code)
+    if (!found) throw new Error("Unknown example code part " + id)
+    return found[1]
+  }
+
+  let content = $in.content.replace(/\bPART\((.*?)\)/g, (_, id) => {
+    return "```javascript\n" + getPart(id) + "```"
   })
 >>
 
