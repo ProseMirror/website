@@ -15,7 +15,9 @@ ProseMirror allows you to define your own schemas, which includes
 defining custom document elements. You can use whatever you put in the
 schema as proper semantic element in your documents.
 
-In this example, we'll extend the
+<div id="editor"></div>
+
+In this example, we extend the
 [basic](https://github.com/prosemirror/prosemirror-schema-basic)
 schema with a single new node. First, we define a [node
 spec](##model.NodeSpec), which describes the node's behavior and its
@@ -40,10 +42,6 @@ Now all that's left to do is creating an editor state and view with
 our custom schema and menu.
 
 PART(editor)
-
-And here is what the dino editor looks like:
-
-<div id="editor"></div>
 
 <div id="content" style="display: none">
   <p>This is your dinosaur-enabled editor. The insert menu allows you

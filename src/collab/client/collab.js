@@ -1,16 +1,16 @@
-const {exampleSetup, buildMenuItems} = require("prosemirror-example-setup")
-const {Step} = require("prosemirror-transform")
-const {EditorState} = require("prosemirror-state")
-const {EditorView} = require("prosemirror-view")
-const {history} = require("prosemirror-history")
-const {collab, receiveTransaction, sendableSteps, getVersion} = require("prosemirror-collab")
-const {MenuItem} = require("prosemirror-menu")
-const crel = require("crel")
+import {exampleSetup, buildMenuItems} from "prosemirror-example-setup"
+import {Step} from "prosemirror-transform"
+import {EditorState} from "prosemirror-state"
+import {EditorView} from "prosemirror-view"
+import {history} from "prosemirror-history"
+import {collab, receiveTransaction, sendableSteps, getVersion} from "prosemirror-collab"
+import {MenuItem} from "prosemirror-menu"
+import crel from "crel"
 
-const {schema} = require("../schema")
-const {GET, POST} = require("./http")
-const {Reporter} = require("./reporter")
-const {commentPlugin, commentUI, addAnnotation, annotationIcon} = require("./comment")
+import {schema} from "../schema"
+import {GET, POST} from "./http"
+import {Reporter} from "./reporter"
+import {commentPlugin, commentUI, addAnnotation, annotationIcon} from "./comment"
 
 const report = new Reporter()
 
