@@ -353,6 +353,8 @@ code { margin: 0 2px }
   outline: none;
 }
 
+.ProseMirror p { margin-bottom: 1em }
+
 div.figure { margin: 1em; }
 .figure img {
   width: 400px;
