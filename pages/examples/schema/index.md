@@ -3,11 +3,15 @@
 <style>
   #text-editor { background-color: rgba(0, 0, 0, 0.05); padding: 0 }
   .ProseMirror { min-height: none !important }
+  .ProseMirror a { text-decoration: underline; }
   note, notegroup { display: block; border: 1px solid silver; border-radius: 3px; padding: 3px 6px; margin: 5px 0; }
   notegroup { border-color: #66f }
+  p.boring { background: #eee; color: #444; }
+  shouting { display: inline; text-transform: uppercase; font-weight: bold; }
+  star { display: inline; font-size: 190%; line-height: 1; vertical-align: -10%; color: #a8f; -webkit-text-stroke: 1px #75b; }
 </style>
 
-# A schema from scratch
+# Schemas from scratch
 
 ProseMirror [schemas](/docs/guide/#schema) provide something like a
 syntax for documents—they set down which structures are valid.
@@ -18,9 +22,8 @@ just of text.
 PART(textSchema)
 
 You can use it to edit inline content. <span id="text-editor"></span>
-(A ProseMirror instance can be
-[mounted](##view.EditorView.constructor) on any node, including inline
-nodes.)
+(A ProseMirror view can be [mounted](##view.EditorView.constructor) on
+any node, including inline nodes.)
 
 ## Blocks
 
@@ -29,6 +32,13 @@ nodes. For example, this schema consists of notes that can
 optionally be grouped with group nodes.
 
 PART(noteSchema)
+
+For nodes that aren't text or top-level nodes, it is
+[necessary](/docs/guide/#schema.serialization_and_parsing) to provide
+[`toDOM`](##model.NodeSpec.toDOM) methods, so that the editor can
+render them, and [`parseDOM`](##model.NodeSpec.parseDOM) values, so
+that they can be parsed. This schema uses custom DOM nodes `<note>`
+and `<notegroup>` to represent its nodes.
 
 <div id=note-editor></div>
 
@@ -49,6 +59,73 @@ and thus can be used to create new notes and escape from a note group.
 Backspace at the start of a textblock will lift that textblock out of
 its parent, which can be used to remove notes from a group.
 
+## Groups and marks
+
+Let's do one more, with stars and shouting.
+
+This schema has not just text as inline content, but also _stars_,
+which are just inline nodes. To be able to easily refer to both our
+inline nodes, they are tagged as a group (also called `"inline"`). The
+schema does the same for the two types of block nodes, one paragraph
+type that allows any inline content, and one that only allows unmarked
+text.
+
+PART(starSchema_1)
+
+Since textblocks allow marks by default, the `boring_paragraph` type
+sets [`marks`](##model.NodeSpec.marks) to the empty string to
+explicitly forbid them.
+
+The schema defines two types of marks, shouted text and links. The
+first is like the common strong or emphasis marks, in that it just
+adds a single bit of information to the content it marks, and doesn't
+have any attributes. It specifies that it should be rendered as a
+`<shouting>` tag (which is styled to be inline, bold, and uppercase),
+and that that same tag should be parsed as this mark.
+
+PART(starSchema_2)
+
+Links do have an attribute—their target URL, so their DOM serializing
+method has to output that (the second element in an array returned
+from `toDOM`, if it's a plain object, provides a set of DOM
+attributes), and their DOM parser has to read it.
+
+By default, marks as _inclusive_, meaning that they get applied to
+content inserted at their end (as well as at their start when they
+start at the start of their parent node). For link-type marks, this is
+usually not the expected behavior, and the
+[`inclusive`](##model.MarkSpec.inclusive) property on the mark spec
+can be set to false to disable that behavior.
+
+<div id="star-editor" class=editor></div>
+
+To make it possible to interact with these elements we again have to
+add a custom keymap. There's a command helper for toggling marks,
+which we can use directly for the shouting mark.
+
+PART(starKeymap)
+
+Toggling a link is a little more involved. En- or disabling
+non-inclusive marks when nothing is selected isn't meaningful, since
+you can't “type into’ them like you can with inclusive marks. And we
+need to ask the user for a URL—but only if a link is being added. So
+the command uses [`rangeHasMark`](##model.Node.rangeHasMark) to check
+whether it will be adding or removing, before prompting for a URL.
+
+(`prompt` is probably not what you'd want to use in a real system.
+When using an asynchronous method to query the user for something,
+make sure to use the _current_ state, not the state when the command
+was originally called, when applying the command's effect.)
+
+PART(toggleLink)
+
+The command that inserts a star first checks whether the schema allows
+one to be inserted at the cursor position (using
+[`canReplaceWith`](##model.Node.canReplaceWith)), and if so, replaces
+the selection with a newly created star node.
+
+PART(insertStar)
+
 <div style="display: none">
   <div id="text-content">Such as this sentence.</div>
   <div id="note-content">
@@ -58,5 +135,10 @@ its parent, which can be used to remove notes from a group.
       <note>Buy flour</note>
       <note>Get toilet paper</note>
     </notegroup>
+  </div>
+  <div id="star-content">
+    <p>This is a <star></star>nice<star></star> paragraph, it can have <shouting>anything</shouting> in it.</p>
+    <p class=boring>This paragraph is boring, it can't have anything.</p>
+    <p>Press ctrl/cmd-space to insert a star, ctrl/cmd-b to toggle shouting, and ctrl/cmd-q to add or remove a link.</p>
   </div>
 </div>

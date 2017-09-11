@@ -223,19 +223,16 @@ the basic schema has these for the emphasis mark:
 
 ```javascript
   parseDOM: [
-    {tag: "em"},          // Match <em> nodes
-    {tag: "i"},           // and <i> nodes
-    {style: "font-style", // and inline font-style: italic
-     getAttrs: value => value == "italic" ? {} : undefined}
+    {tag: "em"},                 // Match <em> nodes
+    {tag: "i"},                  // and <i> nodes
+    {style: "font-style=italic"} // and inline 'font-style: italic'
   ]
 ```
 
 The value given to [`tag`](##model.ParseRule.tag) in a parse rule can
-be a CSS selector, so you can do thing like `"div.myclass"` too. The
-[`getAttrs` property](##model.ParseRule.getAttrs) will be used to
-compute the attributes for the mark or node. In the example above it
-is used as a filter, to only match italic font style rules, and
-prevent the match by returning `undefined` otherwise.
+be a CSS selector, so you can do thing like `"div.myclass"` too.
+Similarly, [`style`](##model.ParseRule.style) matches inline CSS
+styles.
 
 When a schema includes `parseDOM` annotations, you can create a
 [`DOMParser`](##model.DOMParser) object for it with

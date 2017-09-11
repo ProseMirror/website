@@ -201,7 +201,7 @@ nav#toc ul ul {
   padding-left: 20px;
 }
 
-#editor {
+#editor, .editor {
   background: white;
   color: black;
   background-clip: padding-box;

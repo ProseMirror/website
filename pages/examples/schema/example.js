@@ -1,29 +1,33 @@
 // textSchema{
 import {Schema} from "prosemirror-model"
 
-const textSchema = new Schema({nodes: {
-  text: {},
-  doc: {content: "text*"}
-}})
+const textSchema = new Schema({
+  nodes: {
+    text: {},
+    doc: {content: "text*"}
+  }
+})
 // }
 
 // noteSchema{
-const noteSchema = new Schema({nodes: {
-  text: {},
-  note: {
-    content: "text*",
-    toDOM() { return ["note", 0] },
-    parseDOM: [{tag: "note"}]
-  },
-  notegroup: {
-    content: "note+",
-    toDOM() { return ["notegroup", 0] },
-    parseDOM: [{tag: "notegroup"}]
-  },
-  doc: {
-    content: "(note | notegroup)+"
+const noteSchema = new Schema({
+  nodes: {
+    text: {},
+    note: {
+      content: "text*",
+      toDOM() { return ["note", 0] },
+      parseDOM: [{tag: "note"}]
+    },
+    notegroup: {
+      content: "note+",
+      toDOM() { return ["notegroup", 0] },
+      parseDOM: [{tag: "notegroup"}]
+    },
+    doc: {
+      content: "(note | notegroup)+"
+    }
   }
-}})
+})
 // }
 
 // makeNoteGroup{
@@ -39,6 +43,84 @@ function makeNoteGroup(state, dispatch) {
   // Otherwise, dispatch a transaction, using the `wrap` method to
   // create the step that does the actual wrapping.
   if (dispatch) dispatch(state.tr.wrap(range, wrapping).scrollIntoView())
+  return true
+}
+// }
+
+// starSchema_1{
+let starSchema = new Schema({
+  nodes: {
+    text: {
+      group: "inline",
+    },
+    star: {
+      inline: true,
+      group: "inline",
+      toDOM() { return ["star", "🟊"] },
+      parseDOM: [{tag: "star"}]
+    },
+    paragraph: {
+      group: "block",
+      content: "inline*",
+      toDOM() { return ["p", 0] },
+      parseDOM: [{tag: "p"}]
+    },
+    boring_paragraph: {
+      group: "block",
+      content: "text*",
+      marks: "",
+      toDOM() { return ["p", {class: "boring"}, 0] },
+      parseDOM: [{tag: "p.boring", priority: 60}]
+    },
+    doc: {
+      content: "block+"
+    }
+  },
+// }
+// starSchema_2{
+  marks: {
+    shouting: {
+      toDOM() { return ["shouting"] },
+      parseDOM: [{tag: "shouting"}]
+    },
+    link: {
+      attrs: {href: {}},
+      toDOM(node) { return ["a", {href: node.attrs.href}] },
+      parseDOM: [{tag: "a", getAttrs(dom) { return {href: dom.href} }}],
+      inclusive: false
+    }
+  }
+})
+// }
+
+// starKeymap{
+import {toggleMark} from "prosemirror-commands"
+
+let starKeymap = keymap({
+  "Mod-b": toggleMark(starSchema.marks.shouting),
+  "Mod-q": toggleLink,
+  "Mod-Space": insertStar
+})
+// }
+// toggleLink{
+function toggleLink(state, dispatch) {
+  let {doc, selection} = state
+  if (selection.empty) return false
+  let attrs = null
+  if (!doc.rangeHasMark(selection.from, selection.to, starSchema.marks.link)) {
+    attrs = {href: prompt("Link to where?", "")}
+    if (!attrs.href) return false
+  }
+  return toggleMark(starSchema.marks.link, attrs)(state, dispatch)
+}
+// }
+// insertStar{
+function insertStar(state, dispatch) {
+  let type = starSchema.nodes.star
+  let {doc, selection: {$from}} = state
+  if (!$from.parent.canReplaceWith($from.index(), $from.index(), type))
+    return false
+  dispatch(state.tr.replaceSelectionWith(type.create()))
   return true
 }
 // }
@@ -66,4 +148,4 @@ function id(str) { return document.getElementById(str) }
 
 start({mount: id("text-editor")}, id("text-content"), textSchema)
 start(id("note-editor"), id("note-content"), noteSchema, [keymap({"Mod-Space": makeNoteGroup})])
-
+start(id("star-editor"), id("star-content"), starSchema, [starKeymap])
