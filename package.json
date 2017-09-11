@@ -18,6 +18,7 @@
     "prosemirror-history": "^0.22.0",
     "prosemirror-inputrules": "^0.22.0",
     "prosemirror-keymap": "^0.22.0",
+    "prosemirror-gapcursor": "^0.22.0",
     "prosemirror-markdown": "^0.22.0",
     "prosemirror-menu": "^0.22.0",
     "prosemirror-model": "^0.22.0",
