@@ -91,7 +91,7 @@ import {EditorView} from "prosemirror-view"
 import {schema} from "prosemirror-schema-basic"
 import {exampleSetup} from "prosemirror-example-setup"
 
-window.view = new EditorView(document.querySelector("#editor"), {
+let view = window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(schema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema}).concat(placeholderPlugin)

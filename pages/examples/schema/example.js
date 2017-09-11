@@ -117,7 +117,7 @@ function toggleLink(state, dispatch) {
 // insertStar{
 function insertStar(state, dispatch) {
   let type = starSchema.nodes.star
-  let {doc, selection: {$from}} = state
+  let {$from} = state.selection
   if (!$from.parent.canReplaceWith($from.index(), $from.index(), type))
     return false
   dispatch(state.tr.replaceSelectionWith(type.create()))

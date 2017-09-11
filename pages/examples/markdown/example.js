@@ -41,7 +41,7 @@ let place = document.querySelector("#editor")
 let view = new MarkdownView(place, document.querySelector("#content").value)
 
 document.querySelectorAll("input[type=radio]").forEach(button => {
-  button.addEventListener("change", e => {
+  button.addEventListener("change", () => {
     if (!button.checked) return
     let View = button.value == "markdown" ? MarkdownView : ProseMirrorView
     if (view instanceof View) return

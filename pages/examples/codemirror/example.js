@@ -100,7 +100,7 @@ class CodeBlockView {
     this.view.focus()
     let targetPos = this.getPos() + (dir < 0 ? 0 : this.node.nodeSize)
     let selection = Selection.near(this.view.state.doc.resolve(targetPos), dir)
-    this.view.dispatch(this.view.state.tr.setSelection().scrollIntoView())
+    this.view.dispatch(this.view.state.tr.setSelection(selection).scrollIntoView())
     this.view.focus()
   }
 // }
