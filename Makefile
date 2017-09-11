@@ -11,6 +11,7 @@ endif
 
 all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      $(foreach EX,$(EXAMPLES), public/examples/$(EX)/example.js) \
+     public/examples/prosemirror.js \
      public/css/editor.css public/css/codemirror.css
 
 public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/* templates/* src/build/*.js
@@ -35,7 +36,7 @@ public/examples/prosemirror.js: bin/library.js $(foreach LIB,$(CORE),$(wildcard 
 	mkdir -p $(dir $@)
 	node bin/build-library.js > $@
 
-public/examples/%/example.js: pages/examples/%/example.js public/examples/prosemirror.js
+public/examples/%/example.js: pages/examples/%/example.js
 	mkdir -p $(dir $@)
 	node bin/build-example.js $< > $@
 
