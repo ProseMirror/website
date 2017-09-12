@@ -43,25 +43,33 @@ let content = document.querySelector("#content")
 let startDoc = DOMParser.fromSchema(dinoSchema).parse(content)
 // }
 
+// command{
+let dinoType = dinoSchema.nodes.dino
+
+function insertDino(type) {
+  return function(state, dispatch) {
+    let {$from} = state.selection, index = $from.index()
+    if (!$from.parent.canReplaceWith(index, index, dinoType))
+      return false
+    if (dispatch)
+      dispatch(state.tr.replaceSelectionWith(dinoType.create({type})))
+    return true
+  }
+}
+// }
+
 // menu{
 import {MenuItem} from "prosemirror-menu"
 import {buildMenuItems} from "prosemirror-example-setup"
-import {insertPoint} from "prosemirror-transform"
 
 // Ask example-setup to build its basic menu
 let menu = buildMenuItems(dinoSchema)
-let dinoType = dinoSchema.nodes.dino
 // Add a dino-inserting item for each type of dino
 dinos.forEach(name => menu.insertMenu.content.push(new MenuItem({
   title: "Insert " + name,
   label: name.charAt(0).toUpperCase() + name.slice(1),
-  select(state) {
-    // Enable the item when a dino can be inserted at the cursor
-    return insertPoint(state.doc, state.selection.from, dinoType) != null
-  },
-  run(state, dispatch) {
-    dispatch(state.tr.replaceSelectionWith(dinoType.create({type: name})))
-  }
+  enable(state) { return insertDino(name)(state) },
+  run: insertDino(name)
 })))
 // }
 
