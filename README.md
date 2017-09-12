@@ -3,10 +3,10 @@
 These are the sources for http://prosemirror.net
 
 This currently contains a [front-page](http://prosemirror.net), the
-[demos](http://prosemirror.net/#demos) (including server-side code to
+[examples](http://prosemirror.net/examples/) (including server-side code to
 support the
-[collaborative demo](http://prosemirror.net/demo/collab.html)), the
-[guides](http://prosemirror.net/docs.html), and the scripts to build
+[collaborative demo](http://prosemirror.net/example/collab/)), the
+[guide](http://prosemirror.net/docs/guide/), and the scripts to build
 the [reference docs](http://prosemirror.net/docs/ref/).
 
 ## Installation

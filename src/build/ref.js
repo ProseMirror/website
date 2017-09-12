@@ -1,4 +1,5 @@
 var builddocs = require("builddocs")
+var fs = require("fs")
 
 var modules = [{
   name: "state",
@@ -38,13 +39,22 @@ var modules = [{
 }]
 
 var baseDir = __dirname + "/../../node_modules/"
-if (!require("fs").existsSync(baseDir + "prosemirror-model"))
+if (!fs.existsSync(baseDir + "prosemirror-model"))
   baseDir = __dirname + "/../../../node_modules/"
 
 let read = Object.create(null)
-modules.forEach(config => read[config.name] = builddocs.read({
-  files: baseDir + "prosemirror-" + config.name + "/src/*.js"
-}))
+modules.forEach(config => {
+  let files = baseDir + "prosemirror-" + config.name + "/src/*.js"
+  if (config.name == "transform") {
+    // Move transform.js to the front when building the transform
+    // module, to make sure methods added to the prototype later
+    // appear after the base properties.
+    let dir = files.slice(0, -4)
+    let list = ["transform.js"].concat(fs.readdirSync(dir).filter(n => /\.js$/.test(n) && n != "transform.js"))
+    files = list.map(n => dir + n).join(" ")
+  }
+  read[config.name] = builddocs.read({files})
+})
 
 let imports = Object.create(null)
 
@@ -74,7 +84,7 @@ function importsFor(mod) {
 }
 
 let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => {
-  let tocPart = {name: module.name, href: "#" + module.name}
+  let tocPart = {name: "prosemirror-" + module.name, href: "#" + module.name}
   toc.push(tocPart)
   let text = builddocs.build({
     name: module.name,
@@ -83,7 +93,9 @@ let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => 
       constructor: false,
       T: false,
       this: false,
-      OrderedMap: "https://github.com/marijnh/orderedmap#readme"
+      OrderedMap: "https://github.com/marijnh/orderedmap#readme",
+      false: false,
+      true: false
     }, ...importsFor(module)],
     qualifiedImports: {
       dom: builddocs.browserImports

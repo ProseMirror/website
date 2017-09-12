@@ -24,7 +24,7 @@ const dinoNodeSpec = {
     tag: "img[dino-type]",
     getAttrs: dom => {
       let type = dom.getAttribute("dino-type")
-      if (dinos.indexOf(type) > -1) return {type}
+      return dinos.indexOf(type) > -1 ? {type} : false
     }
   }]
 }
