@@ -1,11 +1,12 @@
 const {createServer} = require("http")
-const path = require("path")
+const path = require("path"), fs = require("fs")
 const {parse: parseURL} = require("url")
 
 const ModuleServer = require("moduleserve/moduleserver")
 const {handleCollabRequest} = require("./collab/server/server")
 const ecstatic = require("ecstatic")
 const {buildFile} = require("./build/buildfile")
+const tariff = require("tariff")
 
 let port = 8000
 const root = path.resolve(__dirname, "../public/")
@@ -22,7 +23,10 @@ for (let i = 2; i < process.argv.length; i++) {
   else usage(1)
 }
 
-let moduleServer = new ModuleServer({root: root})
+let moduleServer = new ModuleServer({
+  root,
+  transform(_, content) { return tariff(content) }
+})
 let fileServer = ecstatic({root: root})
 
 function transformPage(req, resp) {
@@ -32,7 +36,9 @@ function transformPage(req, resp) {
 
   if (!/\.html$/.test(path)) return false
 
-  let text = buildFile(__dirname + "/../pages" + path).replace(
+  let file = __dirname + "/../pages" + path, mdFile = file.replace(/\.html$/, ".md")
+  if (!fs.existsSync(file) && fs.existsSync(mdFile)) file = mdFile
+  let text = buildFile(file).replace(
     /<script src="[^"]*prosemirror\.js"><\/script>\s+<script src="([^"]*\.js)"><\/script>/,
     function(_, script) {
       let base = path.replace(/\/[^\/]+$|^\//g, ""), full = /^\//.test(script) ? script : base + "/" + script
