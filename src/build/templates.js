@@ -1,11 +1,8 @@
 var fs = require("fs")
 var Mold = require("mold-template")
-var CodeMirror = require("codemirror/addon/runmode/runmode.node.js")
-require("codemirror/mode/javascript/javascript.js")
-require("codemirror/mode/xml/xml.js")
 var markdown = (require("markdown-it")({
   html: true,
-  highlight
+  highlight: require("./highlight").highlight
 })).use(require("markdown-it-deflist"))
 
 module.exports = function loadTemplates(config) {
@@ -30,16 +27,6 @@ module.exports = function loadTemplates(config) {
     return mold.defs.markdown(options)
   }
   return mold
-}
-
-function highlight(str, lang) {
-  if (lang == "html") lang = "text/html"
-  let result = ""
-  CodeMirror.runMode(str, lang, (text, style) => {
-    let esc = markdown.utils.escapeHtml(text)
-    result += style ? `<span class="${style.replace(/^|\s+/g, "$&hl-")}">${esc}</span>` : esc
-  })
-  return result
 }
 
 function headerAnchors(str, prefix) {

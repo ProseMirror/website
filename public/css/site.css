@@ -321,8 +321,8 @@ ul.grid-list h3 {
 dd p { margin: 0 }
 dd { margin-left: 20px }
 dt {
-  padding-left: 30px;
-  text-indent: -30px;
+  padding-left: 35px;
+  text-indent: -35px;
 }
 
 code { margin: 0 2px }

@@ -100,7 +100,8 @@ let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => 
     qualifiedImports: {
       dom: builddocs.browserImports
     },
-    templates: __dirname + "/../../templates/"
+    templates: __dirname + "/../../templates/",
+    markdownOptions: {highlight: require("./highlight").highlight}
   }, read[module.name]).replace(/<h3>(.*?)<\/h3>/g, function(_, text) {
     let id = module.name + "." + text.replace(/\W+/g, "_")
     if (!tocPart.sub) tocPart.sub = []
