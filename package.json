@@ -30,7 +30,7 @@
     "prosemirror-view": "^0.22.0"
   },
   "devDependencies": {
-    "builddocs": "^0.1.1",
+    "builddocs": "^0.2.0",
     "ecstatic": "^1.4.0",
     "getdocs": "^0.6.0",
     "glob": "^6.0.1",
