@@ -42,6 +42,7 @@ public/examples/%/example.js: pages/examples/%/example.js
 
 public/css/editor.css: $(ROOT)prosemirror-view/style/prosemirror.css \
                        $(ROOT)prosemirror-menu/style/menu.css \
+                       $(ROOT)prosemirror-gapcursor/style/gapcursor.css \
                        $(ROOT)prosemirror-example-setup/style/style.css
 	cat $^ > $@
 
