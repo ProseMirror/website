@@ -42,7 +42,7 @@ The core modules are:
 
 In addition, there are modules for [basic editing
 commands](##commands), [binding keys](##keymap), [undo
-history](##history), [input macros](##inputrule), [collaborative
+history](##history), [input macros](##inputrules), [collaborative
 editing](##collab), a [simple document schema](##schema-basic), and
 more under the [GitHub prosemirror
 organization](https://github.com/prosemirror/).

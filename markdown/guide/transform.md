@@ -135,7 +135,7 @@ inserted content, or stay in front of it? In the example, it is
 apparently moved after the inserted tokens.
 
 But sometimes you want the other behavior, which is why the [`map`
-method](##transform.Mapping.map) on step maps and mappings accepts a
+method](##transform.Mappable.map) on step maps and mappings accepts a
 second parameter, `bias`, which you can set to -1 to keep your
 position in place when content is inserted on top of it.
 

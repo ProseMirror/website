@@ -82,7 +82,7 @@ flows.
 
 It is possible to ‘intercept’ transactions as they are
 [dispatched](##view.EditorView.dispatch) with the
-[`dispatchTransaction` prop](##view.EditorProps.dispatchTransaction),
+[`dispatchTransaction` prop](##view.DirectEditorProps.dispatchTransaction),
 in order to wire this cyclic data flow into a larger cycle—if your
 whole app is using a data flow model like this, as with
 [Redux](https://github.com/reactjs/redux) and similar architectures,
@@ -194,7 +194,7 @@ event, the first one that returns true gets to handle the event. And
 finally, for some props, such as
 [`attributes`](##view.EditorProps.attributes) (which can be used to
 set attributes on the editable DOM node) and
-[`decorations`](##view.EditorProps.decoration) (which we'll get to in
+[`decorations`](##view.EditorProps.decorations) (which we'll get to in
 the next section), the union of all provided values is used.
 
 ## Decorations

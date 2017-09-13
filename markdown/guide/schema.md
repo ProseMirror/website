@@ -102,11 +102,11 @@ dealing with valid content—higher level concepts like
 [transforms](#transform) do, but primitive node-creation methods
 usually don't and instead put the responsibility for providing sane
 input on their caller. It is perfectly possible to use, for example
-[`NodeType.create`](##model.NodeType^create), to create a node with
+[`NodeType.create`](##model.NodeType.create), to create a node with
 invalid content. For nodes that are ‘open’ on the edge of
 [slices](#doc.slices), this is even a reasonable thing to do. There
 is a separate [`createChecked`
-method](##model.NodeType^createChecked), as well as an after-the-fact
+method](##model.NodeType.createChecked), as well as an after-the-fact
 [`check` method](##model.Node.check) that can be used to assert that a
 given node's content is valid.
 
@@ -165,13 +165,13 @@ in a node or mark spec.
 
 In this schema, every instance of the `heading` node will have a
 `level` attribute under `.attrs.level`. If it isn't specified when the
-node is [created](##model.NodeType^create), it will default to 1.
+node is [created](##model.NodeType.create), it will default to 1.
 
 When you don't give a default value for an attribute, an error will be
 raised when you attempt to create such a node without specifying that
 attribute. It will also make it impossible for the library to generate
 such nodes as filler to satisfy schema constraints during a transform
-or when calling [`createAndFill`](##model.NodeType^createAndFill).
+or when calling [`createAndFill`](##model.NodeType.createAndFill).
 
 ## Serialization and Parsing
 
@@ -244,7 +244,7 @@ Documents also come with a built-in JSON serialization format. You can
 call [`toJSON`](##model.Node.toJSON) on them to get an object that can
 safely be passed to
 [`JSON.stringify`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify),
-and schema objects have a [`fromJSON` method](##model.Schema.fromJSON)
+and schema objects have a [`nodeFromJSON` method](##model.Schema.nodeFromJSON)
 that can parse this representation back into a document.
 
 ## Extending a schema
@@ -253,9 +253,9 @@ The `nodes` and `marks` options passed to the [`Schema`
 constructor](##model.Schema) take [`OrderedMap`
 objects](https://github.com/marijnh/orderedmap#readme) as well as
 plain JavaScript objects. The resulting schema's
-[`nodeSpec`](##model.Schema.nodeSpec) and
-[`markSpec`](##model.Schema.markSpec) properties are always
-`OrderedMap`s, which can be used as the basis for further schemas.
+[`spec`](##model.Schema.spec)`.nodes` and `spec.marks` properties are
+always `OrderedMap`s, which can be used as the basis for further
+schemas.
 
 Such maps support a number of methods to conveniently create updated
 versions. For example you could say

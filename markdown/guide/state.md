@@ -116,7 +116,7 @@ transaction itself, for convenient chaining.
 
 ## Plugins
 
-When [creating](##state.EditorState.create) a new state, you can
+When [creating](##state.EditorState^create) a new state, you can
 provide an array of plugins to use. These will be stored in the state
 and any state that is derived from it, and can influence both the way
 transactions are applied and the way an editor based on this state
