@@ -82,7 +82,8 @@ Here `"block+"` is equivalent to `"(paragraph | blockquote)+"`.
 
 It is recommended to always require at least one child node in nodes
 that have block content (such as `"doc"` and `"blockquote"` in the
-example above), because browsers will 
+example above), because browsers will completely collapse the node
+when it's empty, making it rather hard to edit.
 
 The order in which your nodes appear in an or-expression is
 significant. When creating a default instance for a non-optional node,
