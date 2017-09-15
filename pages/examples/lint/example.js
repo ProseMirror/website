@@ -51,7 +51,7 @@ function fixPunc(replacement) {
 
 function fixHeader(level) {
   return function({state, dispatch}) {
-    dispatch(state.tr.setNodeType(this.from - 1, null, {level}))
+    dispatch(state.tr.setNodeMarkup(this.from - 1, null, {level}))
   }
 }
 
@@ -59,7 +59,7 @@ function addAlt({state, dispatch}) {
   let alt = prompt("Alt text", "")
   if (alt) {
     let attrs = Object.assign({}, state.doc.nodeAt(this.from).attrs, {alt})
-    dispatch(state.tr.setNodeType(this.from, null, attrs))
+    dispatch(state.tr.setNodeMarkup(this.from, null, attrs))
   }
 }
 // }
