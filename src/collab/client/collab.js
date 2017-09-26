@@ -95,15 +95,11 @@ class EditorConnection {
       if (this.view)
         this.view.updateState(this.state.edit)
       else
-        this.view = window.view = new EditorView(document.querySelector("#editor"), {
+        this.setView(new EditorView(document.querySelector("#editor"), {
           state: this.state.edit,
           dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction})
-        })
-    } else if (this.view) {
-      this.view.destroy()
-      this.view = null
-      window.view = undefined
-    }
+        }))
+    } else this.setView(null)
   }
 
   // Load the document from the server and start up
@@ -209,11 +205,12 @@ class EditorConnection {
 
   close() {
     this.closeRequest()
-    if (this.view) {
-      this.view.destroy()
-      this.view = null
-      window.view = undefined
-    }
+    this.setView(null)
+  }
+
+  setView(view) {
+    if (this.view) this.view.destroy()
+    this.view = window.view = view
   }
 }
 
