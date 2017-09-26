@@ -143,7 +143,7 @@ class EditorConnection {
     }, err => {
       if (err.status == 410 || badVersion(err)) {
         // Too far behind. Revert to server state
-        report.failure(err)
+        this.report.failure(err)
         this.dispatch({type: "restart"})
       } else if (err) {
         this.dispatch({type: "recover", error: err})
