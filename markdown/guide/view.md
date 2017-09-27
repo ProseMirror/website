@@ -338,7 +338,7 @@ class ImageView {
     this.dom.addEventListener("click", e => {
       e.preventDefault()
       let alt = prompt("New alt text:", "")
-      if (alt) view.dispatch(view.state.tr.setNodeType(getPos(), null, {
+      if (alt) view.dispatch(view.state.tr.setNodeMarkup(getPos(), null, {
         src: node.attrs.src,
         alt
       }))
@@ -349,7 +349,7 @@ class ImageView {
 }
 ```
 
-[`setNodeType`](##transform.Transform.setNodeType) is a method that
+[`setNodeMarkup`](##transform.Transform.setNodeMarkup) is a method that
 can be used to change the type or set of attributes for the node at a
 given position. In the example, we use `getPos` to find our image's
 current position, and give it a new attribute object with the new alt
