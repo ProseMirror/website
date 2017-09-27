@@ -35,9 +35,9 @@ function makePlain(html) {
 }
 
 export function GET(url) {
-  return req({url: url, method: "GET"})
+  return req({url, method: "GET"})
 }
 
 export function POST(url, body, type) {
-  return req({url: url, method: "POST", body: body, headers: {"Content-Type": type}})
+  return req({url, method: "POST", body, headers: {"Content-Type": type}})
 }
