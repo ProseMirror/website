@@ -1,4 +1,4 @@
-class Reporter {
+export class Reporter {
   constructor() {
     this.state = this.node = null
     this.setAt = 0
@@ -37,4 +37,3 @@ class Reporter {
       this.clearState()
   }
 }
-exports.Reporter = Reporter
