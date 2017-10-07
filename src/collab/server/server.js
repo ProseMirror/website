@@ -125,7 +125,8 @@ function outputEvents(inst, data) {
                       commentVersion: inst.comments.version,
                       steps: data.steps.map(s => s.toJSON()),
                       clientIDs: data.steps.map(step => step.clientID),
-                      comment: data.comment})
+                      comment: data.comment,
+                      users: data.users})
 }
 
 // An endpoint for a collaborative document instance which
