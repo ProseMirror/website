@@ -56,9 +56,13 @@ class Instance {
         this.comments.created(event)
     }
 
-    while (this.waiting.length) this.waiting.pop().finish()
+    sendUpdates()
     scheduleSave()
     return {version: this.version, commentVersion: this.comments.version}
+  }
+
+  sendUpdates() {
+    while (this.waiting.length) this.waiting.pop().finish()
   }
 
   // : (Number)
@@ -88,14 +92,23 @@ class Instance {
   }
 
   collectUsers() {
+    const oldUserCount = this.userCount
     this.users = Object.create(null)
     this.userCount = 0
     this.collecting = null
     for (let i = 0; i < this.waiting.length; i++)
-      this.registerUser(this.waiting[i].ip)
+      this._registerUser(this.waiting[i].ip)
+    if (this.userCount != oldUserCount) this.sendUpdates()
   }
 
   registerUser(ip) {
+    if (!(ip in this.users)) {
+      this._registerUser(ip)
+      this.sendUpdates()
+    }
+  }
+
+  _registerUser(ip) {
     if (!(ip in this.users)) {
       this.users[ip] = true
       this.userCount++
