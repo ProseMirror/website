@@ -33,7 +33,6 @@
     "builddocs": "^0.2.0",
     "ecstatic": "^1.4.0",
     "getdocs": "^0.6.0",
-    "glob": "^6.0.1",
     "markdown-it": "^8.4.0",
     "markdown-it-deflist": "^2.0.0",
     "moduleserve": "^0.8.0",
