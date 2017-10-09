@@ -56,7 +56,7 @@ class Instance {
         this.comments.created(event)
     }
 
-    sendUpdates()
+    this.sendUpdates()
     scheduleSave()
     return {version: this.version, commentVersion: this.comments.version}
   }
