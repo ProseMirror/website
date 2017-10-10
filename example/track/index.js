@@ -132,7 +132,16 @@ import {EditorState} from "prosemirror-state"
 import {Decoration, DecorationSet, EditorView} from "prosemirror-view"
 import {schema} from "prosemirror-schema-basic"
 import {exampleSetup} from "prosemirror-example-setup"
-import crel from "crel"
+
+function elt(name, attrs, ...children) {
+  let dom = document.createElement(name)
+  if (attrs) for (let attr in attrs) dom.setAttribute(attr, attrs[attr])
+  for (let i = 0; i < children.length; i++) {
+    let child = children[i]
+    dom.appendChild(typeof child == "string" ? document.createTextNode(child) : child)
+  }
+  return dom
+}
 
 const highlightPlugin = new Plugin({
   state: {
@@ -197,12 +206,12 @@ function renderCommits(state, dispatch) {
   out.textContent = ""
   let commits = curState.commits
   commits.forEach(commit => {
-    let node = crel("div", {class: "commit"},
-                    crel("span", {class: "commit-time"},
-                         commit.time.getHours() + ":" + (commit.time.getMinutes() < 10 ? "0" : "")
-                         + commit.time.getMinutes()),
-                    "\u00a0 " + commit.message + "\u00a0 ",
-                    crel("button", {class: "commit-revert"}, "revert"))
+    let node = elt("div", {class: "commit"},
+                   elt("span", {class: "commit-time"},
+                       commit.time.getHours() + ":" + (commit.time.getMinutes() < 10 ? "0" : "")
+                       + commit.time.getMinutes()),
+                   "\u00a0 " + commit.message + "\u00a0 ",
+                   elt("button", {class: "commit-revert"}, "revert"))
     node.lastChild.addEventListener("click", () => revertCommit(commit))
     node.addEventListener("mouseover", e => {
       if (!node.contains(e.relatedTarget))
@@ -272,9 +281,9 @@ document.querySelector("#blame").addEventListener("mousedown", e => {
   let pos = e.target.getBoundingClientRect()
   let commitID = findInBlameMap(state.selection.head, state)
   let commit = commitID != null && trackPlugin.getState(state).commits[commitID]
-  let node = crel("div", {class: "blame-info"},
-                  commitID != null ? ["It was: ", crel("strong", null, commit ? commit.message : "Uncommitted")]
-                  : "No commit found")
+  let node = elt("div", {class: "blame-info"},
+                 commitID != null ? elt("span", null, "It was: ", elt("strong", null, commit ? commit.message : "Uncommitted"))
+                 : "No commit found")
   node.style.right = (document.body.clientWidth - pos.right) + "px"
   node.style.top = (pos.bottom + 2) + "px"
   document.body.appendChild(node)
