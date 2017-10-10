@@ -95,6 +95,7 @@ let starSchema = new Schema({
 
 // starKeymap{
 import {toggleMark} from "prosemirror-commands"
+import {keymap} from "prosemirror-keymap"
 
 let starKeymap = keymap({
   "Mod-b": toggleMark(starSchema.marks.shouting),
@@ -129,7 +130,6 @@ import {DOMParser} from "prosemirror-model"
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {baseKeymap} from "prosemirror-commands"
-import {keymap} from "prosemirror-keymap"
 import {history, undo, redo} from "prosemirror-history"
 
 let histKeymap = keymap({"Mod-z": undo, "Mod-y": redo})

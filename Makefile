@@ -2,6 +2,8 @@ PAGES:=$(shell find pages -name "*.html") $(shell find pages -name "*.md")
 
 EXAMPLES:=basic markdown dino codemirror lint track collab footnote schema upload menu tooltip
 
+GLITCH_EXAMPLES:=basic dino lint track footnote schema upload menu tooltip
+
 ROOT:=$(shell if [ -d node_modules/prosemirror-model ]; then echo node_modules/; else echo ../node_modules/; fi)
 
 UGLIFY:=
@@ -49,5 +51,15 @@ public/css/editor.css: $(ROOT)prosemirror-view/style/prosemirror.css \
 public/css/codemirror.css:
 	cp $(ROOT)codemirror/lib/codemirror.css $@
 
+glitch: $(foreach EX,$(GLITCH_EXAMPLES), example/build/prosemirror-example-$(EX)/index.js)
+
+example/build/prosemirror-example-%/index.js: example/%/index.js example/%/index.html
+	node bin/build-glitch $*
+	cd example/build/prosemirror-example-$*; \
+	  git init; \
+	  git add *; \
+	  git commit -a -m "Add"; \
+	  git push https://$(GLITCH_AUTH)@api.glitch.com/prosemirror-demo-$*/git +HEAD:master
+
 clean:
-	rm public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md
+	rm -rf public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md example/build/

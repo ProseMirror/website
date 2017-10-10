@@ -46,6 +46,7 @@ function menuPlugin(items) {
 
 // menu{
 import {toggleMark, setBlockType, wrapIn} from "prosemirror-commands"
+import {schema} from "prosemirror-schema-basic"
 
 // Helper function to create menu icons
 function icon(text, name) {
@@ -75,7 +76,6 @@ let menu = menuPlugin([
 
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
-import {schema} from "prosemirror-schema-basic"
 import {baseKeymap} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 import {DOMParser} from "prosemirror-model"

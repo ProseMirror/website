@@ -7,6 +7,8 @@ footnotes in ProseMirror.
 
 @HTML
 
+[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-footnote)
+
 Footnotes seem like they should be inline nodes with content—they
 appear in between other inline content, but their content isn't really
 part of the textblock around them. Let's define them like this:

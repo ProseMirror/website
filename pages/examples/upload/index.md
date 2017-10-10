@@ -16,6 +16,8 @@ upload finishes, that placeholder is replaced with the final image.
 
 @HTML
 
+[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-upload)
+
 Since the upload might take a moment, and the user might make more
 changes while waiting for it, the placeholder should move along with
 its context as the document is edited, and when the the final image is

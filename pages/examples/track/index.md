@@ -13,6 +13,8 @@ piece of text originates from.
 
 @HTML
 
+[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-track)
+
 Hover over commits to highlight the text they introduced.
 
 This page won't list the [whole source
