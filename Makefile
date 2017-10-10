@@ -36,7 +36,7 @@ public/examples/prosemirror.js: bin/library.js $(foreach LIB,$(CORE),$(wildcard 
 	mkdir -p $(dir $@)
 	node bin/build-library.js > $@
 
-public/examples/%/example.js: pages/examples/%/example.js
+public/examples/%/example.js: example/%/index.js
 	mkdir -p $(dir $@)
 	node bin/build-example.js $< > $@
 

@@ -1,45 +1,5 @@
 !{"template": "example", "title": "ProseMirror change tracking example"}
 
-<style>
-  .commit {
-    margin-bottom: 4px;
-  }
-  .commit:hover {
-    background: #ff8;
-  }
-  .commit-revert {
-    color: #a22;
-  }
-  .commit-time {
-    background: #5ab;
-    padding: 0 5px;
-    color: white;
-    font-size: 90%;
-  }
-  .commit-blame {
-    background: #ff8;
-  }
-  .blame-info {
-    position: fixed;
-    border: 1px solid silver;
-    background: white;
-    padding: 3px 8px;
-    z-index: 3;
-  }
-  .blame-wrap {
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
-  #commit {
-    margin: 6px 0;
-    position: relative;
-  }
-  .blame-marker {
-    background: #ff8;
-  }
-</style>
-
 # Tracking changes
 
 Changes are first-class values in ProseMirror. You can hold on to
@@ -51,14 +11,7 @@ This example uses those properties to allow you to “commit” your
 changes, to revert individual commits, and to find out which commit a
 piece of text originates from.
 
-<div id="editor"></div>
-
-<form id="commit">
-  Commit message: <input type=text id=message name=message> <button id=commitbutton type="submit">commit</button>
-    <div class=blame-wrap><button type=button id=blame>blame at cursor</button></div>
-</form>
-
-<div id="commits" style="margin-bottom: 23px"></div>
+@HTML
 
 Hover over commits to highlight the text they introduced.
 

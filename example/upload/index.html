@@ -1,0 +1,21 @@
+<style>
+  placeholder {
+    display: inline;
+    border: 1px solid #ccc;
+    color: #ccc;
+  }
+  placeholder:after {
+    content: "☁";
+    font-size: 200%;
+    line-height: 0.1;
+    font-weight: bold;
+  }
+  .ProseMirror img { max-width: 100px }
+</style>
+
+<div id=editor style="margin-bottom: 0"></div>
+<div>Insert image: <input type=file id=image-upload></div>
+
+<div style="display: none" id=content>
+  <p>This paragraph needs an image.</p>
+</div>

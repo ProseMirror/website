@@ -1,9 +1,10 @@
 <<head {title: $in.title, type: "examples"}>>
 
 <<do
-  const {dirname, resolve} = require("path")
+  const {dirname, resolve, basename} = require("path")
   const {readFileSync} = require("fs")
-  const baseFile = resolve(dirname($in.fileName), "./example.js")
+  const dir = dirname($in.fileName), base = basename(dir), exDir = resolve(dir, "../../../example/" + base)
+  const baseFile = resolve(exDir, "./index.js"), htmlFile = resolve(exDir, "./index.html")
 
   function getPart(id) {
     let parts = id.split(":")
@@ -16,6 +17,12 @@
 
   let content = $in.content.replace(/\bPART\((.*?)\)/g, (_, id) => {
     return "```javascript\n" + getPart(id) + "```"
+  }).replace(/\n@HTML(:\w+)?\n/g, (_, id) => {
+    let html = readFileSync(htmlFile, "utf8")
+    if (!id) return html
+    let found = new RegExp("<!--\\s*" + id.slice(1) + "\\{\\s*-->\n([^]*?)<!--\\s*}\\s*-->\n").exec(html)
+    if (!found) throw new Error("Unknown example code part " + id.slice(1))
+    return found[1]
   })
 >>
 

@@ -17,7 +17,7 @@ PART(code)
 
 And this is what it looks like:
 
-<div id=editor style="margin-bottom: 23px"></div>
+@HTML
 
 These plugins are created by the example setup:
 
@@ -36,22 +36,3 @@ These plugins are created by the example setup:
  * A [menu bar](https://github.com/prosemirror/prosemirror-menu)
    (which is another module that is meant more for demos than for
    production), with menu items for common tasks and schema elements.
-
-<div style="display: none" id="content">
-  <h3>Hello ProseMirror</h3>
-
-  <p>This is editable text. You can focus it and start typing.</p>
-
-  <p>To apply styling, you can select a piece of text and manipulate
-  its styling from the menu. The basic schema
-  supports <em>emphasis</em>, <strong>strong
-  text</strong>, <a href="http://marijnhaverbeke.nl/blog">links</a>, <code>code
-  font</code>, and <img src="/img/smiley.png"> images.</p>
-
-  <p>Block-level structure can be manipulated with key bindings (try
-  ctrl-shift-2 to create a level 2 heading, or enter in an empty
-  textblock to exit the parent block), or through the menu.</p>
-
-  <p>Try using the “list” item in the menu to wrap this paragraph in
-  a numbered list.</p>
-</div>

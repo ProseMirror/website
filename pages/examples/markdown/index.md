@@ -1,12 +1,5 @@
 !{"template": "example", "title": "ProseMirror markdown example"}
 
-<style>
-  .ProseMirror { height: 120px; overflow-y: auto; box-sizing: border-box; -moz-box-sizing: border-box }
-  textarea { width: 100%; height: 123px; border: 1px solid silver; box-sizing: border-box; -moz-box-sizing: border-box; padding: 3px 10px;
-             border: none; outline: none; font-family: inherit; font-size: inherit }
-  .ProseMirror-menubar-wrapper, #markdown textarea { display: block; margin-bottom: 4px }
-</style>
-
 # Friendly Markdown
 
 Imagine you have a site that allows users to enter comments, and
@@ -19,12 +12,7 @@ Without changing anything in your backend, you can drop in
 ProseMirror as an alternative input editor. People can even switch
 between both views as they are editing!
 
-<div id="editor" style="margin-bottom: 0"></div>
-<div style="text-align: center">
-  <label style="border-right: 1px solid silver">
-    Markdown <input type=radio name=inputformat value=markdown checked>&nbsp;</label>
-  <label>&nbsp;<input type=radio name=inputformat value=prosemirror> WYSIWYM</label>
-</div>
+@HTML
 
 The
 [`prosemirror-markdown`](https://github.com/prosemirror/prosemirror-markdown)
@@ -48,5 +36,3 @@ Finally, we can wire up some radio buttons to allow users to switch
 between these two representations.
 
 PART(radio)
-
-<div style="display: none"><textarea id="content">This is a comment written in [Markdown](http://commonmark.org). *You* may know the syntax for inserting a link, but does your whole audience?&#13;&#13;So you can give people the **choice** to use a more familiar, discoverable interface.</textarea></div>

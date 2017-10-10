@@ -1,5 +1,7 @@
 !{"template": "example", "title": "ProseMirror embedded editor example"}
 
+<link rel=stylesheet href="../../css/codemirror.css">
+
 # Embedded code editor
 
 It can be useful to have the in-document representation of some node,
@@ -11,7 +13,7 @@ possible.
 Wiring this node view and keymap into an editor gives us something
 like this:
 
-<div id="editor"></div>
+@HTML
 
 In this example, we set up code blocks, as they exist in the [basic
 schema](##schema-basic), to be rendered as instances of
@@ -94,27 +96,3 @@ of a given textblock. If it is, and the next block is a code block,
 the selection is moved into it.
 
 PART(arrowHandlers)
-
-<div id=content style="display: none">
-<h3>The code block is a code editor</h3>
-<p>This editor has been wired up to render code blocks as instances of
-the <a href="http://codemirror.net">CodeMirror</a> code editor, which
-provides syntax highlighting, auto-indentation, and similar.</p>
-<pre>
-function max(a, b) {
-  return a > b ? a : b
-}</pre>
-<p>The content of the code editor is kept in sync with the content of
-the code block in the rich text editor, so that it is as if you're
-directly editing the outer document, using a more convenient
-interface.</p>
-</div>
-
-<link rel=stylesheet href="../../css/codemirror.css">
-<style>
-  .CodeMirror {
-    border: 1px solid #eee;
-    height: auto;
-  }
-  .CodeMirror pre { white-space: pre !important }
-</style>

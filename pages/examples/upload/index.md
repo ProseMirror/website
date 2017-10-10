@@ -1,20 +1,5 @@
 !{"template": "example", "title": "ProseMirror upload example"}
 
-<style>
-  placeholder {
-    display: inline;
-    border: 1px solid #ccc;
-    color: #ccc;
-  }
-  placeholder:after {
-    content: "☁";
-    font-size: 200%;
-    line-height: 0.1;
-    font-weight: bold;
-  }
-  .ProseMirror img { max-width: 100px }
-</style>
-
 # Upload handling
 
 Some types of editing involve asynchronous operations, but you want to
@@ -29,8 +14,7 @@ Ideally, when the image is selected, you start the upload but also
 immediately insert a placeholder into the document. Then, when the
 upload finishes, that placeholder is replaced with the final image.
 
-<div id=editor style="margin-bottom: 0"></div>
-<div>Insert image: <input type=file id=image-upload></div>
+@HTML
 
 Since the upload might take a moment, and the user might make more
 changes while waiting for it, the placeholder should move along with
@@ -71,7 +55,3 @@ Because the placeholder plugin [maps](##view.DecorationSet.map) its
 decorations through transactions, `findPlaceholder` will get the
 accurate position of the image, even if the document was modified
 during the upload.
-
-<div style="display: none" id=content>
-  <p>This paragraph needs an image.</p>
-</div>

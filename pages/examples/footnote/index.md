@@ -1,52 +1,11 @@
 !{"template": "example", "title": "ProseMirror footnote example"}
 
-<style>
-  .ProseMirror {
-    counter-reset: prosemirror-footnote;
-  }
-  footnote {
-    display: inline-block;
-    position: relative;
-    cursor: pointer;
-  }
-  footnote::after {
-    content: counter(prosemirror-footnote);
-    vertical-align: super;
-    font-size: 75%;
-    counter-increment: prosemirror-footnote;
-  }
-  .ProseMirror-hideselection .footnote-tooltip *::selection { background-color: transparent; }
-  .ProseMirror-hideselection .footnote-tooltip *::-moz-selection { background-color: transparent; }
-  .footnote-tooltip {
-    cursor: auto;
-    position: absolute;
-    left: -30px;
-    top: calc(100% + 10px);
-    background: silver;
-    padding: 3px;
-    border-radius: 2px;
-    width: 500px;
-  }
-  .footnote-tooltip::before {
-    border: 5px solid silver;
-    border-top-width: 0px;
-    border-left-color: transparent;
-    border-right-color: transparent;
-    position: absolute;
-    top: -5px;
-    left: 27px;
-    content: " ";
-    height: 0;
-    width: 0;
-  }
-</style>
-
 # Editing footnotes
 
 This example demonstrates one way to implement something like
 footnotes in ProseMirror.
 
-<div id="editor"></div>
+@HTML
 
 Footnotes seem like they should be inline nodes with content—they
 appear in between other inline content, but their content isn't really
@@ -117,8 +76,3 @@ We can enable our schema and node view like this, to create an actual
 editor.
 
 PART(editor)
-
-<div id="content" style="display: none">
-  <p>This paragraph has a footnote<footnote>Which is a piece of text placed at the bottom of a page or chapter, providing additional <em>comments</em> or <em>citations</em>.</footnote> in it. And another<footnote>Some more footnote text.</footnote> one.</p>
-  <p>Move onto or click on a footnote number to edit it.</p>
-</div>

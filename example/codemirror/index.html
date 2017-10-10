@@ -1,0 +1,24 @@
+<div id="editor"></div>
+
+<div id=content style="display: none">
+<h3>The code block is a code editor</h3>
+<p>This editor has been wired up to render code blocks as instances of
+the <a href="http://codemirror.net">CodeMirror</a> code editor, which
+provides syntax highlighting, auto-indentation, and similar.</p>
+<pre>
+function max(a, b) {
+  return a > b ? a : b
+}</pre>
+<p>The content of the code editor is kept in sync with the content of
+the code block in the rich text editor, so that it is as if you're
+directly editing the outer document, using a more convenient
+interface.</p>
+</div>
+
+<style>
+  .CodeMirror {
+    border: 1px solid #eee;
+    height: auto;
+  }
+  .CodeMirror pre { white-space: pre !important }
+</style>

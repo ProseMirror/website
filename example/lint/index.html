@@ -1,0 +1,24 @@
+<style>
+  #editor { position: relative }
+  .problem { background: #fdd; border-bottom: 1px solid #f22; margin-bottom: -1px; }
+  .lint-icon {
+    display: inline-block; position: absolute; right: 2px; cursor: pointer;
+    border-radius: 100px; background: #f22; color: white; font-family: times, georgia, serif;
+    font-size: 15px; font-weight: bold; width: 1.1em; height: 1.1em;
+    text-align: center; padding-left: .5px; line-height: 1.1em
+  }
+  .lint-icon:before { content: "!" }
+  .ProseMirror { padding-right: 20px }
+</style>
+
+<div id=editor></div>
+
+<div id=content style="display: none">
+  <h3>Lint example</h3>
+  <p>This is a sentence ,but the comma isn't in the right place.</p>
+  <h5>Too-minor header</h5>
+  <p>This is an image <img src="/img/smiley.png"> without alt text.
+  You can hover over the icons on the right to see what the
+  problem is, click them to select the relevant text, and, obviously,
+  double-click them to automatically fix it (if supported).</p>
+</div>

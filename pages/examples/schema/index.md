@@ -1,16 +1,5 @@
 !{"template": "example", "title": "ProseMirror schema example"}
 
-<style>
-  #text-editor { background-color: rgba(0, 0, 0, 0.05); padding: 0 }
-  .ProseMirror { min-height: none !important }
-  .ProseMirror a { text-decoration: underline; }
-  note, notegroup { display: block; border: 1px solid silver; border-radius: 3px; padding: 3px 6px; margin: 5px 0; }
-  notegroup { border-color: #66f }
-  p.boring { background: #eee; color: #444; }
-  shouting { display: inline; text-transform: uppercase; font-weight: bold; }
-  star { display: inline; font-size: 190%; line-height: 1; vertical-align: -10%; color: #a8f; -webkit-text-stroke: 1px #75b; }
-</style>
-
 # Schemas from scratch
 
 ProseMirror [schemas](/docs/guide/#schema) provide something like a
@@ -40,7 +29,7 @@ render them, and [`parseDOM`](##model.NodeSpec.parseDOM) values, so
 that they can be parsed. This schema uses custom DOM nodes `<note>`
 and `<notegroup>` to represent its nodes.
 
-<div id=note-editor></div>
+@HTML:note
 
 You can press ctrl-space (cmd-space on OS X) to add a group around the
 selected notes. To get that functionality, you first have to implement
@@ -97,7 +86,7 @@ usually not the expected behavior, and the
 [`inclusive`](##model.MarkSpec.inclusive) property on the mark spec
 can be set to false to disable that behavior.
 
-<div id="star-editor" class=editor></div>
+@HTML:star
 
 To make it possible to interact with these elements we again have to
 add a custom keymap. There's a command helper for toggling marks,
@@ -125,20 +114,3 @@ one to be inserted at the cursor position (using
 the selection with a newly created star node.
 
 PART(insertStar)
-
-<div style="display: none">
-  <div id="text-content">Such as this sentence.</div>
-  <div id="note-content">
-    <note>Do laundry</note>
-    <note>Water the tomatoes</note>
-    <notegroup>
-      <note>Buy flour</note>
-      <note>Get toilet paper</note>
-    </notegroup>
-  </div>
-  <div id="star-content">
-    <p>This is a <star></star>nice<star></star> paragraph, it can have <shouting>anything</shouting> in it.</p>
-    <p class=boring>This paragraph is boring, it can't have anything.</p>
-    <p>Press ctrl/cmd-space to insert a star, ctrl/cmd-b to toggle shouting, and ctrl/cmd-q to add or remove a link.</p>
-  </div>
-</div>

@@ -1,18 +1,5 @@
 !{"template": "example", "title": "ProseMirror lint example"}
 
-<style>
-  #editor { position: relative }
-  .problem { background: #fdd; border-bottom: 1px solid #f22; margin-bottom: -1px; }
-  .lint-icon {
-    display: inline-block; position: absolute; right: 2px; cursor: pointer;
-    border-radius: 100px; background: #f22; color: white; font-family: times, georgia, serif;
-    font-size: 15px; font-weight: bold; width: 1.1em; height: 1.1em;
-    text-align: center; padding-left: .5px; line-height: 1.1em
-  }
-  .lint-icon:before { content: "!" }
-  .ProseMirror { padding-right: 20px }
-</style>
-
 # Linting example
 
 The browser DOM serves its purpose—representing complex webpages—very
@@ -24,7 +11,7 @@ This example implements a simple document
 [linter](https://en.wikipedia.org/wiki/Lint_(software)) that finds
 problems in your document, and makes it easy to fix them.
 
-<div id=editor></div>
+@HTML
 
 The first part of this example is a function that, given a document,
 produces an array of problems found in that document. We'll use the
@@ -64,13 +51,3 @@ doable—the transaction can give you the information you need to figure
 out what part of the document changed.
 
 PART(plugin)
-
-<div id=content style="display: none">
-  <h3>Lint example</h3>
-  <p>This is a sentence ,but the comma isn't in the right place.</p>
-  <h5>Too-minor header</h5>
-  <p>This is an image <img src="/img/smiley.png"> without alt text.
-  You can hover over the icons on the right to see what the
-  problem is, click them to select the relevant text, and, obviously,
-  double-click them to automatically fix it (if supported).</p>
-</div>

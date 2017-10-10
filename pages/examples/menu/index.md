@@ -1,27 +1,5 @@
 !{"template": "example", "title": "ProseMirror menu example"}
 
-<style>
-  .menubar {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    line-height: 0.1;
-  }
-  .menuicon {
-    display: inline-block;
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
-    color: #888;
-    line-height: 1;
-    padding: 0 7px;
-    margin: 1px;
-    cursor: pointer;
-    text-align: center;
-    min-width: 1.4em;
-  }
-  .strong, .heading { font-weight: bold; }
-  .em { font-style: italic; }
-
-  #editor { padding-top: 0 }
-</style>
-
 # Adding a menu
 
 Most of the examples use the [example setup
@@ -35,7 +13,7 @@ you're likely to run into their limitations rather quickly.
 This example will go through building a custom (and ugly) menu for a
 ProseMirror editor.
 
-<div id=editor></div>
+@HTML
 
 The idea is, roughly, to create a number of user interface elements
 and tie them to [commands](/doc/guide/#commands). When clicked, they
@@ -101,8 +79,3 @@ package](https://github.com/prosemirror/prosemirror-menu) works
 similarly, but adds support for things like simple drop-down menus and
 active/inactive icons (to highlight the strong button when strong text
 is selected).
-
-<div style="display: none" id=content>
-  <h3>Simple editor</h3>
-  <p>With a very crude menu bar.
-</div>
