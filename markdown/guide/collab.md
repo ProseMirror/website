@@ -137,7 +137,7 @@ That's all there is to it. Of course, with asynchronous data channels
 (such as long polling in
 [the collab demo](https://github.com/ProseMirror/website/blob/master/src/collab/client/collab.js)
 or web sockets), you'll need somewhat more complicated communication
-and syncronization code. And you'll probably also want your authority
+and synchronization code. And you'll probably also want your authority
 to start throwing away steps at some point, so that its memory
 consumption doesn't grow without bound. But the general approach is
 fully described by this little example.
