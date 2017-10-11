@@ -22,5 +22,5 @@ let options = {
 
 rollup(options).then(bundle => bundle.generate(options)).then(
   output => console.log(output.code),
-  error => { console.log(error.stack || error.message); process.exit(1) }
+  error => { console.error(error.stack || error.message); process.exit(1) }
 )
