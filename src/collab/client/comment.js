@@ -118,34 +118,34 @@ export const annotationIcon = {
 
 // Comment UI
 
-export const commentUI = function(options) {
+export const commentUI = function(dispatch) {
   return new Plugin({
     props: {
       decorations(state) {
-        return commentTooltip(state, options)
+        return commentTooltip(state, dispatch)
       }
     }
   })
 }
 
-function commentTooltip(state, options) {
+function commentTooltip(state, dispatch) {
   let sel = state.selection
   if (!sel.empty) return null
   let comments = commentPlugin.getState(state).commentsAt(sel.from)
   if (!comments.length) return null
-  return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, options))])
+  return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, dispatch, state))])
 }
 
-function renderComment(comment, options) {
+function renderComment(comment, dispatch, state) {
   let btn = crel("button", {class: "commentDelete", title: "Delete annotation"}, "×")
-  btn.addEventListener("click", () => {
-    options.dispatch(options.getState().tr.setMeta(commentPlugin, {type: "deleteComment", comment}))
-  })
+  btn.addEventListener("click", () =>
+    dispatch(state.tr.setMeta(commentPlugin, {type: "deleteComment", comment}))
+  )
   return crel("li", {class: "commentText"}, comment.text, btn)
 }
 
-function renderComments(comments, options) {
+function renderComments(comments, dispatch, state) {
   return crel("div", {class: "tooltip-wrapper"},
               crel("ul", {class: "commentList"},
-                   comments.map(c => renderComment(c.spec.comment, options))))
+                   comments.map(c => renderComment(c.spec.comment, dispatch, state))))
 }
