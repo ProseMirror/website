@@ -24,7 +24,6 @@
     "prosemirror-model": "^1.0.0",
     "prosemirror-schema-basic": "^1.0.0",
     "prosemirror-schema-list": "^1.0.0",
-    "prosemirror-schema-table": "^0.22.0",
     "prosemirror-state": "^1.0.0",
     "prosemirror-transform": "^1.0.0",
     "prosemirror-view": "^1.0.0"
