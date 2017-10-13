@@ -48,8 +48,7 @@ class EditorConnection {
           history({preserveItems: true}),
           collab({version: action.version}),
           commentPlugin,
-          commentUI({dispatch: transaction => this.dispatch({type: "transaction", transaction}),
-                     getState: () => this.state.edit})
+          commentUI(transaction => this.dispatch({type: "transaction", transaction}))
         ]),
         comments: action.comments
       })
