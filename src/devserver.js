@@ -42,8 +42,9 @@ function transformPage(req, resp) {
     /<script src="[^"]*prosemirror\.js"><\/script>\s+<script src="([^"]*\.js)"><\/script>/,
     function(_, script) {
       let base = path.replace(/\/[^\/]+$|^\//g, ""), full = /^\//.test(script) ? script : base + "/" + script
+      let name = /\/([^\/]*?)\/example\.js/.exec(full)
       let up = base ? base.replace(/[^\/]+/g, "..") + "/" : ""
-      return `<script src="/moduleserve/load.js" data-module="./${up}../pages/${full}" data-require></script>`
+      return `<script src="/moduleserve/load.js" data-module="./${up}../example/${name[1]}/index.js" data-require></script>`
     }
   )
   resp.writeHead(200, {"Content-Type": "text/html"})
