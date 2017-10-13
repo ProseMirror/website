@@ -136,16 +136,16 @@ function commentTooltip(state, dispatch) {
   return DecorationSet.create(state.doc, [Decoration.widget(sel.from, renderComments(comments, dispatch, state))])
 }
 
+function renderComments(comments, dispatch, state) {
+  return crel("div", {class: "tooltip-wrapper"},
+              crel("ul", {class: "commentList"},
+                   comments.map(c => renderComment(c.spec.comment, dispatch, state))))
+}
+
 function renderComment(comment, dispatch, state) {
   let btn = crel("button", {class: "commentDelete", title: "Delete annotation"}, "×")
   btn.addEventListener("click", () =>
     dispatch(state.tr.setMeta(commentPlugin, {type: "deleteComment", comment}))
   )
   return crel("li", {class: "commentText"}, comment.text, btn)
-}
-
-function renderComments(comments, dispatch, state) {
-  return crel("div", {class: "tooltip-wrapper"},
-              crel("ul", {class: "commentList"},
-                   comments.map(c => renderComment(c.spec.comment, dispatch, state))))
 }
