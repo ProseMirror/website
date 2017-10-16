@@ -28,7 +28,7 @@ PART(MarkdownView)
 
 And then implement the same interface for a Markdown-enabled
 ProseMirror instance. The in- and output of this interface is still
-Markdown text, which it internall converts to a ProseMirror document.
+Markdown text, which it internally converts to a ProseMirror document.
 
 PART(ProseMirrorView)
 
