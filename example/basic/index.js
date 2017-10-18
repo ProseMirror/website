@@ -17,6 +17,10 @@ window.view = new EditorView(document.querySelector("#editor"), {
   state: EditorState.create({
     doc: DOMParser.fromSchema(mySchema).parse(document.querySelector("#content")),
     plugins: exampleSetup({schema: mySchema})
-  })
+  }),
+  dispatchTransaction: tr => {
+      tr.addStoredMark(schema.marks.em.create())
+      window.view.updateState(window.view.state.apply(tr))
+  }
 })
 // }
