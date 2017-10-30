@@ -16,7 +16,7 @@ between both views as they are editing!
 
 The
 [`prosemirror-markdown`](https://github.com/prosemirror/prosemirror-markdown)
-package defines a ProseMirror [schema](/doc/guide/#schema) that can
+package defines a ProseMirror [schema](/docs/guide/#schema) that can
 express exactly the things that can be expressed in Markdown. It also
 comes with a parser and serializer that convert documents in this
 schema to and from Markdown text.

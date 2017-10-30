@@ -32,7 +32,7 @@ The demo is going to use the [example
 setup](https://github.com/prosemirror/prosemirror-example-setup)
 module again, to provide the basic plumbing for the editor. But we
 need new menu items in the insert menu. First, define a
-[command](/doc/guide/#commands) that handles dinosaur insertion.
+[command](/docs/guide/#commands) that handles dinosaur insertion.
 
 PART(command)
 
