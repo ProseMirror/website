@@ -98,7 +98,7 @@ let appState = {
 }
 
 let view = new EditorView(document.body, {
-  state: startState,
+  state: appState,
   dispatchTransaction(transaction) {
     update({type: "EDITOR_TRANSACTION", transaction})
   }
