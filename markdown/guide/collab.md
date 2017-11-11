@@ -93,7 +93,7 @@ to be sent to the central authority.
 import {EditorState} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {schema} from "prosemirror-schema-basic"
-import {collab} from "prosemirror-collab"
+import collab from "prosemirror-collab"
 
 function collabEditor(authority, place) {
   let view = new EditorView(place, {
