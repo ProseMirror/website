@@ -178,7 +178,7 @@ which can only be provided directly to the view.
 function maxSizePlugin(max) {
   return new Plugin({
     props: {
-      editable(state) { return state.content.size < max }
+      editable(state) { return state.doc.content.size < max }
     }
   })
 }
