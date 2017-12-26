@@ -13,7 +13,7 @@ if (process.env.NODE_ENV != "development")
 let options = {
   input: "bin/library.js",
   plugins,
-  format: "iife"
+  output: {format: "iife"}
 }
 
 rollup(options).then(bundle => bundle.generate(options)).then(

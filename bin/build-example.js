@@ -16,8 +16,7 @@ let options = {
     require("rollup-plugin-buble")()
   ],
   external,
-  globals,
-  format: "iife"
+  output: {format: "iife", globals}
 }
 
 rollup(options).then(bundle => bundle.generate(options)).then(
