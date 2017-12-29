@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "builddocs": "^0.3.0",
-    "ecstatic": "^1.4.0",
+    "ecstatic": "^3.0.0",
     "getdocs": "^0.6.0",
     "markdown-it": "^8.4.0",
     "markdown-it-deflist": "^2.0.0",
