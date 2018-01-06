@@ -303,7 +303,7 @@ your cursor outside of the document), so the size of a document is
 Interpreting such position manually involves quite a lot of counting.
 You can call [`Node.resolve`](##model.Node.resolve) to get a more
 descriptive [data structure](##model.ResolvedPos) for a position. This
-data structure will tell you what the parent node of the position it,
+data structure will tell you what the parent node of the position is,
 what its offset into that parent is, what ancestors the parent has,
 and a few other things.
 
