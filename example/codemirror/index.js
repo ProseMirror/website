@@ -1,3 +1,14 @@
+// schema {
+import {schema as baseSchema} from "prosemirror-schema-basic"
+import {Schema} from "prosemirror-model"
+
+let baseNodes = baseSchema.spec.nodes
+const schema = new Schema({
+  nodes: baseNodes.update("code_block", Object.assign(
+    {}, baseNodes.get("code_block"), {isolating: true})),
+  marks: baseSchema.spec.marks
+})
+// }
 // nodeview_start{
 import CodeMirror from "codemirror"
 import {exitCode} from "prosemirror-commands"
@@ -57,7 +68,6 @@ class CodeBlockView {
     this.cm.setSelection(this.cm.posFromIndex(anchor),
                          this.cm.posFromIndex(head))
     this.updating = false
-    console.log("set sel", anchor, head, this.cm.getCursor())
   }
 // }
 // nodeview_valueChanged{
@@ -165,7 +175,6 @@ const arrowHandlers = keymap({
 import {EditorState, Selection, TextSelection} from "prosemirror-state"
 import {EditorView} from "prosemirror-view"
 import {DOMParser} from "prosemirror-model"
-import {schema} from "prosemirror-schema-basic"
 import {exampleSetup} from "prosemirror-example-setup"
 
 window.view = new EditorView(document.querySelector("#editor"), {
