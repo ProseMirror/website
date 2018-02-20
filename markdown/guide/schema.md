@@ -238,7 +238,7 @@ styles.
 When a schema includes `parseDOM` annotations, you can create a
 [`DOMParser`](##model.DOMParser) object for it with
 [`DOMParser.fromSchema`](##model.DOMParser^fromSchema). This is done
-by the editor to create a the default clipboard parser, but you can
+by the editor to create the default clipboard parser, but you can
 also [override](##view.EditorProps.clipboardParser) that.
 
 Documents also come with a built-in JSON serialization format. You can
