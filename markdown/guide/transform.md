@@ -46,7 +46,7 @@ console.log(myDoc.toString()) // → p("hello")
 // A step that deletes the content between positions 3 and 5
 let step = new ReplaceStep(3, 5, Slice.empty)
 let result = step.apply(myDoc)
-console.log(result.doc.toString()) → p("heo")
+console.log(result.doc.toString()) // → p("heo")
 ```
 
 Applying a step is a relatively straightforward process—it doesn't do
@@ -81,7 +81,7 @@ console.log(tr.steps.length)   // → 2
 Most transform methods return the transform itself, for convenient
 chaining (allowing you to do `tr.delete(5, 7).split(5)`).
 
-There are transform methods methods for
+There are transform methods for
 [deleting](##transform.Transform.delete) and
 [replacing](##transform.Transform.replace), for
 [adding](##transform.Transform.addMark) and [removing
@@ -109,7 +109,7 @@ in the document before and after applying the step.
 let step = new ReplaceStep(4, 6, Slice.empty) // Delete 4-5
 let map = step.getMap()
 console.log(map.map(8)) // → 6
-console.log(map.map(2)) // → 2 (nothing changes before the change)
+console.log(map.map(2)) // → 2 (nothing changes after the change)
 ```
 
 Transform objects automatically
