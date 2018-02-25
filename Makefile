@@ -29,6 +29,10 @@ public/%.html: pages/%.* templates/* src/build/*.js
 	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
+public/docs/guide/index.html: pages/docs/guide/index.html templates/* src/build/*.js markdown/guide/*.md
+	mkdir -p $(dir $@)
+	node src/build/build.js $<
+
 CORE:=prosemirror-model prosemirror-transform prosemirror-state prosemirror-view \
       prosemirror-keymap prosemirror-inputrules prosemirror-history prosemirror-commands \
       prosemirror-schema-basic prosemirror-schema-list \
