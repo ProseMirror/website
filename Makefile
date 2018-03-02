@@ -20,8 +20,8 @@ public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/*
 	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
-CHANGELOG.md:
-	curl https://raw.githubusercontent.com/ProseMirror/prosemirror/master/CHANGELOG.md > CHANGELOG.md
+markdown/CHANGELOG.md: $(ROOT)prosemirror-*/CHANGELOG.md src/build/changelog.js
+	node src/build/changelog.js > $@
 
 public/docs/changelog/index.html: CHANGELOG.md
 
