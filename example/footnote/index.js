@@ -6,7 +6,6 @@ const footnoteSpec = {
   group: "inline",
   content: "inline*",
   inline: true,
-  draggable: true,
   // This makes the view treat the node as a leaf, even though it
   // technically has content
   atom: true,
