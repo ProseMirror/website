@@ -23,13 +23,11 @@ public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/*
 markdown/CHANGELOG.md: $(ROOT)prosemirror-*/CHANGELOG.md src/build/changelog.js
 	node src/build/changelog.js > $@
 
-public/docs/changelog/index.html: CHANGELOG.md
-
-public/%.html: pages/%.* templates/* src/build/*.js
-	mkdir -p $(dir $@)
-	node src/build/build.js $<
+public/docs/changelog/index.html: markdown/CHANGELOG.md
 
 public/docs/guide/index.html: pages/docs/guide/index.html templates/* src/build/*.js markdown/guide/*.md
+
+public/%.html: pages/%.* templates/* src/build/*.js
 	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
