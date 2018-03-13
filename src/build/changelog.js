@@ -11,7 +11,7 @@ Promise.all(mods.map(mod => {
   try { local = require.resolve(`prosemirror-${mod}/CHANGELOG.md`) }
   catch(_) {}
   if (local) return Promise.resolve({mod, log: readFileSync(local, "utf8")})
-  
+
   return new Promise((resolve, reject) => {
     let req = request({
       hostname: "raw.githubusercontent.com",
