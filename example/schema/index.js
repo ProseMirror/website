@@ -80,12 +80,12 @@ let starSchema = new Schema({
 // starSchema_2{
   marks: {
     shouting: {
-      toDOM() { return ["shouting"] },
+      toDOM() { return ["shouting", 0] },
       parseDOM: [{tag: "shouting"}]
     },
     link: {
       attrs: {href: {}},
-      toDOM(node) { return ["a", {href: node.attrs.href}] },
+      toDOM(node) { return ["a", {href: node.attrs.href}, 0] },
       parseDOM: [{tag: "a", getAttrs(dom) { return {href: dom.href} }}],
       inclusive: false
     }
