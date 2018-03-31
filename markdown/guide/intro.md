@@ -13,7 +13,7 @@ react to them.
 The core library is not an easy drop-in component—we are prioritizing
 modularity and customizeability over simplicity, with the hope that,
 in the future, people will distribute drop-in editors based on
-ProseMirror. As such, this is more of a lego set than a matchbox car.
+ProseMirror. As such, this is more of a Lego set than a Matchbox car.
 
 There are four core modules, which are required to do any editing at
 all, and a number of extension modules maintained by the core team,
@@ -57,7 +57,7 @@ bundling on the web, for example
 
 ## My first editor
 
-The lego pieces fit together like this to create a very minimal
+The Lego pieces fit together like this to create a very minimal
 editor:
 
 ```javascript
