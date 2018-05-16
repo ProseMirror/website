@@ -63,7 +63,7 @@ header.frontpage > h1:before {
   left: -1000px;
   right: -1000px;
   bottom: -213px;
-  height: calc(100% + 440px);
+  height: calc(100% + 850px);
   background-size: 100px 100px;
   background-image: linear-gradient(to right, #1a1a1a 2px, transparent 1px), linear-gradient(to bottom, #1a1a1a 2px, black 1px);
   background-position: left 40px bottom 60px;
