@@ -148,7 +148,7 @@ function doSave() {
   for (var prop in instances)
     out[prop] = {doc: instances[prop].doc.toJSON(),
                  comments: instances[prop].comments.comments}
-  writeFile(saveFile, JSON.stringify(out))
+  writeFile(saveFile, JSON.stringify(out), () => null)
 }
 
 function getInstance(id, ip) {
