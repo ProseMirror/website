@@ -98,9 +98,9 @@ import {toggleMark} from "prosemirror-commands"
 import {keymap} from "prosemirror-keymap"
 
 let starKeymap = keymap({
-  "Mod-b": toggleMark(starSchema.marks.shouting),
-  "Mod-q": toggleLink,
-  "Mod-Space": insertStar
+  "Ctrl-b": toggleMark(starSchema.marks.shouting),
+  "Ctrl-q": toggleLink,
+  "Ctrl-Space": insertStar
 })
 // }
 // toggleLink{
@@ -147,5 +147,5 @@ function start(place, content, schema, plugins = []) {
 function id(str) { return document.getElementById(str) }
 
 start({mount: id("text-editor")}, id("text-content"), textSchema)
-start(id("note-editor"), id("note-content"), noteSchema, [keymap({"Mod-Space": makeNoteGroup})])
+start(id("note-editor"), id("note-content"), noteSchema, [keymap({"Ctrl-Space": makeNoteGroup})])
 start(id("star-editor"), id("star-content"), starSchema, [starKeymap])

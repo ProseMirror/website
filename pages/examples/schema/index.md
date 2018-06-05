@@ -31,14 +31,14 @@ and `<notegroup>` to represent its nodes.
 
 @HTML:note
 
-You can press ctrl-space (cmd-space on OS X) to add a group around the
+You can press ctrl-space to add a group around the
 selected notes. To get that functionality, you first have to implement
 a custom [editing command](/docs/guide/#commands). Something like
 this:
 
 PART(makeNoteGroup)
 
-A [keymap](##keymap) like `keymap({"Mod-Space": makeNoteGroup})` can
+A [keymap](##keymap) like `keymap({"Ctrl-Space": makeNoteGroup})` can
 be used to enable it.
 
 The [generic bindings](##commands.baseKeymap) for enter and backspace
