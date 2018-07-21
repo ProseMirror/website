@@ -20,6 +20,7 @@ class CodeBlockView {
     this.node = node
     this.view = view
     this.getPos = getPos
+    this.incomingChanges = false
 
     // Create a CodeMirror instance
     this.cm = new CodeMirror(null, {
@@ -37,10 +38,19 @@ class CodeBlockView {
     // This flag is used to avoid an update loop between the outer and
     // inner editor
     this.updating = false
+    // Track whether changes are have been made but not yet propagated
+    this.cm.on("beforeChange", () => this.incomingChanges = true)
     // Propagate updates from the code editor to ProseMirror
-    this.cm.on("cursorActivity",
-               () => {if (!this.updating) this.forwardSelection()})
-    this.cm.on("changes", () => {if (!this.updating) this.valueChanged()})
+    this.cm.on("cursorActivity", () => {
+      if (!this.updating && !this.incomingChanges) this.forwardSelection()
+    })
+    this.cm.on("changes", () => {
+      if (!this.updating) {
+        this.valueChanged()
+        this.forwardSelection()
+      }
+      this.incomingChanges = false
+    })
     this.cm.on("focus", () => this.forwardSelection())
   }
 // }
