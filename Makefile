@@ -66,3 +66,10 @@ example/build/prosemirror-example-%/index.js: example/%/index.js example/%/index
 
 clean:
 	rm -rf public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md example/build/
+
+pre-update:
+	npm upgrade
+	rm markdown/CHANGELOG.md
+	touch $(ROOT)prosemirror-model/src/index.html
+
+update: pre-update all
