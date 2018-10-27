@@ -34,16 +34,16 @@ body {
   margin: 0 0 5px;
   line-height: 1.45;
   background: white;
-  font-size: 16px;
+  font-size: 18px;
   position: relative;
 }
 
 header, article, footer nav {
-  max-width: 720px;
+  max-width: 730px;
   margin: 0 auto;
 }
 
-h1, h2, h3, h4, h5 { font-family: Merriweather; font-weight: 700; }
+h1, h2, h3, h4, h5 { font-family: Merriweather; font-weight: 708; }
 
 h1 { font-size: 32px; line-height: 40px }
 
