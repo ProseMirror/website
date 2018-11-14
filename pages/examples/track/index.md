@@ -18,7 +18,7 @@ piece of text originates from.
 Hover over commits to highlight the text they introduced.
 
 This page won't list the [whole source
-code](https://github.com/ProseMirror/website/blob/master/pages/examples/track/example.js)
+code](https://github.com/ProseMirror/website/blob/master/example/track/index.js)
 for the example, only the most interesting parts.
 
 The first thing we need is a way to track the commit history. An
