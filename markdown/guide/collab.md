@@ -46,9 +46,8 @@ class Authority {
   receiveSteps(version, steps, clientID) {
     if (version != this.steps.length) return
 
-    // Apply and accumulate new steps
+    // Accumulate new steps
     steps.forEach(step => {
-      this.doc = step.apply(this.doc).doc
       this.steps.push(step)
       this.stepClientIDs.push(clientID)
     })
