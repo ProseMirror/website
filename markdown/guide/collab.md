@@ -36,8 +36,7 @@ JavaScript environment as the editors.
 
 ```javascript
 class Authority {
-  constructor(doc) {
-    this.doc = doc
+  constructor() {
     this.steps = []
     this.stepClientIDs = []
     this.onNewSteps = []
