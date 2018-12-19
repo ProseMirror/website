@@ -97,7 +97,10 @@ import collab from "prosemirror-collab"
 
 function collabEditor(authority, place) {
   let view = new EditorView(place, {
-    state: EditorState.create({schema, plugins: [collab.collab()]}),
+    state: EditorState.create({
+      doc: authority.doc,
+      plugins: [collab.collab({version: authority.steps.length})]
+    }),
     dispatchTransaction(transaction) {
       let newState = view.state.apply(transaction)
       view.updateState(newState)
