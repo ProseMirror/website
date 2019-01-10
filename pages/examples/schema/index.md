@@ -79,7 +79,7 @@ method has to output that (the second element in an array returned
 from `toDOM`, if it's a plain object, provides a set of DOM
 attributes), and their DOM parser has to read it.
 
-By default, marks as _inclusive_, meaning that they get applied to
+By default, marks are _inclusive_, meaning that they get applied to
 content inserted at their end (as well as at their start when they
 start at the start of their parent node). For link-type marks, this is
 usually not the expected behavior, and the
