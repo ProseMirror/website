@@ -15,13 +15,13 @@ modularity and customizeability over simplicity, with the hope that,
 in the future, people will distribute drop-in editors based on
 ProseMirror. As such, this is more of a Lego set than a Matchbox car.
 
-There are four core modules, which are required to do any editing at
+There are four essential modules, which are required to do any editing at
 all, and a number of extension modules maintained by the core team,
 which have a status similar to that of 3rd party modules—they provide
 useful functionality, but you may omit them or replace them with other
 modules that implement similar functionality.
 
-The core modules are:
+The essential modules are:
 
  - [`prosemirror-model`](##model) defines the editor's [document
    model](#doc), the data structure used to describe the content
