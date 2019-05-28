@@ -70,6 +70,6 @@ clean:
 pre-update:
 	npm upgrade
 	rm -f markdown/CHANGELOG.md
-	touch $(ROOT)prosemirror-model/src/index.js
+	touch $(ROOT)prosemirror-model/dist/index.js
 
 update: pre-update all
