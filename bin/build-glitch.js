@@ -32,7 +32,7 @@ writeFileSync(output + "/require-pm.js", `// Kludge to make requiring prosemirro
 // which bundles all the core libraries.
 function require(name) {
   let id = /^prosemirror-(.*)/.exec(name), mod = id && PM[id[1].replace(/-/g, "_")]
-  if (!mod) throw new Error(\`Library ${name} isn't loaded\`)
+  if (!mod) throw new Error(\`Library \${name} isn't loaded\`)
   return mod
 }`)
 
