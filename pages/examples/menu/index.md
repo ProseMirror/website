@@ -7,7 +7,7 @@ package](https://github.com/prosemirror/prosemirror-example-setup) to
 create a menu, but we actually don't recommend using that and the
 example [menu
 package](https://github.com/prosemirror/prosemirror-menu) in actual
-production, since they are rather simplistic, opinioned modules, and
+production, since they are rather simplistic, opinionated modules, and
 you're likely to run into their limitations rather quickly.
 
 This example will go through building a custom (and ugly) menu for a
