@@ -41,7 +41,7 @@ inserts it into the document alongside the editor.
 PART(tooltip)
 
 Whenever the editor state updates, it checks whether it needs to
-update the tooltip. The positioning calculatings are a bit involved,
+update the tooltip. The positioning calculations are a bit involved,
 but such is life with CSS. Basically, it uses ProseMirror's
 [`coordsAtPos` method](##view.EditorView.coordsAtPos) to find the
 screen coordinates of the selection, and uses those to set a `left`
