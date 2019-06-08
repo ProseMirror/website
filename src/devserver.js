@@ -25,7 +25,7 @@ for (let i = 2; i < process.argv.length; i++) {
 
 let moduleServer = new ModuleServer({
   root,
-  transform(_, content) { return tariff(content) }
+  transform(path, content) { return /\.json$/.test(path) ? content : tariff(content) }
 })
 let fileServer = ecstatic({root: root})
 
