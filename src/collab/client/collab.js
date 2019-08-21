@@ -12,6 +12,11 @@ import {GET, POST} from "./http"
 import {Reporter} from "./reporter"
 import {commentPlugin, commentUI, addAnnotation, annotationIcon} from "./comment"
 
+
+//const WEBSOCKET_URL = "ws://localhost:3001";
+const WEBSOCKET_URL = "wss://7hsxmtd8ac.execute-api.eu-west-1.amazonaws.com/dev";
+const DOC_PREFIX = "pref_1_";
+
 const report = new Reporter()
 
 function badVersion(err) {
@@ -26,7 +31,7 @@ class State {
 }
 
 class EditorConnection {
-  constructor(report, url) {
+  constructor(report, url, docName) {
     this.report = report
     this.url = url
     this.state = new State(null, "start")
@@ -34,6 +39,10 @@ class EditorConnection {
     this.backOff = 0
     this.view = null
     this.dispatch = this.dispatch.bind(this)
+
+    // DESKPRO EDIT
+    this.socket = new WebSocket(WEBSOCKET_URL);
+    this.docName = docName;
     this.start()
   }
 
@@ -96,13 +105,56 @@ class EditorConnection {
       else
         this.setView(new EditorView(document.querySelector("#editor"), {
           state: this.state.edit,
-          dispatchTransaction: transaction => this.dispatch({type: "transaction", transaction})
+          // DESKPRO EDIT
+          dispatchTransaction: transaction => {
+            let newState = this.view.state.apply(transaction)
+            this.view.updateState(newState)
+            let sendable = sendableSteps(newState)
+            if (sendable) {
+              let json = JSON.stringify({
+                action: "setEditorState",
+                version: sendable.version + 1,
+                steps: sendable.steps ? sendable.steps.map(s => s.toJSON()) : [],
+                clientID: sendable.clientID,
+                documentUrn: this.docName
+              });
+
+              const res = this.socket.send(json);
+            }
+          }
         }))
     } else this.setView(null)
   }
 
   // Load the document from the server and start up
   start() {
+
+    let self = this;
+
+    // DESKPRO EDIT
+    setTimeout(()=>{
+      console.log("join websocket", this.docName);
+      this.socket.send(JSON.stringify({
+        action: "joinCollab",
+        documentUrn: this.docName
+      }));
+    }, 1000);
+
+    this.socket.addEventListener('message', function (event) {
+      console.log('Got websocket message', event.data);
+      const data = JSON.parse(event.data);
+      console.log(data);
+      const steps = data.event.steps.map(j => Step.fromJSON(schema, j));
+      const clientIds = new Array(steps.length).fill(data.event.clientID);
+
+      self.view.dispatch(
+        receiveTransaction(self.view.state, steps, clientIds)
+      );
+    });
+    this.socket.addEventListener('error', function (event) {
+      console.log('Webscoket Error', event);
+    });
+
     this.run(GET(this.url)).then(data => {
       data = JSON.parse(data)
       this.report.success()
@@ -122,6 +174,8 @@ class EditorConnection {
   // for a new version of the document to be created if the client
   // is already up-to-date.
   poll() {
+    // DESKPRO EDIT
+    return;
     let query = "version=" + getVersion(this.state.edit) + "&commentVersion=" + commentPlugin.getState(this.state.edit).version
     this.run(GET(this.url + "/events?" + query)).then(data => {
       this.report.success()
@@ -203,6 +257,8 @@ class EditorConnection {
   }
 
   close() {
+    // DESKPRO EDIT
+    this.socket.close();
     this.closeRequest()
     this.setView(null)
   }
@@ -288,7 +344,8 @@ function connectFromHash() {
   if (isID) {
     if (connection) connection.close()
     info.name.textContent = decodeURIComponent(isID[1])
-    connection = window.connection = new EditorConnection(report, "/collab-backend/docs/" + isID[1])
+    // DESKPRO EDIT
+    connection = window.connection = new EditorConnection(report, "/collab-backend/docs/" + isID[1], DOC_PREFIX + isID[1])
     connection.request.then(() => connection.view.focus())
     return true
   }
