@@ -76,11 +76,12 @@ header > * { z-index: 2; position: relative; }
 
 header {
   position: relative;
-  padding: 62px 3px 0;
+  padding: 62px 6px 0;
 }
 
 header.frontpage {
   color: white;
+  overflow-x: hidden;
   margin-bottom: 40px;
 }
 
@@ -105,7 +106,11 @@ h2 a:link, h2 a:visited, h3 a:link, h3 a:visited, h4 a:link, h4 a:visited {
 
 code, pre { font-size: 14px; }
 h2 code, h3 code { font-size: inherit; }
-pre { line-height: 22px; padding-left: 20px; }
+pre {
+  line-height: 22px;
+  padding-left: 20px;
+  overflow-x: auto;
+}
 
 a.blocklink:hover {
   color: #0075ff;
@@ -202,12 +207,12 @@ nav#toc ul ul {
 }
 
 article {
-  padding: 10px 3px 100px;
+  padding: 10px 6px 100px;
 }
 
 footer {
   margin-bottom: 54px;
-  padding: 14px 3px 0;
+  padding: 14px 6px 0;
   color: white;
   background: black;
 }
