@@ -71,5 +71,6 @@ pre-update:
 	npm upgrade
 	rm -f markdown/CHANGELOG.md
 	touch $(ROOT)prosemirror-model/dist/index.js
+	touch pages/docs/ref/index.html
 
 update: pre-update all
