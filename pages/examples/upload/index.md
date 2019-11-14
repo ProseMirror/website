@@ -5,7 +5,7 @@
 Some types of editing involve asynchronous operations, but you want to
 present them to your users as a single action. For example, when
 inserting an image from the user's local filesystem, you won't have
-access to the actual image until you're uploaded it and created a URL
+access to the actual image until you've uploaded it and created a URL
 for it. Yet, you don't want to make the user go through the motion of
 first uploading the image, then waiting for that to complete, and only
 then inserting the image into the document.
