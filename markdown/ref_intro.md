@@ -1,5 +1,5 @@
 This is the reference manual for the
-[ProseMirror](http://prosemirror.net) rich text editor. It lists and
+[ProseMirror](https://prosemirror.net) rich text editor. It lists and
 describes the full public API exported by the library. For more
 introductory material, please see the [guide](/docs/guide/).
 

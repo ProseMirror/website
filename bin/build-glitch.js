@@ -19,7 +19,7 @@ writeFileSync(output + "/index.html", `<!doctype html>
 <script src="require-pm.js"></script>
 
 <script src="index.js" defer></script>
-<base href="http://prosemirror.net/">
+<base href="https://prosemirror.net/">
 
 ${html.replace(/<!--.*?-->\n/g, "")}`)
 
@@ -28,7 +28,7 @@ writeFileSync(output + "/index.js", code.replace(/\bimport \{(.*?)\}\s*from\s*"(
 }).replace(/\/\/ (\}|\w+\{)\n/g, ""))
 
 writeFileSync(output + "/require-pm.js", `// Kludge to make requiring prosemirror core libraries possible. The
-// PM global is defined by http://prosemirror.net/examples/prosemirror.js,
+// PM global is defined by https://prosemirror.net/examples/prosemirror.js,
 // which bundles all the core libraries.
 function require(name) {
   let id = /^prosemirror-(.*)/.exec(name), mod = id && PM[id[1].replace(/-/g, "_")]

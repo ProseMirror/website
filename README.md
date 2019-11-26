@@ -1,13 +1,13 @@
 # Prosemirror.net
 
-These are the sources for http://prosemirror.net
+These are the sources for https://prosemirror.net
 
-This currently contains a [front-page](http://prosemirror.net), the
-[examples](http://prosemirror.net/examples/) (including server-side code to
+This currently contains a [front-page](https://prosemirror.net), the
+[examples](https://prosemirror.net/examples/) (including server-side code to
 support the
-[collaborative demo](http://prosemirror.net/example/collab/)), the
-[guide](http://prosemirror.net/docs/guide/), and the scripts to build
-the [reference docs](http://prosemirror.net/docs/ref/).
+[collaborative demo](https://prosemirror.net/example/collab/)), the
+[guide](https://prosemirror.net/docs/guide/), and the scripts to build
+the [reference docs](https://prosemirror.net/docs/ref/).
 
 ## Installation
 
