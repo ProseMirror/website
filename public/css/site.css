@@ -337,6 +337,15 @@ div.figure { margin: 1em; }
   max-width: 90%;
 }
 
+a.sponsor {
+  display: block;
+  margin: 1em 0 1em 20px;
+}
+
+a.sponsor.diamond img {
+  height: 100px
+}
+
 /* Code highlighting styles */
 .hl-keyword, .fn {color: #708;}
 .hl-atom {color: #219;}
