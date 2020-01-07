@@ -337,14 +337,22 @@ div.figure { margin: 1em; }
   max-width: 90%;
 }
 
+.sponsorlist {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  position: relative;
+}
+
 a.sponsor {
   display: block;
   margin: 1em 0 1em 20px;
+  min-width: 45%;
 }
 
-a.sponsor.diamond img {
-  height: 100px
-}
+a.sponsor.diamond img { height: 100px }
+a.sponsor.gold img { height: 70px }
+a.sponsor.silver img { height: 35px }
 
 /* Code highlighting styles */
 .hl-keyword, .fn {color: #708;}
