@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "codemirror": "^5.21.0",
-    "crel": "^4.2.0",
+    "crelt": "1.0.0",
     "prosemirror-collab": "^1.0.0",
     "prosemirror-commands": "^1.0.0",
     "prosemirror-example-setup": "^1.0.0",

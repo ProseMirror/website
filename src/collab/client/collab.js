@@ -5,7 +5,7 @@ import {EditorView} from "prosemirror-view"
 import {history} from "prosemirror-history"
 import {collab, receiveTransaction, sendableSteps, getVersion} from "prosemirror-collab"
 import {MenuItem} from "prosemirror-menu"
-import crel from "crel"
+import crel from "crelt"
 
 import {schema} from "../schema"
 import {GET, POST} from "./http"
