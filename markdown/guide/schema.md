@@ -168,11 +168,17 @@ In this schema, every instance of the `heading` node will have a
 `level` attribute under `.attrs.level`. If it isn't specified when the
 node is [created](##model.NodeType.create), it will default to 1.
 
-When you don't give a default value for an attribute, an error will be
-raised when you attempt to create such a node without specifying that
-attribute. It will also make it impossible for the library to generate
-such nodes as filler to satisfy schema constraints during a transform
-or when calling [`createAndFill`](##model.NodeType.createAndFill).
+<a id="generatable"></a>When you don't give a default value for an
+attribute, an error will be raised when you attempt to create such a
+node without specifying that attribute.
+
+That will also make it impossible for the library to generate such
+nodes as filler to satisfy schema constraints during a transform or
+when calling [`createAndFill`](##model.NodeType.createAndFill). This
+is why you are not allowed to put such nodes in a required position in
+the schema—in order to be able to enforce the schema constraints, the
+editor needs to be able to generate empty nodes to fill missing pieces
+in the content.
 
 ## Serialization and Parsing
 
