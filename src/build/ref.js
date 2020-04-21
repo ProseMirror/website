@@ -94,6 +94,7 @@ let toc = [{name: "Intro", href: "#top.intro"}], output = modules.map(module => 
       T: false,
       this: false,
       OrderedMap: "https://github.com/marijnh/orderedmap#readme",
+      "dom.ClipboardEvent": "https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent",
       false: false,
       true: false
     }, ...importsFor(module)],
