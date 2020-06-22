@@ -11,7 +11,7 @@ All updates go through a single point, where you can inspect them and
 react to them.
 
 The core library is not an easy drop-in component—we are prioritizing
-modularity and customizeability over simplicity, with the hope that,
+modularity and customizability over simplicity, with the hope that,
 in the future, people will distribute drop-in editors based on
 ProseMirror. As such, this is more of a Lego set than a Matchbox car.
 
