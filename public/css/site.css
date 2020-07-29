@@ -82,6 +82,7 @@ header {
 header.frontpage {
   color: white;
   margin-bottom: 40px;
+  overflow: hidden;
 }
 
 header > h1 {
@@ -348,6 +349,10 @@ a.sponsor {
   display: block;
   margin: .5em 0 .5em 20px;
   min-width: 45%;
+}
+
+a.sponsor img {
+  max-width: 100%;
 }
 
 a.sponsor.diamond img { height: 100px }
