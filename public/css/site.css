@@ -38,7 +38,7 @@ body {
   position: relative;
 }
 
-header, article, footer nav {
+article, footer nav {
   max-width: 720px;
   margin: 0 auto;
 }
@@ -57,19 +57,19 @@ a { text-decoration: none }
 
 header.frontpage > h1 { z-index: 0; }
 
-header.frontpage > h1:before {
+header.frontpage::before {
   content: "";
   position: absolute;
   left: -1000px;
   right: -1000px;
-  bottom: -213px;
+  bottom: 26%;
   height: calc(100% + 850px);
   background-size: 100px 100px;
   background-image: linear-gradient(to right, #1a1a1a 2px, transparent 1px), linear-gradient(to bottom, #1a1a1a 2px, black 1px);
   background-position: left 40px bottom 60px;
   transform: rotate(-5deg);
   transform-origin: 50% 50%;
-  z-index: -1;
+  z-index: 0;
 }
 
 header > * { z-index: 2; position: relative; }
@@ -82,11 +82,19 @@ header {
 header.frontpage {
   color: white;
   margin-bottom: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 header > h1 {
   text-align: center;
   margin: 63px 0 50px;
+}
+
+header nav, header #editor, header h1 {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 header nav, footer nav {
@@ -348,6 +356,10 @@ a.sponsor {
   display: block;
   margin: .5em 0 .5em 20px;
   min-width: 45%;
+}
+
+a.sponsor img {
+  max-width: 100%;
 }
 
 a.sponsor.diamond img { height: 100px }
