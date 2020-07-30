@@ -35,6 +35,7 @@ body {
   line-height: 1.45;
   background: white;
   font-size: 16px;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -348,6 +349,10 @@ a.sponsor {
   display: block;
   margin: .5em 0 .5em 20px;
   min-width: 45%;
+}
+
+a.sponsor img {
+  max-width: 100%;
 }
 
 a.sponsor.diamond img { height: 100px }
