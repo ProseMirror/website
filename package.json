@@ -41,6 +41,7 @@
     "rollup-plugin-buble": "^0.16.0",
     "rollup-plugin-commonjs": "^8.2.4",
     "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
     "tariff": "0.1.0"
