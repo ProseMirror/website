@@ -57,3 +57,14 @@ Because the placeholder plugin [maps](##view.DecorationSet.map) its
 decorations through transactions, `findPlaceholder` will get the
 accurate position of the image, even if the document was modified
 during the upload.
+
+Note: this example uses the
+[`prosemirror-dropcursor`](https://github.com/ProseMirror/prosemirror-dropcursor)
+plugin to display the position an image will be dropped when
+dragged, and the
+[`prosemirror-gapcursor`](https://github.com/ProseMirror/prosemirror-gapcursor)
+to focus places that don't allow regular selections (such
+as positions that have a leaf block node, tables, or the end
+of the document). See the [source
+code](https://github.com/ProseMirror/website/blob/master/example/upload/index.js)
+for a complete listing.
