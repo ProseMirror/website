@@ -101,12 +101,12 @@ class CodeBlockView {
       Left: () => this.maybeEscape("char", -1),
       Down: () => this.maybeEscape("line", 1),
       Right: () => this.maybeEscape("char", 1),
-      [`${mod}-Z`]: () => undo(view.state, view.dispatch),
-      [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
-      [`${mod}-Y`]: () => redo(view.state, view.dispatch),
       "Ctrl-Enter": () => {
         if (exitCode(view.state, view.dispatch)) view.focus()
-      }
+      },
+      [`${mod}-Z`]: () => undo(view.state, view.dispatch),
+      [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
+      [`${mod}-Y`]: () => redo(view.state, view.dispatch)
     })
   }
 
