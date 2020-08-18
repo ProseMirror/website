@@ -47,7 +47,7 @@ checks some conditions, and fires off the upload when possible.
 PART(event)
 
 The core functionality happens in `startImageUpload`. The utility
-`uploadFile`, which returns a promise that resolves to the uploaded
+`uploadFile` returns a promise that resolves to the uploaded
 file's URL (in the demo it actually just waits for a bit and then
 returns a `data:` URL).
 
