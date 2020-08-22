@@ -356,6 +356,8 @@ a.sponsor img {
 a.sponsor.diamond img { height: 100px }
 a.sponsor.gold img { height: 70px }
 a.sponsor.silver img { height: 35px }
+a.sponsor.bronze img { height: 25px }
+a.sponsor.bronze { font-size: 30px; font-weight: bold }
 
 /* Code highlighting styles */
 .hl-keyword, .fn {color: #708;}
