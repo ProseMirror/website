@@ -7,8 +7,7 @@ let plugins = [
 ]
 
 if (process.env.NODE_ENV != "development")
-  plugins.push(require("rollup-plugin-uglify")())
-
+  plugins.push(require("rollup-plugin-uglify").uglify())
 
 let options = {
   input: "bin/library.js",
@@ -17,6 +16,6 @@ let options = {
 }
 
 rollup(options).then(bundle => bundle.generate(options.output)).then(
-  output => console.log(output.code),
+  bundle => console.log(bundle.output[0].code),
   error => { console.error(error.stack || error.message); process.exit(1) }
 )

@@ -20,6 +20,8 @@ let options = {
 }
 
 rollup(options).then(bundle => bundle.generate(options.output)).then(
-  output => console.log(output.code),
+  bundle => {
+    for (let file of bundle.output) if (file.fileName == "index.js") console.log(file.code)
+  },
   error => { console.error(error.stack || error.message); process.exit(1) }
 )
