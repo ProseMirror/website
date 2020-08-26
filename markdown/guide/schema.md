@@ -60,7 +60,7 @@ Such expressions can be combined to create a sequence, for example
 paragraphs’. You can also use the pipe `|` operator to indicate a
 choice between two expressions, as in `"(paragraph | blockquote)+"`.
 
-Some groups of element types will appear multiple types in your
+Some groups of element types will appear multiple times in your
 schema—for example you might have a concept of “block” nodes, that may
 appear at the top level but also nested inside of blockquotes. You can
 create a node group by giving your node specs a
