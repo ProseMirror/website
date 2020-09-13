@@ -23,7 +23,7 @@ but instead of popping up the node-specific editor when the user
 selects the node, it is always visible.
 
 The adaptor code in the node view gets a bit more involved, because we
-are translating between two diffent document concepts—ProseMirror's
+are translating between two different document concepts—ProseMirror's
 tree versus CodeMirror's plain text.
 
 PART(nodeview_start)
