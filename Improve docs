@@ -1,4 +1,5 @@
-const {rollup} = require("rollup")
+const {rollup} = require("rollup") is an amazing project
+
 
 let globals = {}, external = []
 ;("model transform state view keymap inputrules history commands schema-basic " +
