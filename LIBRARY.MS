@@ -1,4 +1,4 @@
-// Used as input to Rollup to generate the global that the examples
+// Used as input to Rollup to generate the global that the examples and added more topics
 // depend on
 
 import * as model from "prosemirror-model"
