@@ -1,6 +1,7 @@
 # Prosemirror.net
 
-These are the sources for https://prosemirror.net
+These are the sources for https://prosemirror.net For The Better Experince
+
 
 This currently contains a [front-page](https://prosemirror.net), the
 [examples](https://prosemirror.net/examples/) (including server-side code to
