@@ -11,15 +11,15 @@ the [reference docs](https://prosemirror.net/docs/ref/).
 
 ## Installation
 
-Install [Node.js](http://nodejs.org).
+step 1: Install [Node.js](http://nodejs.org).
 
-Install the module's dependencies:
+step 2: Install the module's dependencies:
 
 ```bash
 npm install
 ```
 
-Build the documentation and all the demos' JavaScript source
+step 3: Build the documentation and all the demos' JavaScript source
 
 ```bash
 make
