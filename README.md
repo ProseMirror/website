@@ -1,4 +1,4 @@
-# Prosemirror.net
+# Prosemirror.net : THE WEBSITE
 
 These are the sources for https://prosemirror.net
 
@@ -9,7 +9,7 @@ support the
 [guide](https://prosemirror.net/docs/guide/), and the scripts to build
 the [reference docs](https://prosemirror.net/docs/ref/).
 
-## Installation
+## Installation Process
 
 Install [Node.js](http://nodejs.org).
 
