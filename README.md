@@ -1,4 +1,4 @@
-# Prosemirror.net
+# Prosemirror.net-An amazing project
 
 These are the sources for https://prosemirror.net
 
