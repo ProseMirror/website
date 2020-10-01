@@ -11,7 +11,7 @@ the [reference docs](https://prosemirror.net/docs/ref/).
 
 ## Installation
 
-Install [Node.js](http://nodejs.org).
+Install [Node.js] here (http://nodejs.org).
 
 Install the module's dependencies:
 
