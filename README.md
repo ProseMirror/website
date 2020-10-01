@@ -11,15 +11,15 @@ the [reference docs](https://prosemirror.net/docs/ref/).
 
 ## Installation
 
-Install [Node.js](http://nodejs.org).
+1. Install [Node.js](http://nodejs.org).
 
-Install the module's dependencies:
+2. Install the module's dependencies:
 
 ```bash
 npm install
 ```
 
-Build the documentation and all the demos' JavaScript source
+3. Build the documentation and all the demos' JavaScript source
 
 ```bash
 make
@@ -28,7 +28,7 @@ make
 That will populate the `public/` directory with an instance of the
 website. You could point a webserver at it to try it out.
 
-To work on the demos, or to experiment with the collaborative demo, it
+4. To work on the demos, or to experiment with the collaborative demo, it
 is a good idea to use the dev server:
 
 ```
