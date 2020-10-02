@@ -59,9 +59,9 @@ glitch: $(foreach EX,$(GLITCH_EXAMPLES), example/build/prosemirror-example-$(EX)
 example/build/prosemirror-example-%/index.js: example/%/index.js example/%/index.html
 	node bin/build-glitch $*
 	cd example/build/prosemirror-example-$*; \
-	  git init; \
-	  git add *; \
-	  git commit -a -m "Add"; \
+	  git init; \ // initiate git
+	  git add *; \ // add the current working repo as a whole 
+	  git commit -a -m "Add"; \ //make changes on your git 
 	  git push https://$(GLITCH_AUTH)@api.glitch.com/prosemirror-demo-$*/git +HEAD:master
 
 clean:
