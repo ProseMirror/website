@@ -156,7 +156,7 @@ last change.
 ## Commands
 
 The `undo` and `redo` values that the previous example bound to keys
-are a special kind of functions called [_commands_](#commands).
+are a special kind of function called [_commands_](#commands).
 Most editing actions are written as commands which can be bound to
 keys, hooked up to menus, or otherwise exposed to the user.
 

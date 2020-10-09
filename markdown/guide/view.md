@@ -143,7 +143,7 @@ Similarly, the DOM selection is only updated when it is actually out
 of sync with the selection in the state, to avoid disrupting the
 various pieces of ‘hidden’ state that browsers keep along with the
 selection (such as that feature where when you arrow down or up past a
-short line, you horizontal position goes back to where it was when you
+short line, your horizontal position goes back to where it was when you
 enter the next long line).
 
 ## Props
