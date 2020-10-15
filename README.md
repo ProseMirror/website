@@ -44,7 +44,7 @@ bundled code. You can now edit them and see the changes with a single
 refresh. (Though the server-side collaborative code still needs a
 server refresh to update.)
 
-Note that this is not secure (it provides file system access of HTTP)
+Note that this is not secure (it provides file system's access of HTTP)
 and not fast (the browser will fetch each module individually), and
 should only be used for development, on your local machine, bound to
 `localhost`.
