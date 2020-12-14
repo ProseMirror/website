@@ -20,7 +20,7 @@ upload finishes, that placeholder is replaced with the final image.
 
 Since the upload might take a moment, and the user might make more
 changes while waiting for it, the placeholder should move along with
-its context as the document is edited, and when the the final image is
+its context as the document is edited, and when the final image is
 inserted, it should be put where the placeholder has ended up by that
 time.
 
