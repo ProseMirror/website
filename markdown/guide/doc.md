@@ -333,6 +333,17 @@ depth](##model.Slice.openStart) on both sides. You can use the
 [`slice` method](##model.Node.slice) on nodes to cut a slice out of a
 document.
 
+If doc holds two paragraphs, containing text "a" and "b", with
+positions and depth, looks like this:
+
+    0   1 2     3
+    0   1       0
+     <p> a </p>
+
+    3   4 5     6
+    0   1       0
+     <p> a </p>
+
 ```javascript
 // doc holds two paragraphs, containing text "a" and "b"
 let slice1 = doc.slice(0, 3) // The first paragraph
