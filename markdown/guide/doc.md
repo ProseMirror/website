@@ -342,7 +342,7 @@ positions and depth, looks like this:
 
     3   4 5     6
     0   1       0
-     <p> a </p>
+     <p> b </p>
 
 ```javascript
 // doc holds two paragraphs, containing text "a" and "b"
