@@ -7,7 +7,7 @@ let plugins = [
 ]
 
 if (process.env.NODE_ENV != "development")
-  plugins.push(require("rollup-plugin-uglify").uglify())
+  plugins.push(require("rollup-plugin-terser").terser())
 
 let options = {
   input: "bin/library.js",
