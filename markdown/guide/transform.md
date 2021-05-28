@@ -119,7 +119,7 @@ steps in them, using an abstraction called
 and allows you to map through them in one go.
 
 ```javascript
-let tr = new Transaction(myDoc)
+let tr = new Transform(myDoc)
 tr.split(10)    // split a node, +2 tokens at 10
 tr.delete(2, 5) // -3 tokens at 2
 console.log(tr.mapping.map(15)) // → 14
