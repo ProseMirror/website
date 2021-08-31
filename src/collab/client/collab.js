@@ -45,7 +45,7 @@ class EditorConnection {
       let editState = EditorState.create({
         doc: action.doc,
         plugins: exampleSetup({schema, history: false, menuContent: menu.fullMenu}).concat([
-          history({preserveItems: true}),
+          history(),
           collab({version: action.version}),
           commentPlugin,
           commentUI(transaction => this.dispatch({type: "transaction", transaction}))
