@@ -1,5 +1,5 @@
 ProseMirror provides a set of tools and concepts for building rich
-text editors, using user interface inspired by
+text editors, using a user interface inspired by
 what-you-see-is-what-you-get, but trying to avoid the pitfalls of that
 style of editing.
 

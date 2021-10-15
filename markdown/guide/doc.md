@@ -300,7 +300,7 @@ tokens are not considered part of the document (because you can't put
 your cursor outside of the document), so the size of a document is
 `doc.content.size`, **not** `doc.nodeSize`.
 
-Interpreting such position manually involves quite a lot of counting.
+Interpreting such positions manually involves quite a lot of counting.
 You can call [`Node.resolve`](##model.Node.resolve) to get a more
 descriptive [data structure](##model.ResolvedPos) for a position. This
 data structure will tell you what the parent node of the position is,
