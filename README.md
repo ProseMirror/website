@@ -5,7 +5,7 @@ These are the sources for https://prosemirror.net
 This currently contains a [front-page](https://prosemirror.net), the
 [examples](https://prosemirror.net/examples/) (including server-side code to
 support the
-[collaborative demo](https://prosemirror.net/example/collab/)), the
+[collaborative demo](https://prosemirror.net/examples/collab/)), the
 [guide](https://prosemirror.net/docs/guide/), and the scripts to build
 the [reference docs](https://prosemirror.net/docs/ref/).
 
