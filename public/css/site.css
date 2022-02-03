@@ -2,25 +2,25 @@
   font-family: 'Merriweather';
   font-style: normal;
   font-weight: 700;
-  src: local('Merriweather Bold'), local('Merriweather-Bold'), url(https://fonts.gstatic.com/s/merriweather/v13/ZvcMqxEwPfh2qDWBPxn6nnNuWYKPzoeKl5tYj8yhly0.woff2) format('woff2');
+  src: local('Merriweather Bold'), local('Merriweather-Bold'), url(font/merriweather_bold.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Source Sans Pro';
   font-style: normal;
   font-weight: 400;
-  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url(https://fonts.gstatic.com/s/sourcesanspro/v9/ODelI1aHBYDBqgeIAH2zlNV_2ngZ8dMf8fLgjYEouxg.woff2) format('woff2');
+  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url(font/source_sans.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Source Sans Pro';
   font-style: normal;
   font-weight: 600;
-  src: local('Source Sans Pro Semibold'), local('SourceSansPro-Semibold'), url(https://fonts.gstatic.com/s/sourcesanspro/v9/toadOcfmlt9b38dHJxOBGCOFnW3Jk0f09zW_Yln67Ac.woff2) format('woff2');
+  src: local('Source Sans Pro Semibold'), local('SourceSansPro-Semibold'), url(font/source_sans_semibold.woff2) format('woff2');
 }
 @font-face {
   font-family: 'Source Sans Pro';
   font-style: italic;
   font-weight: 400;
-  src: local('Source Sans Pro Italic'), local('SourceSansPro-It'), url(https://fonts.gstatic.com/s/sourcesanspro/v9/M2Jd71oPJhLKp0zdtTvoMxgy2Fsj5sj3EzlXpqVXRKo.woff2) format('woff2');
+  src: local('Source Sans Pro Italic'), local('SourceSansPro-It'), url(font/source_sans_italic.woff2) format('woff2');
 }
 
 html {
