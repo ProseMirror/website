@@ -7,7 +7,7 @@ mark yet.
 Those are the three main components of a ProseMirror state, and exist
 on state objects as [`doc`](##state.EditorState.doc),
 [`selection`](##state.EditorState.selection), and
-[`storedMarks`](##state.EditorState.selection).
+[`storedMarks`](##state.EditorState.storedMarks).
 
 ```javascript
 import {schema} from "prosemirror-schema-basic"
