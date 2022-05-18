@@ -310,24 +310,24 @@ ul.grid-list h3 {
   .toc-toggle { display: inline; cursor: pointer; }
 }
 
-dd p { margin: 0 }
-dd { margin-left: 20px }
-dt {
-  padding-left: 35px;
-  text-indent: -35px;
-}
-
 code { margin: 0 2px }
 
-.kind, .extends {
-  font-weight: 600;
-  font-family: "Source Sans Pro";
-  font-size: 14px;
-  margin-bottom: -4px;
+dd p, dd ul, dd ol { margin: 0 }
+dd { margin-left: 20px }
+dt { line-height: 1.35 }
+
+.breaktype {
+  padding-left: 20px;
 }
-.extends code {
+
+h2 .keyword, h3 .keyword, h4 .keyword {
+  font-weight: 600;
+  margin-bottom: -4px;
   color: black;
 }
+h2 .keyword { font-size: 18px }
+h3 .keyword { font-size: 16px }
+h4 .keyword { font-size: 14px }
 
 div.figure { margin: 1em; }
 .figure img {
@@ -359,9 +359,9 @@ a.sponsor.bronze img { height: 25px }
 a.sponsor.bronze { font-size: 30px; font-weight: bold }
 
 /* Code highlighting styles */
-.hl-keyword, .fn {color: #708;}
+.hl-keyword, .fn, .keyword {color: #708;}
 .hl-atom {color: #219;}
-.hl-number {color: #164;}
+.hl-number, .prim {color: #164;}
 .hl-def {color: #00f;}
 .hl-variable-2, .type {color: #05a;}
 .hl-comment {color: #a50;}

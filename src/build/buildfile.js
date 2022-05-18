@@ -10,7 +10,7 @@ var config = {
     })
   },
   env: {
-    ref: function() { return require("./ref") },
+    ref: function() { return require("./ref").buildRef() },
     require
   }
 }
