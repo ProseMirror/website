@@ -153,6 +153,10 @@ footer .navlinks {
 
 .navlinks > a:hover { color: #0075ff; }
 
+nav#toc a.current-section {
+  color: black;
+}
+
 nav#toc {
   position: absolute;
   top: 140px;
