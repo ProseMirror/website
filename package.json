@@ -34,7 +34,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "builddocs": "^1.0.3",
-    "ecstatic": "^3.0.0",
+    "serve-static": "^1.14.1",
     "getdocs-ts": "^0.1.1",
     "markdown-it": "^12.0.0",
     "markdown-it-deflist": "^2.1.0",

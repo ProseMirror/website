@@ -4,7 +4,7 @@ const {parse: parseURL} = require("url")
 
 const ModuleServer = require("moduleserve/moduleserver")
 const {handleCollabRequest} = require("./collab/server/server")
-const ecstatic = require("ecstatic")
+const serveStatic = require("serve-static")
 const {buildFile} = require("./build/buildfile")
 const tariff = require("tariff")
 
@@ -27,7 +27,7 @@ let moduleServer = new ModuleServer({
   root,
   transform(path, content) { return /\.json$/.test(path) ? content : tariff(content) }
 })
-let fileServer = ecstatic({root: root})
+let fileServer = serveStatic(root)
 
 function transformPage(req, resp) {
   let path = parseURL(req.url).pathname
