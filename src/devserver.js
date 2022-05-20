@@ -1,6 +1,6 @@
 const {createServer} = require("http")
 const path = require("path"), fs = require("fs")
-const {URL} = require("url")
+const {parse: parseURL} = require("url")
 
 const ModuleServer = require("moduleserve/moduleserver")
 const {handleCollabRequest} = require("./collab/server/server")
@@ -30,7 +30,7 @@ let moduleServer = new ModuleServer({
 let fileServer = ecstatic({root: root})
 
 function transformPage(req, resp) {
-  let path = (new URL(req.url)).pathname
+  let path = parseURL(req.url).pathname
   let dir = /\/([^\.\/]+)?$/.exec(path)
   if (dir) path = (dir[1] ? path : path.slice(0, -1)) + "/index.html"
 
