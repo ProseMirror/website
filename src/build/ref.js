@@ -26,7 +26,7 @@ exports.buildRef = function buildRef() {
       anchorPrefix: name + ".",
       allowUnresolvedTypes: false,
       processType: type => {
-        if ((type.type == "Node" || type.type == "Selection") && !type.typeOrigin)
+        if ((type.type == "Node" || type.type == "Selection") && type.typeSource && /dom\.d\.ts/.test(type.typeSource))
           return {...type, type: "DOM" + type.type}
       },
       markdownOptions: {highlight: require("./highlight").highlight},
