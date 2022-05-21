@@ -2,7 +2,6 @@
   // Highlight module currently scrolled into view
 
   let sections = document.querySelectorAll("#toc a[href]")
-  console.log(sections)
 
   function nodeAt(x, y) {
     if (document.caretPositionFromPoint) {
