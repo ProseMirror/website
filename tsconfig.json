@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["es2015", "dom", "scripthost"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+  },
+  "include": ["node_modules/prosemirror-*/src/*.ts"]
+}

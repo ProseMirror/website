@@ -35,8 +35,9 @@ exports.buildRef = function buildRef() {
         if (type.type == "OrderedMap") return "https://github.com/marijnh/orderedmap#readme"
         if (type.type == "DOMNode") return "https://developer.mozilla.org/en-US/docs/Web/API/Node"
         if (type.type == "DOMSelection") return "https://developer.mozilla.org/en-US/docs/Web/API/Selection"
-        let sibling = /\.\.\/([\w-]+)\//.exec(type.typeSource)
+        let sibling = /\.\.\/(?:prosemirror-)?([\w-]+)\//.exec(type.typeSource)
         if (sibling && packages.includes(sibling[1])) return "#" + sibling[1] + "." + type.type
+        if (type.type == "Mark") console.log(type.typeSource)
       }, browserImports]
     }
   }
