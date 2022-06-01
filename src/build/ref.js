@@ -37,7 +37,6 @@ exports.buildRef = function buildRef() {
         if (type.type == "DOMSelection") return "https://developer.mozilla.org/en-US/docs/Web/API/Selection"
         let sibling = /\.\.\/(?:prosemirror-)?([\w-]+)\//.exec(type.typeSource)
         if (sibling && packages.includes(sibling[1])) return "#" + sibling[1] + "." + type.type
-        if (type.type == "Mark") console.log(type.typeSource)
       }, browserImports]
     }
   }
