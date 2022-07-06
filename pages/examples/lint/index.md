@@ -13,8 +13,6 @@ problems in your document, and makes it easy to fix them.
 
 @HTML
 
-[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-lint)
-
 The first part of this example is a function that, given a document,
 produces an array of problems found in that document. We'll use the
 [`descendants`](##model.Node.descendants) method to easily iterate

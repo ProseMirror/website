@@ -15,8 +15,6 @@ ProseMirror editor.
 
 @HTML
 
-[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-menu)
-
 The idea is, roughly, to create a number of user interface elements
 and tie them to [commands](/docs/guide/#commands). When clicked, they
 should execute these commands on the editor.

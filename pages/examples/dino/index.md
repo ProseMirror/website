@@ -13,8 +13,6 @@ schema as proper semantic element in your documents.
 
 @HTML
 
-[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-dino)
-
 In this example, we extend the
 [basic](https://github.com/prosemirror/prosemirror-schema-basic)
 schema with a single new node. First, we define a [node

@@ -88,8 +88,6 @@ can be set to false to disable that behavior.
 
 @HTML:star
 
-[![Remix on Glitch](https://cdn.glitch.com/2703baf2-b643-4da7-ab91-7ee2a2d00b5b%2Fremix-button.svg)](https://glitch.com/edit/#!/remix/prosemirror-demo-schema)
-
 To make it possible to interact with these elements we again have to
 add a custom keymap. There's a command helper for toggling marks,
 which we can use directly for the shouting mark.
