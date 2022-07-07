@@ -1,14 +1,17 @@
-var CodeMirror = require("codemirror/addon/runmode/runmode.node.js")
-require("codemirror/mode/javascript/javascript.js")
-require("codemirror/mode/xml/xml.js")
+const {highlightTree, classHighlighter} = require("@lezer/highlight")
+const {parser: jsParser} = require("@lezer/javascript")
+const {parser: htmlParser} = require("@lezer/html")
 var escapeHtml = require("markdown-it")().utils.escapeHtml
 
 exports.highlight = function(str, lang) {
-  if (lang == "html") lang = "text/html"
-  let result = ""
-  CodeMirror.runMode(str, lang, (text, style) => {
-    let esc = escapeHtml(text)
-    result += style ? `<span class="${style.replace(/^|\s+/g, "$&hl-")}">${esc}</span>` : esc
+  let parser = lang == "html" ? htmlParser : lang == "javascript" ? jsParser : null
+  if (!parser) return escapeHtml(str)
+  let pos = 0, result = ""
+  highlightTree(parser.parse(str), classHighlighter, (from, to, cls) => {
+    result += escapeHtml(str.slice(pos, from))
+    result += `<span class="${cls}">${escapeHtml(str.slice(from, to))}</span>`
+    pos = to
   })
+  result += escapeHtml(str.slice(pos))
   return result
 }

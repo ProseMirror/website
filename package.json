@@ -10,7 +10,13 @@
     }
   ],
   "dependencies": {
-    "codemirror": "^5.21.0",
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/lang-javascript": "^6.0.0",
+    "@lezer/html": "^1.0.0",
+    "@lezer/highlight": "^1.0.0",
+    "@lezer/javascript": "^1.0.0",
     "crelt": "^1.0.0",
     "prosemirror-collab": "^1.0.0",
     "prosemirror-commands": "^1.0.0",

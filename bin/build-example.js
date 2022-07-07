@@ -7,13 +7,15 @@ let globals = {}, external = []
   external.push("prosemirror-" + name)
 })
 
+let input = process.argv[2]
+
 let options = {
-  input: process.argv[2],
+  input,
   plugins: [
     require("@rollup/plugin-node-resolve").nodeResolve({main: true, preferBuiltins: false}),
     require("@rollup/plugin-json")(),
     require("@rollup/plugin-commonjs")(),
-    require("@rollup/plugin-buble")()
+    .../codemirror/.test(input) ? [] : [require("@rollup/plugin-buble")()]
   ],
   external,
   output: {format: "iife", globals}

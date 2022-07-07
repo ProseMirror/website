@@ -10,11 +10,6 @@ editor control specifically for such content. [Node
 views](##view.NodeView) are a ProseMirror feature that make this
 possible.
 
-Wiring this node view and keymap into an editor gives us something
-like this:
-
-@HTML
-
 In this example, we set up code blocks, as they exist in the [basic
 schema](##schema-basic), to be rendered as instances of
 [CodeMirror](http://codemirror.net), a code editor component. The
@@ -22,37 +17,41 @@ general idea is quite similar to the [footnote example](../footnote/),
 but instead of popping up the node-specific editor when the user
 selects the node, it is always visible.
 
-The adaptor code in the node view gets a bit more involved, because we
-are translating between two different document concepts—ProseMirror's
-tree versus CodeMirror's plain text.
+Wiring such a node view and keymap into an editor gives us something
+like this:
+
+@HTML
+
+Because we want changes in the code editor to be reflected in the
+ProseMirror document, our node view must flush changes to its content
+to ProseMirror as soon as they happen. To allow ProseMirror commands
+to act on the right selection, the code editor will also sync its
+current selection to ProseMirror.
+
+The first thing we do in our code block node view is create an editor
+with some basic extensions, a few extra key bindings, and an update
+listener that will do the synchronization.
 
 PART(nodeview_start)
 
-When the code editor is focused, we can keep the selection of the
-outer editor synchronized with the inner one, so that any commands
-executed on the outer editor see an accurate selection.
+When the code editor is focused, translate any update that changes the
+document or selection to a ProseMirror transaction. The `getPos` that
+was passed to the node view can be used to find out where our code
+content starts, relative to the outer document (the `+ 1` skips the
+code block opening token).
 
-PART(nodeview_forwardSelection)
+PART(nodeview_forwardUpdate)
 
-This helper function translates from a CodeMirror selection to a
-ProseMirror selection. Because CodeMirror uses a line/column based
-indexing system, `indexFromPos` is used to convert to an actual
-character index.
+When adding steps to a transaction for content changes, the offset is
+adjusted for the changes in length caused by the change, so that
+further steps are created in the correct position.
 
-PART(nodeview_asProseMirrorSelection)
-
-Selections are also synchronized the other way, from ProseMirror to
-CodeMirror, using the view's
-[`setSelection`](##view.NodeView.setSelection) method.
+The `setSelection` method on a node view will be called when
+ProseMirror tries to put the selection inside the node. Our
+implementation makes sure the CodeMirror selection is set to match the
+position that is passed in.
 
 PART(nodeview_setSelection)
-
-When the actual content of the code editor is changed, the event
-handler registered in the node view's constructor calls this method.
-It'll compare the code block node's current value to the value in the
-editor, and dispatch a transaction if there is a difference.
-
-PART(nodeview_valueChanged)
 
 A somewhat tricky aspect of nesting editor like this is handling
 cursor motion across the edges of the inner editor. This node view
@@ -67,30 +66,28 @@ creates a new paragraph after a code block.
 
 PART(nodeview_keymap)
 
-When an update comes in from the editor, for example because of an
-undo action, we kind of have to do the inverse of what `valueChanged`
-did—check for text changes, and if present, propagate them from the
-outer to the inner editor.
+When a node update comes in from ProseMirror, for example because of
+an undo action, we sort of have to do the inverse of what
+`forwardUpdate` did—check for text changes, and if present, propagate
+them from the outer to the inner editor.
+
+To avoid needlessly clobbering the state of the inner editor, this
+method only generates a replacement for the range of the content that
+was changed, by comparing the start and end of the old and new
+content.
 
 PART(nodeview_update)
 
-The `updating` property is used to disable the event handlers on the
-code editor.
+The `updating` property is used to disable the event listener on the
+code editor, so that it doesn't try to forward the change (which just
+came from ProseMirror) back to ProseMirror.
 
 PART(nodeview_end)
 
-`computeChange` which was used to compare two strings and find the
-minimal change between them, looks like this:
-
-PART(computeChange)
-
-It iterates from the start and end of the strings, until it hits a
-difference, and returns an object giving the change's start, end, and
-replacement text, or `null` if there was no change.
-
 Handling cursor motion from the outer to the inner editor must be done
-with a keymap on the outer editor. The `arrowHandler` function uses
-the [`endOfTextblock` method](##view.EditorView.endOfTextblock) to
+with a keymap on the outer editor, because the browser's native
+behavior won't handle this. The `arrowHandler` function uses the
+[`endOfTextblock` method](##view.EditorView.endOfTextblock) to
 determine, in a bidi-text-aware way, whether the cursor is at the end
 of a given textblock. If it is, and the next block is a code block,
 the selection is moved into it.

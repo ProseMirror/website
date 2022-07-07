@@ -363,17 +363,17 @@ a.sponsor.bronze img { height: 25px }
 a.sponsor.bronze { font-size: 30px; font-weight: bold }
 
 /* Code highlighting styles */
-.hl-keyword, .fn, .keyword {color: #708;}
-.hl-atom {color: #219;}
-.hl-number, .prim {color: #164;}
-.hl-def {color: #00f;}
-.hl-variable-2, .type {color: #05a;}
-.hl-comment {color: #a50;}
-.hl-string, .string {color: #a11;}
-.hl-string-2 {color: #f50;}
-.hl-meta {color: #555;}
-.hl-tag {color: #170;}
-.hl-attribute {color: #00c;}
+.tok-keyword, .fn, .keyword {color: #708;}
+.tok-atom, .tok-bool {color: #219;}
+.tok-number, .prim {color: #164;}
+.tok-variableName.tok-definition {color: #00f;}
+.tok-variableName2, .tok-typeName, .type {color: #05a;}
+.tok-comment {color: #a50;}
+.tok-string, .string {color: #a11;}
+.tok-string2 {color: #f50;}
+.tok-meta {color: #555;}
+.tok-tag {color: #170;}
+.tok-attribute {color: #00c;}
 
 .param, .prop {font-style: italic;}
 .prim {color: #075;}

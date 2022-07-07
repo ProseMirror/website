@@ -10,7 +10,13 @@ const schema = new Schema({
 })
 // }
 // nodeview_start{
-import CodeMirror from "codemirror"
+import {
+  EditorView as CodeMirror, keymap as cmKeymap, drawSelection
+} from "@codemirror/view"
+import {javascript} from "@codemirror/lang-javascript"
+import {defaultKeymap} from "@codemirror/commands"
+import {syntaxHighlighting, defaultHighlightStyle} from "@codemirror/language"
+
 import {exitCode} from "prosemirror-commands"
 import {undo, redo} from "prosemirror-history"
 
@@ -20,107 +26,86 @@ class CodeBlockView {
     this.node = node
     this.view = view
     this.getPos = getPos
-    this.incomingChanges = false
 
     // Create a CodeMirror instance
-    this.cm = new CodeMirror(null, {
-      value: this.node.textContent,
-      lineNumbers: true,
-      extraKeys: this.codeMirrorKeymap()
+    this.cm = new CodeMirror({
+      doc: this.node.textContent,
+      extensions: [
+        cmKeymap.of([
+          ...this.codeMirrorKeymap(),
+          ...defaultKeymap
+        ]),
+        drawSelection(),
+        syntaxHighlighting(defaultHighlightStyle),
+        javascript(),
+        CodeMirror.updateListener.of(update => this.forwardUpdate(update))
+      ]
     })
 
     // The editor's outer node is our DOM representation
-    this.dom = this.cm.getWrapperElement()
-    // CodeMirror needs to be in the DOM to properly initialize, so
-    // schedule it to update itself
-    setTimeout(() => this.cm.refresh(), 20)
+    this.dom = this.cm.dom
 
     // This flag is used to avoid an update loop between the outer and
     // inner editor
     this.updating = false
-    // Track whether changes are have been made but not yet propagated
-    this.cm.on("beforeChange", () => this.incomingChanges = true)
-    // Propagate updates from the code editor to ProseMirror
-    this.cm.on("cursorActivity", () => {
-      if (!this.updating && !this.incomingChanges) this.forwardSelection()
-    })
-    this.cm.on("changes", () => {
-      if (!this.updating) {
-        this.valueChanged()
-        this.forwardSelection()
-      }
-      this.incomingChanges = false
-    })
-    this.cm.on("focus", () => this.forwardSelection())
   }
 // }
-// nodeview_forwardSelection{
-  forwardSelection() {
-    if (!this.cm.hasFocus()) return
-    let state = this.view.state
-    let selection = this.asProseMirrorSelection(state.doc)
-    if (!selection.eq(state.selection))
-      this.view.dispatch(state.tr.setSelection(selection))
-  }
-// }
-// nodeview_asProseMirrorSelection{
-  asProseMirrorSelection(doc) {
-    let offset = this.getPos() + 1
-    let anchor = this.cm.indexFromPos(this.cm.getCursor("anchor")) + offset
-    let head = this.cm.indexFromPos(this.cm.getCursor("head")) + offset
-    return TextSelection.create(doc, anchor, head)
+// nodeview_forwardUpdate{
+  forwardUpdate(update) {
+    if (this.updating || !this.cm.hasFocus) return
+    let offset = this.getPos() + 1, {main} = update.state.selection
+    let selection = TextSelection.create(this.view.state.doc,
+                                         offset + main.from, offset + main.to)
+    if (update.docChanged || !this.view.state.selection.eq(selection)) {
+      let tr = this.view.state.tr.setSelection(selection)
+      update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
+        tr.replaceWith(offset + fromA, offset + toA,
+                       schema.text(text.toString()))
+        offset += (toB - fromB) - (toA - fromA)
+      })
+      this.view.dispatch(tr)
+    }
   }
 // }
 // nodeview_setSelection{
   setSelection(anchor, head) {
     this.cm.focus()
     this.updating = true
-    this.cm.setSelection(this.cm.posFromIndex(anchor),
-                         this.cm.posFromIndex(head))
+    this.cm.dispatch({selection: {anchor, head}})
     this.updating = false
-  }
-// }
-// nodeview_valueChanged{
-  valueChanged() {
-    let change = computeChange(this.node.textContent, this.cm.getValue())
-    if (change) {
-      let start = this.getPos() + 1
-      let tr = this.view.state.tr.replaceWith(
-        start + change.from, start + change.to,
-        change.text ? schema.text(change.text) : null)
-      this.view.dispatch(tr)
-    }
   }
 // }
 // nodeview_keymap{
   codeMirrorKeymap() {
     let view = this.view
-    let mod = /Mac|iP(hone|[oa]d)/.test(navigator.platform) ? "Cmd" : "Ctrl"
-    return CodeMirror.normalizeKeyMap({
-      Up: () => this.maybeEscape("line", -1),
-      Left: () => this.maybeEscape("char", -1),
-      Down: () => this.maybeEscape("line", 1),
-      Right: () => this.maybeEscape("char", 1),
-      "Ctrl-Enter": () => {
-        if (exitCode(view.state, view.dispatch)) view.focus()
-      },
-      [`${mod}-Z`]: () => undo(view.state, view.dispatch),
-      [`Shift-${mod}-Z`]: () => redo(view.state, view.dispatch),
-      [`${mod}-Y`]: () => redo(view.state, view.dispatch)
-    })
+    return [
+      {key: "ArrowUp", run: () => this.maybeEscape("line", -1)},
+      {key: "ArrowLeft", run: () => this.maybeEscape("char", -1)},
+      {key: "ArrowDown", run: () => this.maybeEscape("line", 1)},
+      {key: "ArrowRight", run: () => this.maybeEscape("char", 1)},
+      {key: "Ctrl-Enter", run: () => {
+        if (!exitCode(view.state, view.dispatch)) return false
+        view.focus()
+        return true
+      }},
+      {key: "Ctrl-z", mac: "Cmd-z",
+       run: () => undo(view.state, view.dispatch)},
+      {key: "Shift-Ctrl-z", mac: "Shift-Cmd-z",
+       run: () => redo(view.state, view.dispatch)},
+      {key: "Ctrl-y", mac: "Cmd-y",
+       run: () => redo(view.state, view.dispatch)}
+    ]
   }
 
   maybeEscape(unit, dir) {
-    let pos = this.cm.getCursor()
-    if (this.cm.somethingSelected() ||
-        pos.line != (dir < 0 ? this.cm.firstLine() : this.cm.lastLine()) ||
-        (unit == "char" &&
-         pos.ch != (dir < 0 ? 0 : this.cm.getLine(pos.line).length)))
-      return CodeMirror.Pass
-    this.view.focus()
+    let {state} = this.cm, {main} = state.selection
+    if (!main.empty) return false
+    if (unit == "line") main = state.doc.lineAt(main.head)
+    if (dir < 0 ? main.from > 0 : main.to < state.doc.length) return false
     let targetPos = this.getPos() + (dir < 0 ? 0 : this.node.nodeSize)
     let selection = Selection.near(this.view.state.doc.resolve(targetPos), dir)
-    this.view.dispatch(this.view.state.tr.setSelection(selection).scrollIntoView())
+    let tr = this.view.state.tr.setSelection(selection).scrollIntoView()
+    this.view.dispatch(tr)
     this.view.focus()
   }
 // }
@@ -128,11 +113,26 @@ class CodeBlockView {
   update(node) {
     if (node.type != this.node.type) return false
     this.node = node
-    let change = computeChange(this.cm.getValue(), node.textContent)
-    if (change) {
+    if (this.updating) return true
+    let newText = node.textContent, curText = this.cm.state.doc.toString()
+    if (newText != curText) {
+      let start = 0, curEnd = curText.length, newEnd = newText.length
+      while (start < curEnd &&
+             curText.charCodeAt(start) == newText.charCodeAt(start)) {
+        ++start
+      }
+      while (curEnd > start && newEnd > start &&
+             curText.charCodeAt(curEnd - 1) == newText.charCodeAt(newEnd - 1)) {
+        curEnd--
+        newEnd--
+      }
       this.updating = true
-      this.cm.replaceRange(change.text, this.cm.posFromIndex(change.from),
-                           this.cm.posFromIndex(change.to))
+      this.cm.dispatch({
+        changes: {
+          from: start, to: curEnd,
+          insert: newText.slice(start, newEnd)
+        }
+      })
       this.updating = false
     }
     return true
@@ -144,26 +144,16 @@ class CodeBlockView {
   stopEvent() { return true }
 }
 // }
-
-// computeChange{
-function computeChange(oldVal, newVal) {
-  if (oldVal == newVal) return null
-  let start = 0, oldEnd = oldVal.length, newEnd = newVal.length
-  while (start < oldEnd && oldVal.charCodeAt(start) == newVal.charCodeAt(start)) ++start
-  while (oldEnd > start && newEnd > start &&
-         oldVal.charCodeAt(oldEnd - 1) == newVal.charCodeAt(newEnd - 1)) { oldEnd--; newEnd-- }
-  return {from: start, to: oldEnd, text: newVal.slice(start, newEnd)}
-}
-// }
-
 // arrowHandlers{
 import {keymap} from "prosemirror-keymap"
 
 function arrowHandler(dir) {
   return (state, dispatch, view) => {
     if (state.selection.empty && view.endOfTextblock(dir)) {
-      let side = dir == "left" || dir == "up" ? -1 : 1, $head = state.selection.$head
-      let nextPos = Selection.near(state.doc.resolve(side > 0 ? $head.after() : $head.before()), side)
+      let side = dir == "left" || dir == "up" ? -1 : 1
+      let $head = state.selection.$head
+      let nextPos = Selection.near(
+        state.doc.resolve(side > 0 ? $head.after() : $head.before()), side)
       if (nextPos.$head && nextPos.$head.parent.type.name == "code_block") {
         dispatch(state.tr.setSelection(nextPos))
         return true
@@ -195,5 +185,3 @@ window.view = new EditorView(document.querySelector("#editor"), {
   nodeViews: {code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos)}
 })
 // }
-
-import "codemirror/mode/javascript/javascript"
