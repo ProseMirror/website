@@ -59,8 +59,11 @@ class CodeBlockView {
     if (update.docChanged || !this.view.state.selection.eq(selection)) {
       let tr = this.view.state.tr.setSelection(selection)
       update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
-        tr.replaceWith(offset + fromA, offset + toA,
-                       schema.text(text.toString()))
+        if (text.length)
+          tr.replaceWith(offset + fromA, offset + toA,
+                         schema.text(text.toString()))
+        else
+          tr.delete(offset + fromA, offset + toA)
         offset += (toB - fromB) - (toA - fromA)
       })
       this.view.dispatch(tr)
