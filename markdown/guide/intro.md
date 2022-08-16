@@ -197,8 +197,7 @@ A state's document lives under its [`doc`](##state.EditorState.doc)
 property. This is a read-only data structure, representing the
 document as a hierarchy of nodes, somewhat like the browser DOM. A
 simple document might be a `"doc"` node containing two `"paragraph"`
-nodes, each containing a single `"text"` node. You can read more about
-the document data structure in the [guide](#doc) about it.
+nodes, each containing a single `"text"` node.
 
 When initializing a state, you can give it an initial document to use.
 In that case, the `schema` field is optional, since the schema can be
