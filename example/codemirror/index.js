@@ -54,10 +54,10 @@ class CodeBlockView {
   forwardUpdate(update) {
     if (this.updating || !this.cm.hasFocus) return
     let offset = this.getPos() + 1, {main} = update.state.selection
-    let selection = TextSelection.create(this.view.state.doc,
-                                         offset + main.from, offset + main.to)
-    if (update.docChanged || !this.view.state.selection.eq(selection)) {
-      let tr = this.view.state.tr.setSelection(selection)
+    let selFrom = offset + main.from, selTo = offset + main.to
+    let pmSel = this.view.state.selection
+    if (update.docChanged || pmSel.from != selFrom || pmSel.to != selTo) {
+      let tr = this.view.state.tr
       update.changes.iterChanges((fromA, toA, fromB, toB, text) => {
         if (text.length)
           tr.replaceWith(offset + fromA, offset + toA,
@@ -66,6 +66,7 @@ class CodeBlockView {
           tr.delete(offset + fromA, offset + toA)
         offset += (toB - fromB) - (toA - fromA)
       })
+      tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo))
       this.view.dispatch(tr)
     }
   }
