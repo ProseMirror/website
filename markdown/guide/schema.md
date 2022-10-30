@@ -266,7 +266,7 @@ schemas.
 
 Such maps support a number of methods to conveniently create updated
 versions. For example you could say
-`schema.markSpec.remove("blockquote")` to derive a set of nodes
+`schema.spec.nodes.remove("blockquote")` to derive a set of nodes
 without the `blockquote` node, which can then be passed as the `nodes`
 field for a new schema.
 
