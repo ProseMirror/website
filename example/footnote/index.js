@@ -4,7 +4,7 @@ import {Schema} from "prosemirror-model"
 
 const footnoteSpec = {
   group: "inline",
-  content: "inline*",
+  content: "text*",
   inline: true,
   // This makes the view treat the node as a leaf, even though it
   // technically has content
