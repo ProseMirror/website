@@ -53,7 +53,7 @@ public/css/codemirror.css:
 	cp $(ROOT)codemirror/lib/codemirror.css $@
 
 clean:
-	rm -rf public/**/*.html public/examples/*/example.js public/examples/prosemirror.js public/css/editor.css CHANGELOG.md example/build/
+	rm -rf public/**/*.html public/examples/*/example.js public/examples/*/index.html public/examples/prosemirror.js public/css/editor.css CHANGELOG.md example/build/
 
 pre-update:
 	npm upgrade
