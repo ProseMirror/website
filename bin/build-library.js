@@ -2,8 +2,7 @@ const {rollup} = require("rollup")
 
 let plugins = [
   require("@rollup/plugin-node-resolve").nodeResolve({main: true}),
-  require("@rollup/plugin-commonjs")(),
-  require("@rollup/plugin-buble")()
+  require("@rollup/plugin-commonjs")()
 ]
 
 if (process.env.NODE_ENV != "development")

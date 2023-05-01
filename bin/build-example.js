@@ -14,8 +14,7 @@ let options = {
   plugins: [
     require("@rollup/plugin-node-resolve").nodeResolve({main: true, preferBuiltins: false}),
     require("@rollup/plugin-json")(),
-    require("@rollup/plugin-commonjs")(),
-    .../codemirror/.test(input) ? [] : [require("@rollup/plugin-buble")()]
+    require("@rollup/plugin-commonjs")()
   ],
   external,
   output: {format: "iife", globals}
