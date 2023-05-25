@@ -1,7 +1,5 @@
 !{"template": "example", "title": "ProseMirror embedded editor example"}
 
-<link rel=stylesheet href="../../css/codemirror.css">
-
 # Embedded code editor
 
 It can be useful to have the in-document representation of some node,
