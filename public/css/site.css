@@ -109,6 +109,9 @@ pre {
   padding-left: 20px;
   overflow-x: auto;
 }
+pre > code {
+  margin: 0;
+}
 
 a.blocklink:hover {
   color: #0075ff;
