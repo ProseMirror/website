@@ -14,7 +14,7 @@ all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      public/examples/prosemirror.js \
      public/css/editor.css
 
-public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/*.ts templates/* src/build/*.js
+public/docs/ref/index.html: pages/docs/ref/index.html $(ROOT)prosemirror-*/src/*.ts $(ROOT)prosemirror-*/src/README.md templates/* src/build/*.js
 	mkdir -p $(dir $@)
 	node src/build/build.js $<
 
