@@ -71,17 +71,19 @@ function lintDeco(doc) {
   let decos = []
   lint(doc).forEach(prob => {
     decos.push(Decoration.inline(prob.from, prob.to, {class: "problem"}),
-               Decoration.widget(prob.from, lintIcon(prob)))
+               Decoration.widget(prob.from, lintIcon(prob), {key: prob.msg}))
   })
   return DecorationSet.create(doc, decos)
 }
 
 function lintIcon(prob) {
-  let icon = document.createElement("div")
-  icon.className = "lint-icon"
-  icon.title = prob.msg
-  icon.problem = prob
-  return icon
+  return () => {
+    let icon = document.createElement("div")
+    icon.className = "lint-icon"
+    icon.title = prob.msg
+    icon.problem = prob
+    return icon
+  }
 }
 // }
 
