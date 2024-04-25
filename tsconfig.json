@@ -4,6 +4,11 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
+    "strict": true,
+    "target": "es6",
+    "module": "es2020",
+    "newLine": "lf",
+    "moduleResolution": "node"
   },
   "include": ["node_modules/prosemirror-*/src/*.ts"]
 }
