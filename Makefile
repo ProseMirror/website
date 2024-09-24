@@ -1,6 +1,6 @@
 PAGES:=$(shell find pages -name "*.html") $(shell find pages -name "*.md")
 
-EXAMPLES:=basic markdown dino codemirror lint track collab footnote schema upload menu tooltip
+EXAMPLES:=basic markdown dino codemirror lint track collab footnote schema upload menu tooltip fold
 
 ROOT:=$(shell if [ -d node_modules/prosemirror-model ]; then echo node_modules/; else echo ../node_modules/; fi)
 
