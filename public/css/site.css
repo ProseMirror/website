@@ -114,11 +114,11 @@ pre > code {
 }
 
 a.blocklink:hover {
-  color: #0075ff;
+  color: #0045ff;
 }
 
 nav a.active, a:link, a:visited {
-  color: #0075ff;
+  color: #0045ff;
 }
 
 a.logo {
@@ -154,7 +154,7 @@ footer .navlinks {
   padding-bottom: 3px;
 }
 
-.navlinks > a:hover { color: #0075ff; }
+.navlinks > a:hover { color: #0045ff; }
 
 nav#toc a.current-section {
   color: black;
