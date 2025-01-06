@@ -1,4 +1,4 @@
-<<in {type, title, meta, toc}>>
+<<in {type, title, meta, toc, extraTags}>>
 
 <!doctype html>
 <html lang=en-US>
@@ -12,6 +12,7 @@
 <title><<t title || "ProseMirror">></title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel=stylesheet href=/css/site.css>
+<<if extraTags>><<h extraTags>><</if>>
 
 <header <<if type == "frontpage">>class=frontpage<</if>>>
   <nav>

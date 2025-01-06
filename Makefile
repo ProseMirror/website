@@ -11,6 +11,7 @@ endif
 
 all: $(subst .md,.html,$(PAGES:pages/%=public/%)) \
      $(foreach EX,$(EXAMPLES), public/examples/$(EX)/example.js) \
+     public/docs/changelog/changelog.atom \
      public/examples/prosemirror.js \
      public/css/editor.css
 
@@ -28,6 +29,9 @@ public/docs/guide/index.html: pages/docs/guide/index.html templates/* src/build/
 public/%.html: pages/%.* templates/* src/build/*.js
 	mkdir -p $(dir $@)
 	node src/build/build.js $<
+
+public/docs/changelog/changelog.atom: templates/changelog.atom markdown/CHANGELOG.md
+	node src/build/atom.js > $@
 
 CORE:=prosemirror-model prosemirror-transform prosemirror-state prosemirror-view \
       prosemirror-keymap prosemirror-inputrules prosemirror-history prosemirror-commands \

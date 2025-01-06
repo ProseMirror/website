@@ -8,9 +8,9 @@ var markdown = (require("markdown-it")({
 module.exports = function loadTemplates(config) {
   var mold = new Mold(config.env || {})
   fs.readdirSync(config.dir).forEach(function(filename) {
-    var match = /^(.*?)\.html$/.exec(filename)
+    var match = /^(.*?)\.(html|atom)$/.exec(filename)
     if (match)
-      mold.bake(match[1], fs.readFileSync(config.dir + match[1] + ".html", "utf8").trim())
+      mold.bake(match[1], fs.readFileSync(config.dir + match[1] + "." + match[2], "utf8").trim())
   })
   mold.defs.markdown = function(options) {
     if (typeof options == "string") options = {text: options}

@@ -1,5 +1,6 @@
 /node_modules
 /public/**/*.html
+/public/**/*.atom
 /public/examples/*/example.js
 /public/examples/prosemirror.js
 /public/css/editor.css

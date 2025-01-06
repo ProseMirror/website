@@ -1,0 +1,28 @@
+<<in {releases}>>
+<<do let date = timestamp => (new Date(timestamp)).toISOString()>>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">prosemirror.net/docs/changelog</title>
+  <author>
+    <name>Marijn Haverbeke</name>
+    <uri>https://marijnhaverbeke.nl/</uri>
+  </author>
+  <updated><<t date(Date.now())>></updated>
+  <id>https://prosemirror.net/docs/changelog/changelog.atom</id>
+
+  <link rel="self" type="application/atom+xml"
+        href="https://prosemirror.net/docs/changelog/changelog.atom"/>
+
+  <<for release releases>>
+    <<do var url = `https://www.npmjs.com/package/${release.package}/v/${release.version}`>>
+    <entry>
+      <title><<t release.package>> <<t release.version>></title>
+      <link rel="alternate" type="text/html" href="<<t url>>"/>
+      <id><<t url>></id>
+      <updated><<t date(release.date)>></updated>
+      <content type="html" xml:base="https://prosemirror.net/"><![CDATA[
+        <<markdown release.notes>>
+      ]]></content>
+    </entry>
+  <</for>>
+</feed>
