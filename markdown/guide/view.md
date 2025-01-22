@@ -376,7 +376,6 @@ class ParagraphView {
   }
 
   update(node) {
-    if (node.type.name != "paragraph") return false
     if (node.content.size > 0) this.dom.classList.remove("empty")
     else this.dom.classList.add("empty")
     return true
@@ -401,12 +400,10 @@ into the outer node.
 
 The magic happens in the [`update` method](##view.NodeView.update).
 Firstly, this method is responsible for deciding whether the node view
-_can_ be updated to show the new node at all. This new node may be
-anything that the editor's update algorithm might try to draw here, so
-you must verify that this is a node that this node view can handle.
+_can_ be updated to show the new node at all. It should return false
+when it cannot.
 
-The `update` method in the example first checks whether the new node
-is a paragraph, and bails out if that's not the case. Then it makes
-sure that the `"empty"` class is present or absent, depending on the
-content of the new node, and returns true, to indicate that the update
-succeeded (at which point the node's content will be updated).
+The `update` method in the example makes sure that the `"empty"` class
+is present or absent, depending on the content of the new node, and
+returns true, to indicate that the update succeeded (at which point
+the node's content will be updated).
