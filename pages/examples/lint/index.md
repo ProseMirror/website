@@ -38,8 +38,8 @@ doesn't interfere with the document flow.
 
 PART(deco)
 
-The problem object is stored in the icon DOM nodes, so that event
-handlers can access them when handling clicks on the node. We'll make
+The problem object is stored in the decoration spec, so that event
+handlers can retrieve it from the plugin's decoration set. We'll make
 a single click on an icon select the annotated region, and a double
 click run the `fix` method.
 

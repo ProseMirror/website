@@ -70,7 +70,7 @@ import {Decoration, DecorationSet} from "prosemirror-view"
 function lintDeco(doc) {
   let decos = []
   lint(doc).forEach(prob => {
-    decos.push(Decoration.inline(prob.from, prob.to, {class: "problem"}),
+    decos.push(Decoration.inline(prob.from, prob.to, {class: "problem"}, {prob}),
                Decoration.widget(prob.from, lintIcon(prob), {key: prob.msg}))
   })
   return DecorationSet.create(doc, decos)
@@ -81,7 +81,6 @@ function lintIcon(prob) {
     let icon = document.createElement("div")
     icon.className = "lint-icon"
     icon.title = prob.msg
-    icon.problem = prob
     return icon
   }
 }
@@ -89,6 +88,13 @@ function lintIcon(prob) {
 
 // plugin{
 import {Plugin, TextSelection} from "prosemirror-state"
+
+function getProb(view, plugin, dom) {
+  let pos = view.posAtDOM(dom, 0)
+  let found = plugin.getState(view.state)
+               .find(pos, pos, spec => spec.prob?.msg == dom.title)
+  return found.length ? found[0].type.spec.prob : null
+}
 
 let lintPlugin = new Plugin({
   state: {
@@ -99,18 +105,18 @@ let lintPlugin = new Plugin({
     decorations(state) { return this.getState(state) },
     handleClick(view, _, event) {
       if (/lint-icon/.test(event.target.className)) {
-        let {from, to} = event.target.problem
-        view.dispatch(
-          view.state.tr
-            .setSelection(TextSelection.create(view.state.doc, from, to))
+        let prob = getProb(view, this, event.target)
+        if (prob)
+          view.dispatch(view.state.tr
+            .setSelection(TextSelection.create(view.state.doc, prob.from, prob.to))
             .scrollIntoView())
         return true
       }
     },
     handleDoubleClick(view, _, event) {
       if (/lint-icon/.test(event.target.className)) {
-        let prob = event.target.problem
-        if (prob.fix) {
+        let prob = getProb(view, this, event.target)
+        if (prob?.fix) {
           prob.fix(view)
           view.focus()
           return true
