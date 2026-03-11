@@ -36,3 +36,16 @@ These plugins are created by the example setup:
  * A [menu bar](https://github.com/prosemirror/prosemirror-menu)
    (which is another module that is meant more for demos than for
    production), with menu items for common tasks and schema elements.
+
+Many ProseMirror packages come with a CSS file (linked under the
+`"style"` field in package.json). You must make sure to load these
+into the document that contains your editor. Some bundlers will help
+you with this, but if they don't, either create link tags like below,
+or make sure these files get concatenated into your bundled CSS.
+
+```html
+<link rel=stylesheet href="path/prosemirror-view/style/prosemirror.css">
+<link rel=stylesheet href="path/prosemirror-menu/style/menu.css">
+<link rel=stylesheet href="path/prosemirror-example-setup/style/style.css">
+<link rel=stylesheet href="path/prosemirror-gapcursor/style/gapcursor.css">
+```
