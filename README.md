@@ -1,3 +1,5 @@
+**This repository has moved to https://code.haverbeke.berlin/prosemirror/website**
+
 # Prosemirror.net
 
 These are the sources for https://prosemirror.net
