@@ -15,7 +15,7 @@ between both views as they are editing!
 @HTML
 
 The
-[`prosemirror-markdown`](https://github.com/prosemirror/prosemirror-markdown)
+[`prosemirror-markdown`](https://code.haverbeke.berlin/prosemirror/prosemirror-markdown)
 package defines a ProseMirror [schema](/docs/guide/#schema) that can
 express exactly the things that can be expressed in Markdown. It also
 comes with a parser and serializer that convert documents in this

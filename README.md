@@ -38,7 +38,7 @@ npm run devserver -- --port 8888
 That will get you a server at [localhost:8888](http://localhost:8888/)
 that serves the files in `public/`, along with the collaborative
 editing backend, and updates the demo pages to use
-[moduleserve](https://github.com/marijnh/moduleserve) so that you can
+[moduleserve](https://code.haverbeke.berlin/marijn/moduleserve) so that you can
 run the demos directly from the source files, rather than using the
 bundled code. You can now edit them and see the changes with a single
 refresh. (Though the server-side collaborative code still needs a

@@ -17,7 +17,7 @@ yellow background. Put the cursor in an annotation to see what it
 says.
 
 You can find the code for this
-[here](https://github.com/ProseMirror/website/tree/master/src/collab/).
+[here](https://code.haverbeke.berlin/prosemirror/website/tree/master/src/collab/).
 
 **Disclaimer:** Since this demo is open for everybody, you might run
 into people typing stupid, mean, and disgusting things. Since I'm not

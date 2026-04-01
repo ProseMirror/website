@@ -14,7 +14,7 @@ schema as proper semantic element in your documents.
 @HTML
 
 In this example, we extend the
-[basic](https://github.com/prosemirror/prosemirror-schema-basic)
+[basic](https://code.haverbeke.berlin/prosemirror/prosemirror-schema-basic)
 schema with a single new node. First, we define a [node
 spec](##model.NodeSpec), which describes the node's behavior and its
 DOM representation.
@@ -27,7 +27,7 @@ to parse a piece of the HTML page into a ProseMirror document.
 PART(schema)
 
 The demo is going to use the [example
-setup](https://github.com/prosemirror/prosemirror-example-setup)
+setup](https://code.haverbeke.berlin/prosemirror/prosemirror-example-setup)
 module again, to provide the basic plumbing for the editor. But we
 need new menu items in the insert menu. First, define a
 [command](/docs/guide/#commands) that handles dinosaur insertion.

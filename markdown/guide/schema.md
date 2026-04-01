@@ -258,7 +258,7 @@ that can parse this representation back into a document.
 
 The `nodes` and `marks` options passed to the [`Schema`
 constructor](##model.Schema) take [`OrderedMap`
-objects](https://github.com/marijnh/orderedmap#readme) as well as
+objects](https://code.haverbeke.berlin/marijn/orderedmap#readme) as well as
 plain JavaScript objects. The resulting schema's
 [`spec`](##model.Schema.spec)`.nodes` and `spec.marks` properties are
 always `OrderedMap`s, which can be used as the basis for further

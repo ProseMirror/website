@@ -32,7 +32,7 @@ exports.buildRef = function buildRef() {
       markdownOptions: {highlight: require("./highlight").highlight},
       breakAt: 45,
       imports: [type => {
-        if (type.type == "OrderedMap") return "https://github.com/marijnh/orderedmap#readme"
+        if (type.type == "OrderedMap") return "https://code.haverbeke.berlin/marijn/orderedmap#readme"
         if (type.type == "DOMNode") return "https://developer.mozilla.org/en-US/docs/Web/API/Node"
         if (type.type == "DOMSelection") return "https://developer.mozilla.org/en-US/docs/Web/API/Selection"
         let sibling = /\.\.\/(?:prosemirror-)?([\w-]+)\//.exec(type.typeSource)

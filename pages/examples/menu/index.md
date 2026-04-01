@@ -3,10 +3,10 @@
 # Adding a menu
 
 Most of the examples use the [example setup
-package](https://github.com/prosemirror/prosemirror-example-setup) to
+package](https://code.haverbeke.berlin/prosemirror/prosemirror-example-setup) to
 create a menu, but we actually don't recommend using that and the
 example [menu
-package](https://github.com/prosemirror/prosemirror-menu) in actual
+package](https://code.haverbeke.berlin/prosemirror/prosemirror-menu) in actual
 production, since they are rather simplistic, opinionated modules, and
 you're likely to run into their limitations rather quickly.
 
@@ -75,7 +75,7 @@ strong, emphasis, and block type buttons.
 PART(menu)
 
 The [`prosemirror-menu`
-package](https://github.com/prosemirror/prosemirror-menu) works
+package](https://code.haverbeke.berlin/prosemirror/prosemirror-menu) works
 similarly, but adds support for things like simple drop-down menus and
 active/inactive icons (to highlight the strong button when strong text
 is selected).

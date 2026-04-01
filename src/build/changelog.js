@@ -14,8 +14,8 @@ Promise.all(mods.map(mod => {
 
   return new Promise((resolve, reject) => {
     let req = request({
-      hostname: "raw.githubusercontent.com",
-      path: `/ProseMirror/prosemirror-${mod}/master/CHANGELOG.md`,
+      hostname: "code.haverbeke.berlin",
+      path: `/prosemirror/prosemirror-${mod}/raw/branch/main/CHANGELOG.md`,
       method: "GET",
       headers: {Accept: "text/plain"}
     }, response => {

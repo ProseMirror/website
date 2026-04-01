@@ -44,8 +44,8 @@ In addition, there are modules for [basic editing
 commands](##commands), [binding keys](##keymap), [undo
 history](##history), [input macros](##inputrules), [collaborative
 editing](##collab), a [simple document schema](##schema-basic), and
-more under the [GitHub prosemirror
-organization](https://github.com/prosemirror/).
+more under the [prosemirror
+organization](https://code.haverbeke.berlin/prosemirror/).
 
 The fact that ProseMirror isn't distributed as a single,
 browser-loadable script means that you'll probably want to use some
@@ -184,7 +184,7 @@ At this point, you have a basically working editor.
 
 To add a menu, additional keybindings for schema-specific things, and
 so on, you might want to look into the
-[`prosemirror-example-setup`](https://github.com/prosemirror/prosemirror-example-setup)
+[`prosemirror-example-setup`](https://code.haverbeke.berlin/prosemirror/prosemirror-example-setup)
 package. This is a module that provides you with an array of plugins
 that set up a baseline editor, but as the name suggests, it is meant
 more as an example than as a production-level library. For a

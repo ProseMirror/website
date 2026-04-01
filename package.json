@@ -57,6 +57,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/prosemirror/website.git"
+    "url": "git+https://code.haverbeke.berlin/prosemirror/website.git"
   }
 }

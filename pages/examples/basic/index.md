@@ -5,13 +5,13 @@
 Setting up a full editor ‘from scratch’, using only the core
 libraries, requires quite a lot of code. To be able to get started
 quickly with a pre-configured editor, we provide the
-[`prosemirror-example-setup`](https://github.com/prosemirror/prosemirror-example-setup)
+[`prosemirror-example-setup`](https://code.haverbeke.berlin/prosemirror/prosemirror-example-setup)
 package, which creates an array of plugins for you, configured to
 create a passable editing interface for a given schema. In this
 example, we use the [basic
-schema](https://github.com/prosemirror/prosemirror-schema-basic) and
+schema](https://code.haverbeke.berlin/prosemirror/prosemirror-schema-basic) and
 extend it with
-[lists](https://github.com/prosemirror/prosemirror-schema-list).
+[lists](https://code.haverbeke.berlin/prosemirror/prosemirror-schema-list).
 
 PART(code)
 
@@ -30,10 +30,10 @@ These plugins are created by the example setup:
    to enable emphasis and ctrl-shift-1 to make the current textblock a
    heading.
  * The [drop
-   cursor](https://github.com/prosemirror/prosemirror-dropcursor) and
+   cursor](https://code.haverbeke.berlin/prosemirror/prosemirror-dropcursor) and
    [gap cursor](##gapcursor) plugins.
  * The [undo history](##history).
- * A [menu bar](https://github.com/prosemirror/prosemirror-menu)
+ * A [menu bar](https://code.haverbeke.berlin/prosemirror/prosemirror-menu)
    (which is another module that is meant more for demos than for
    production), with menu items for common tasks and schema elements.
 
